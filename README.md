@@ -1,8 +1,6 @@
-# rstk
+# rstk - in progress
 
 A Rust binding for the Tk graphics toolkit.
-
-This library is still under development, and requires nightly.
 
 ## Overview
 
@@ -26,7 +24,7 @@ fn main() {
   let hello = rstk::make_label(&root);
   hello.text("Hello from Rust/Tk");
 
-  root.grid(&hello).row(0).column(0).layout();
+  hello.grid().layout();
 
   rstk::mainloop();
 }
