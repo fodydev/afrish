@@ -1,0 +1,66 @@
+use super::grid;
+use super::image;
+use super::widgets;
+use super::wish;
+
+#[derive(Clone)]
+pub struct TkCheckButton {
+    pub id: String,
+    var: String,
+}
+
+/// Creates an instance of a check-button widget in given parent.
+pub fn make_check_button(parent: &impl widgets::TkWidget) -> TkCheckButton {
+    let id = wish::next_wid(parent.id());
+    let var = format!("cb{}", wish::current_id());
+    let msg = format!("set {} 0 ; ttk::checkbutton {} -variable {}", var, id, var);
+    wish::tell_wish(&msg);
+
+    TkCheckButton {
+        id,
+        var,
+    }
+}
+
+super::tkwidget!(TkCheckButton);
+
+impl TkCheckButton {
+    /// Sets the function to be called when the button is clicked.
+    pub fn command (&self, command: impl Fn(bool)->() + 'static) {
+        wish::add_callback1_bool(&self.id, wish::mk_callback1_bool(command));
+        let msg = format!("{} configure -command {{ puts cb1-{}-${} ; flush stdout }}", self.id, self.id, self.var);
+        wish::tell_wish(&msg);
+    }
+
+    /// For buttons with text and images, specifies how to arrange the text
+    /// relative to the image.
+    pub fn compound(&self, value: widgets::Compound) {
+        widgets::compound(&self.id, value);
+    }
+
+    /// Sets an image to display on the button.
+    pub fn image(&self, image: &image::TkImage) {
+        widgets::configure(&self.id, "image", &image.id);
+    }
+
+    /// Returns true/false if button is selected (checked) or not.
+    pub fn is_selected(&self) -> bool {
+        false
+    }
+
+    /// Sets the selected (checked) state 
+    pub fn selected(&self, value: bool) {
+        let msg = format!("set {} {}", self.var, if value { "1" } else { "0" });
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets the state of the button (normal or disabled).
+    pub fn state(&self, value: widgets::State) {
+        widgets::state(&self.id, value);
+    }
+
+    /// Sets the text label for the button.
+    pub fn text(&self, value: &str) {
+        widgets::configure(&self.id, "text", value);
+    }
+}

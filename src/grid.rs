@@ -28,6 +28,7 @@ impl GridLayout {
         }
     }
 
+    /// Specifies the (0-indexed) column in which to place this widget.
     pub fn column (&mut self, column: u32) -> &mut Self {
         self.column = Some(column);
         self
@@ -48,6 +49,7 @@ impl GridLayout {
         self
     }
 
+    /// Specifies the (0-indexed) row in which to place this widget.
     pub fn row (&mut self, row: u32) -> &mut Self {
         self.row = Some(row);
         self
@@ -63,6 +65,8 @@ impl GridLayout {
         self
     }
 
+    /// Called last to finally create the layout with the parameter values 
+    /// set up by the builder.
     pub fn layout (&mut self) {
         let mut msg = format!("grid {} ", self.id);
         if let Some(column) = self.column {

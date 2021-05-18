@@ -4,6 +4,9 @@
 pub mod button;
 pub use button::*;
 
+pub mod check_button;
+pub use check_button::*;
+
 pub mod entry;
 pub use entry::*;
 

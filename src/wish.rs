@@ -42,6 +42,12 @@ pub(super) fn next_wid(parent: &str) -> String {
     }
 }
 
+pub(super) fn current_id() -> i32 {
+    unsafe {
+        NEXT_ID
+    }
+}
+
 // -- Store for callback functions, such as on button clicks
 
 type Callback0 = Box<(dyn Fn()->() + 'static)>;
@@ -67,14 +73,14 @@ fn eval_callback0(wid: &str) {
 }
 
 type Callback1Bool = Box<(dyn Fn(bool)->() + 'static)>;
-fn mk_callback1bool<F>(f: F) -> Callback1Bool
+pub(super) fn mk_callback1_bool<F>(f: F) -> Callback1Bool
     where F: Fn(bool)->() + 'static {
         Box::new(f) as Callback1Bool
 }
 
 static mut CALLBACKS1BOOL: OnceCell<HashMap<String, Callback1Bool>> = OnceCell::new();
 
-fn add_callback1_bool(wid: &str, callback: Callback1Bool) {
+pub(super) fn add_callback1_bool(wid: &str, callback: Callback1Bool) {
     unsafe {
         CALLBACKS1BOOL.get_mut().unwrap().insert(String::from(wid), callback);
     }
@@ -105,6 +111,12 @@ pub fn mainloop () {
                             println!("Callback on |{}|", widget);
                             eval_callback0(widget);
                         }
+                    } else if input.starts_with("cb1") { // -- callback 1
+                        let parts: Vec<&str> = input.split('-').collect();
+                        let widget = parts[1].trim();
+                        let value = parts[2].trim();
+                        println!("Callback on |{}| with |{}|", widget, value);
+                        eval_callback1_bool(widget, value=="1");
                     } else if input.starts_with("exit") { // -- wish has exited
                         println!("Counter: {}", counter);
                         kill_wish();

@@ -18,41 +18,9 @@ pub fn make_frame(parent: &impl widgets::TkWidget) -> TkFrame {
     }
 }
 
-impl widgets::TkWidget for TkFrame {
-    fn id(&self) -> &str {
-        &self.id
-    }
-}
+super::tkwidget!(TkFrame);
 
 impl TkFrame {
-    // -- common functions to all widgets
-
-    pub fn configure(&self, option: &str, value: &str) {
-        widgets::configure(&self.id, option, value);
-    }
-
-    pub fn focus(&self) {
-        widgets::focus(&self.id);
-    }
-    
-    pub fn grid(&self) -> grid::GridLayout {
-        grid::GridLayout::new(&self.id)
-    }
-
-    pub fn grid_configure(&self, option: &str, value: &str) {
-        widgets::grid_configure(&self.id, option, value);
-    }
-
-    pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
-        widgets::grid_configure_column(&self.id, index, option, value);
-    }
-
-    pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
-        widgets::grid_configure_row(&self.id, index, option, value);
-    }
-
-    // -- functions specific to TkFrame
-
     pub fn border_width(&self, width: u32) {
         widgets::configure(&self.id, "borderwidth", &width.to_string());
     }

@@ -21,35 +21,9 @@ pub fn make_label(parent: &impl widgets::TkWidget) -> TkLabel {
     }
 }
 
+super::tkwidget!(TkLabel);
+
 impl TkLabel {
-    // -- common functions to all widgets
-
-    pub fn configure(&self, option: &str, value: &str) {
-        widgets::configure(&self.id, option, value);
-    }
-
-    pub fn focus(&self) {
-        widgets::focus(&self.id);
-    }
-    
-    pub fn grid(&self) -> grid::GridLayout {
-        grid::GridLayout::new(&self.id)
-    }
-
-    pub fn grid_configure(&self, option: &str, value: &str) {
-        widgets::grid_configure(&self.id, option, value);
-    }
-
-    pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
-        widgets::grid_configure_column(&self.id, index, option, value);
-    }
-
-    pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
-        widgets::grid_configure_row(&self.id, index, option, value);
-    }
-
-    // -- functions specific to TkLabel
-
     pub fn compound(&self, value: widgets::Compound) {
         widgets::compound(&self.id, value);
     }
