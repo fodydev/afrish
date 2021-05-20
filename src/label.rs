@@ -22,24 +22,9 @@ pub fn make_label(parent: &impl widgets::TkWidget) -> TkLabel {
 }
 
 super::tkwidget!(TkLabel);
+super::tklabelfunctions!(TkLabel);
 
 impl TkLabel {
-    pub fn compound(&self, value: widgets::Compound) {
-        widgets::compound(&self.id, value);
-    }
- 
-    pub fn font(&self, font: &str) {
-        widgets::configure(&self.id, "font", font);
-    }
-
-    pub fn image(&self, image: &image::TkImage) {
-        widgets::configure(&self.id, "image", &image.id);
-    }
-
-    pub fn text(&self, value: &str) {
-        widgets::configure(&self.id, "text", value);
-    }
-
     pub fn wrap_length(&self, len: u32) {
         widgets::configure(&self.id, "wraplength", &len.to_string());
     }

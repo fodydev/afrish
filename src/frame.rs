@@ -37,5 +37,13 @@ impl TkFrame {
         widgets::configure(&self.id, "relief", value);
     }
 
+    pub fn height(&self, height: u32) {
+        widgets::configure(&self.id, "height", &height.to_string());
+    }
+
+    pub fn width(&self, width: u32) {
+        widgets::configure(&self.id, "width", &width.to_string());
+    }
+
 }
 

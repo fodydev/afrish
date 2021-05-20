@@ -7,6 +7,8 @@ pub struct GridLayout {
     id: String,
     column: Option<u32>,
     column_span: Option<u32>,
+    ipadx: Option<u32>,
+    ipady: Option<u32>,
     padx: Option<u32>,
     pady: Option<u32>,
     row: Option<u32>,
@@ -20,6 +22,8 @@ impl GridLayout {
             id: String::from(wid),
             column: None,
             column_span: None,
+            ipadx: None,
+            ipady: None,
             padx: None,
             pady: None,
             row: None,
@@ -39,6 +43,16 @@ impl GridLayout {
         self
     }
 
+    pub fn ipadx (&mut self, pad: u32) -> &mut Self {
+        self.ipadx = Some(pad);
+        self
+    }
+
+    pub fn ipady (&mut self, pad: u32) -> &mut Self {
+        self.ipady = Some(pad);
+        self
+    }
+    
     pub fn padx (&mut self, pad: u32) -> &mut Self {
         self.padx = Some(pad);
         self
@@ -74,6 +88,12 @@ impl GridLayout {
         }
         if let Some(span) = self.column_span {
             msg.push_str(&format!("-columnspan {} ", span));
+        }
+        if let Some(pad) = self.ipadx {
+            msg.push_str(&format!("-ipadx {} ", pad));
+        }
+        if let Some(pad) = self.ipady {
+            msg.push_str(&format!("-ipady {} ", pad));
         }
         if let Some(pad) = self.padx {
             msg.push_str(&format!("-padx {} ", pad));

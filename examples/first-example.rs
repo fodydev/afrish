@@ -36,11 +36,16 @@ fn main() {
     metres_label.text("metres");
     metres_label.grid().column(3).row(2).sticky("we").padx(5).pady(5).layout();
 
-    let calculate = move || {
-        // TODO - retrieve text from feet_entry
-        let feet = 3.0;
-        let metres = (0.3048 * feet * 10000.0) / 10000.0;
-        result_label.text(&format!("{:.5}", metres.to_string()));
+    let calculate = {
+        let feet_entry = feet_entry.clone();
+
+        move || {
+            let entry_value = feet_entry.value();
+            if let Ok(feet) = entry_value.parse::<f32>() {
+                let metres = (0.3048 * feet * 10000.0) / 10000.0;
+                result_label.text(&format!("{:.5}", metres.to_string()));
+            }
+        }
     };
 
     // last row has the button on right

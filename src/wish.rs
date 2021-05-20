@@ -14,17 +14,37 @@ static mut WISH: OnceCell<process::Child> = OnceCell::new();
 static mut OUTPUT: OnceCell<process::ChildStdout> = OnceCell::new();
 static mut SENDER: OnceCell<mpsc::Sender<String>> = OnceCell::new();
 
+// Kills the wish process - should be called to exit
 pub(super) fn kill_wish() {
     unsafe {
         WISH.get_mut().unwrap().kill().expect("Wish was unexpectedly already finished");
     }
 }
 
+// Sends a message (tcl command) to wish
 pub(super) fn tell_wish(msg: &str) {
     unsafe {
         SENDER.get_mut().unwrap().send(String::from(msg)).unwrap();
         SENDER.get_mut().unwrap().send(String::from("\n")).unwrap();
     }
+}
+
+// Sends a message (tcl command) to wish and expects a result
+// returns a result as a string
+pub(super) fn eval_wish(msg: &str) -> String {
+    tell_wish(msg);
+    
+    unsafe {
+        let mut input = [32; 100];
+        if let Ok(_) = OUTPUT.get_mut().unwrap().read(&mut input) {
+            if let Ok(input) = String::from_utf8(input.to_vec()) {
+                println!("Result {:?}", &input);
+                return String::from(input).trim().to_string();
+            }
+        }
+    }
+
+    panic!("Eval-wish failed to get a result");
 }
 
 // -- Counter for making new ids

@@ -23,6 +23,7 @@ pub fn make_button(parent: &impl widgets::TkWidget) -> TkButton {
 }
 
 super::tkwidget!(TkButton);
+super::tklabelfunctions!(TkButton);
 
 impl TkButton {
     /// Sets the function to be called when the button is clicked.
@@ -32,25 +33,9 @@ impl TkButton {
         wish::tell_wish(&msg);
     }
     
-    /// For buttons with text and images, specifies how to arrange the text
-    /// relative to the image.
-    pub fn compound(&self, value: widgets::Compound) {
-        widgets::compound(&self.id, value);
-    }
-    
-    /// Sets an image to display on the button.
-    pub fn image(&self, image: &image::TkImage) {
-        widgets::configure(&self.id, "image", &image.id);
-    }
-
     /// Sets the state of the button (normal or disabled).
     pub fn state(&self, value: widgets::State) {
         widgets::state(&self.id, value);
-    }
-
-    /// Sets the text label for the button.
-    pub fn text(&self, value: &str) {
-        widgets::configure(&self.id, "text", value);
     }
 }
 

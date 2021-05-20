@@ -26,4 +26,5 @@ impl TkTopLevel {
         let msg = format!("wm title {} {{{}}}\n", self.id, title);
         wish::tell_wish(&msg);
     }
+
 }
