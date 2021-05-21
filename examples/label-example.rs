@@ -7,7 +7,7 @@ fn main() {
     let label_1 = rstk::make_label(&root);
     label_1.text("Simple text label");
     
-    let image = rstk::make_image("examples/tcllogo.gif");
+    let image = rstk::read_image("examples/tcllogo.gif");
 
     let label_2 = rstk::make_label(&root);
     label_2.image(&image);

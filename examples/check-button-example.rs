@@ -9,7 +9,7 @@ fn main() {
     button_1.text("Simple text label");
     button_1.command(|value| { println!("Button-1 now {}", value); });
 
-    let image = rstk::make_image("examples/tcllogo.gif");
+    let image = rstk::read_image("examples/tcllogo.gif");
     let button_2 = rstk::make_check_button(&root);
     button_2.image(&image);
     button_2.command(|value| { println!("Button-2 now {}", value); });

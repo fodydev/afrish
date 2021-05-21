@@ -192,3 +192,22 @@ pub fn start_wish () -> toplevel::TkTopLevel {
     }
 }
 
+// -- independent functions
+
+/// Returns a list of the current themes
+pub fn theme_names() -> Vec<String> {
+    let themes = eval_wish("puts [ttk::style theme names] ; flush stdout");
+
+    let mut result: Vec<String> = vec![];
+    for theme in themes.split_whitespace() {
+        result.push(String::from(theme));
+    }
+
+    result
+}
+
+/// Sets the current theme to the given theme-name
+pub fn use_theme(name: &str) {
+    let msg = format!("ttk::style theme use {}", name);
+    tell_wish(&msg);
+}

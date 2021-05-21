@@ -30,7 +30,7 @@ fn main() {
 
     // -- some adjustments to the widgets/frames
 
-    content.configure("padding", "3 3 12 12");
+    content.padding(&[3, 3, 12, 12]);
     cb_1.selected(true);
     cb_2.selected(false);
     cb_3.selected(true);

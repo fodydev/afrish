@@ -7,6 +7,9 @@ pub use button::*;
 pub mod check_button;
 pub use check_button::*;
 
+pub mod combobox;
+pub use combobox::*;
+
 pub mod entry;
 pub use entry::*;
 
@@ -21,6 +24,9 @@ pub use image::*;
 
 pub mod label;
 pub use label::*;
+
+pub mod radio_button;
+pub use radio_button::*;
 
 pub mod toplevel;
 pub use toplevel::*;

@@ -1,3 +1,6 @@
+//! Functions and definitions applying to all widgets or specific sub-classes 
+//! of widgets.
+
 use super::wish;
 
 pub trait TkWidget {
@@ -262,13 +265,15 @@ macro_rules! tklabelfunctions {
                 widgets::configure(&self.id, "image", &image.id);
             }
 
-            pub fn padding(&self, pad: &[u32]) {
-                let mut values = String::from("");
-                for i in pad.iter() {
-                   values.push_str(&i.to_string());
-                   values.push(' ');
-                }
-                widgets::configure(&self.id, "padding", &values);
+            /// Sets space around the widget. Takes 
+            /// an array of up to four values, specifying: 
+            ///
+            /// * \[all]
+            /// * [left-right top-bottom]
+            /// * [left top-bottom right]
+            /// * [left top right bottom]
+            pub fn padding(&self, values: &[u32]) {
+                widgets::padding(&self.id, values);
             }
 
             /// Sets the text label for the widget.
@@ -294,6 +299,19 @@ macro_rules! tklabelfunctions {
 // --------------------------------------------------------------------------
 // Enums to type-check values
 
+pub enum Anchor {
+    N, 
+    NE, 
+    E, 
+    SE, 
+    S, 
+    SW, 
+    W, 
+    NW, 
+    Center,
+    Centre,
+}
+
 pub enum Compound {
     Bottom,
     Center,
@@ -304,6 +322,13 @@ pub enum Compound {
     Right,
     Text,
     Top,
+}
+
+pub enum Justify {
+    Center,
+    Centre,
+    Left,
+    Right,
 }
 
 pub enum Relief {
@@ -331,7 +356,7 @@ pub enum State {
 // --------------------------------------------------------------------------
 // Internal functions for within crate use
 
-pub(super) fn compound (wid: &str, value: Compound) {
+pub(super) fn compound(wid: &str, value: Compound) {
     let value = match value {
         Compound::Bottom => "bottom",
         Compound::Center | Compound::Centre => "center",
@@ -345,7 +370,42 @@ pub(super) fn compound (wid: &str, value: Compound) {
     configure(wid, "compound", value);
 }
 
-pub(super) fn state (wid: &str, value: State) {
+pub(super) fn configure(wid: &str, option: &str, value: &str) {
+    let msg = format!("{} configure -{} {{{}}}", wid, option, value);
+    wish::tell_wish(&msg);
+}
+
+pub(super) fn justify(wid: &str, value: Justify) {
+    let value = match value {
+        Justify::Left => "left",
+        Justify::Center | Justify::Centre => "center",
+        Justify::Right => "right",
+    };
+    configure(wid, "justify", value);
+}
+
+pub(super) fn padding(wid: &str, values: &[u32]) {
+    let mut value_str = String::from("");
+    for i in values.iter() {
+        value_str.push_str(&i.to_string());
+        value_str.push(' ');
+    }
+    configure(wid, "padding", &value_str);
+}
+
+pub(super) fn relief(wid: &str, value: Relief) {
+    let value = match value {
+        Relief::Flat => "flat",
+        Relief::Groove => "groove",
+        Relief::Raised => "raised",
+        Relief::Ridge => "ridge",
+        Relief::Solid => "solid",
+        Relief::Sunken => "sunken",
+    };
+    configure(wid, "relief", value);
+}
+ 
+pub(super) fn state(wid: &str, value: State) {
     let value = match value {
         State::Active => "active",
         State::Disabled => "disabled",
@@ -353,10 +413,5 @@ pub(super) fn state (wid: &str, value: State) {
         State::Readonly => "readonly",
     };
     configure(wid, "state", value);
-}
-
-pub(super) fn configure(wid: &str, option: &str, value: &str) {
-    let msg = format!("{} configure -{} {{{}}}", wid, option, value);
-    wish::tell_wish(&msg);
 }
 

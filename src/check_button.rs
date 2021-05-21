@@ -1,5 +1,7 @@
 //! Check buttons 
 //!
+//! A label-like on/off widget, which executes a command when clicked.
+//!
 //! * also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_checkbutton.htm)
 //!
 
@@ -8,6 +10,7 @@ use super::image;
 use super::widgets;
 use super::wish;
 
+/// Refers to a check-button widget
 #[derive(Clone)]
 pub struct TkCheckButton {
     pub id: String,

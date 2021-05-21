@@ -1,4 +1,8 @@
 //! Button widgets
+//!
+//! A label-like widget, which executes a command when clicked.
+//!
+//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_button.htm)
 
 use super::grid;
 use super::image;
@@ -32,7 +36,7 @@ impl TkButton {
         let msg = format!("{} configure -command {{ puts clicked-{} ; flush stdout }}", self.id, self.id);
         wish::tell_wish(&msg);
     }
-    
+
     /// Sets the state of the button (normal or disabled).
     pub fn state(&self, value: widgets::State) {
         widgets::state(&self.id, value);

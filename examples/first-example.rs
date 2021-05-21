@@ -5,7 +5,7 @@ fn main() {
 
     root.title("Feet to Metres");
     let content = rstk::make_frame(&root);
-    content.configure("padding", "3 3 12 12");
+    content.padding(&[3, 3, 12, 12]);
     content.grid()
         .column(0)
         .row(0)

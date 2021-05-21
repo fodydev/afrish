@@ -16,8 +16,8 @@ fn main() {
     frame_2.grid().row(0).column(1).padx(5).pady(5).layout();
     frame_3.grid().row(0).column(2).padx(5).pady(5).layout();
 
-    frame_1.configure("padding", "2");
-    frame_2.configure("padding", "5 40 10 10");
+    frame_1.padding(&[2]);
+    frame_2.padding(&[5, 40, 10, 10]);
 
     let label_1 = rstk::make_label(&frame_1);
     label_1.text("A Label");
