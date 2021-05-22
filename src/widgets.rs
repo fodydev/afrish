@@ -3,6 +3,18 @@
 
 use super::wish;
 
+pub struct TkEvent {
+    pub x: i32,
+    pub y: i32,
+    pub root_x: i32,
+    pub root_y: i32,
+    pub height: i32,
+    pub width: i32,
+    pub key_code: u32,
+    pub key_symbol: String,
+    pub mouse_button: u32,
+}
+
 pub trait TkWidget {
     /// Returns the widget's id reference - used within tk
     fn id(&self) -> &str;
@@ -15,6 +27,7 @@ pub trait TkWidget {
 ///
 /// The first three provide direct access to the equivalent tk functions:
 ///
+/// * bind
 /// * cget
 /// * configure
 /// * winfo
@@ -39,6 +52,11 @@ macro_rules! tkwidget {
         }
 
         impl $widget {
+            /// Binds a command to this widget to call on given event pattern
+            pub fn bind(&self, pattern: &str, command: impl Fn(widgets::TkEvent)->() + 'static) {
+                widgets::bind_to(&self.id, pattern, command);
+            }
+
             /// Retrieve the value of a configuration option
             /// as a string. 
             ///
@@ -324,6 +342,24 @@ pub enum Compound {
     Top,
 }
 
+#[derive(Clone)]
+pub enum DialogType {
+    AbortRetryIgnore,
+    Ok,
+    OkCancel,
+    RetryCancel,
+    YesNo,
+    YesNoCancel,
+}
+
+#[derive(Clone)]
+pub enum IconImage {
+    Error,
+    Information,
+    Question,
+    Warning,
+}
+
 pub enum Justify {
     Center,
     Centre,
@@ -355,6 +391,15 @@ pub enum State {
 
 // --------------------------------------------------------------------------
 // Internal functions for within crate use
+
+pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent)->() + 'static) {
+    // tag+pattern used as identifier, as multiple commands can be bound to each entity
+    let tag_pattern = format!("{}{}", tag, pattern);  // TODO ? remove ':' ?
+    wish::add_callback1_event(&tag_pattern, wish::mk_callback1_event(command));
+    let msg = format!("bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
+                      tag, pattern, tag_pattern);
+    wish::tell_wish(&msg);
+}
 
 pub(super) fn compound(wid: &str, value: Compound) {
     let value = match value {
@@ -404,7 +449,7 @@ pub(super) fn relief(wid: &str, value: Relief) {
     };
     configure(wid, "relief", value);
 }
- 
+
 pub(super) fn state(wid: &str, value: State) {
     let value = match value {
         State::Active => "active",
@@ -415,3 +460,9 @@ pub(super) fn state(wid: &str, value: State) {
     configure(wid, "state", value);
 }
 
+// --------------------------------------------------------------------------
+
+/// Binds command for event pattern to _all_ widgets. 
+pub fn bind(pattern: &str, command: impl Fn(TkEvent)->() + 'static) {
+    bind_to("all", pattern, command);
+}

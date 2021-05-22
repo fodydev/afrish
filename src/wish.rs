@@ -6,7 +6,9 @@ use std::sync::mpsc;
 use std::io::{Read, Write};
 use std::process;
 use std::thread;
+
 use super::toplevel;
+use super::widgets;
 
 use once_cell::sync::OnceCell;
 
@@ -114,6 +116,30 @@ fn eval_callback1_bool(wid: &str, value: bool) {
     }
 }
 
+type Callback1Event = Box<(dyn Fn(widgets::TkEvent)->() + 'static)>; 
+pub(super) fn mk_callback1_event<F>(f: F) -> Callback1Event
+    where F: Fn(widgets::TkEvent)->() + 'static {
+        Box::new(f) as Callback1Event
+}
+
+// for bound events, key is widgetid/all + pattern, as multiple events can be 
+// bound to same entity
+static mut CALLBACKS1EVENT: OnceCell<HashMap<String, Callback1Event>> = OnceCell::new();
+
+pub(super) fn add_callback1_event(wid: &str, callback: Callback1Event) {
+    unsafe {
+        CALLBACKS1EVENT.get_mut().unwrap().insert(String::from(wid), callback);
+    }
+}
+
+fn eval_callback1_event(wid: &str, value: widgets::TkEvent) {
+    unsafe {
+        if let Some(command) = CALLBACKS1EVENT.get_mut().unwrap().get(wid) {
+            command(value);
+        } // TODO - error?
+    }
+}
+
 /// Loops while GUI events occur
 pub fn mainloop () {
     unsafe {
@@ -131,12 +157,37 @@ pub fn mainloop () {
                             println!("Callback on |{}|", widget);
                             eval_callback0(widget);
                         }
-                    } else if input.starts_with("cb1") { // -- callback 1
+                    } else if input.starts_with("cb1b") { // -- callback 1
                         let parts: Vec<&str> = input.split('-').collect();
                         let widget = parts[1].trim();
                         let value = parts[2].trim();
                         println!("Callback on |{}| with |{}|", widget, value);
                         eval_callback1_bool(widget, value=="1");
+                    } else if input.starts_with("cb1e") { // -- callback 1 with event
+                        let parts: Vec<&str> = input.split(':').collect();
+                        let widget_pattern = parts[1].trim();
+                        println!("Callback on |{}| with event", widget_pattern);
+                        let x = parts[2].parse::<i32>().unwrap_or(0);
+                        let y = parts[3].parse::<i32>().unwrap_or(0);
+                        let root_x = parts[4].parse::<i32>().unwrap_or(0);
+                        let root_y = parts[5].parse::<i32>().unwrap_or(0);
+                        let height = parts[6].parse::<i32>().unwrap_or(0);
+                        let width = parts[7].parse::<i32>().unwrap_or(0);
+                        let key_code = parts[8].parse::<u32>().unwrap_or(0);
+                        let key_symbol = parts[9].parse::<String>().unwrap_or(String::from(""));
+                        let mouse_button = parts[10].parse::<u32>().unwrap_or(0);
+                        let event = widgets::TkEvent {
+                            x,
+                            y,
+                            root_x,
+                            root_y,
+                            height,
+                            width,
+                            key_code,
+                            key_symbol,
+                            mouse_button,
+                        };
+                        eval_callback1_event(widget_pattern, event);
                     } else if input.starts_with("exit") { // -- wish has exited
                         println!("Counter: {}", counter);
                         kill_wish();
@@ -185,6 +236,7 @@ pub fn start_wish () -> toplevel::TkTopLevel {
         });
         CALLBACKS0.set(HashMap::new());
         CALLBACKS1BOOL.set(HashMap::new());
+        CALLBACKS1EVENT.set(HashMap::new());
     }
 
     toplevel::TkTopLevel {

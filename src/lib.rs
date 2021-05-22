@@ -10,6 +10,9 @@ pub use check_button::*;
 pub mod combobox;
 pub use combobox::*;
 
+pub mod dialog;
+pub use dialog::*;
+
 pub mod entry;
 pub use entry::*;
 

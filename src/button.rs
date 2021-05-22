@@ -31,9 +31,15 @@ super::tklabelfunctions!(TkButton);
 
 impl TkButton {
     /// Sets the function to be called when the button is clicked.
-    pub fn command (&self, command: impl Fn()->() + 'static) {
+    pub fn command(&self, command: impl Fn()->() + 'static) {
         wish::add_callback0(&self.id, wish::mk_callback0(command));
         let msg = format!("{} configure -command {{ puts clicked-{} ; flush stdout }}", self.id, self.id);
+        wish::tell_wish(&msg);
+    }
+
+    /// Calls the button's command.
+    pub fn invoke(&self) {
+        let msg = format!("{} invoke", self.id);
         wish::tell_wish(&msg);
     }
 

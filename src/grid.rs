@@ -108,7 +108,7 @@ impl GridLayout {
 
     /// Called last to finally create the layout with the parameter values 
     /// set up by the builder.
-    pub fn layout (&mut self) {
+    pub fn layout (&self) {
         let mut msg = format!("grid {} ", self.id);
         if let Some(column) = self.column {
             msg.push_str(&format!("-column {} ", column));

@@ -55,7 +55,7 @@ fn main() {
     calc_button.grid().column(3).row(3).sticky("w").padx(5).pady(5).layout();
 
     feet_entry.focus();
-    root.bind("<Return>", calculate); 
+    root.bind("<Return>", move |_| { calculate(); }); 
 
     rstk::mainloop();
 }

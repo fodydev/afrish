@@ -12,7 +12,11 @@ fn main() {
     cb1.grid().row(0).column(0).pady(10).layout();
     cb2.grid().row(1).column(0).pady(10).layout();
 
-    // TODO - bind "<<ComboboxSelected>>" to cb2 to report state
+    {
+        let cb2 = cb2.clone();
+        cb2.clone().bind("<<ComboboxSelected>>", 
+                 move |_| { println!("cb2 is now {}", cb2.get_value()); });
+    }
 
     let show_values = rstk::make_button(&root);
     show_values.text("Show values...");

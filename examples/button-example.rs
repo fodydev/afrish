@@ -23,12 +23,11 @@ fn main() {
     button_3.compound(rstk::Compound::Bottom);
     button_1.state(rstk::State::Disabled);
 
-    // TODO 
-    // rstk::bind("<Return>", button_2.command());
-
     button_1.grid().row(0).column(0).layout();
     button_2.grid().row(0).column(1).layout();
     button_3.grid().row(0).column(2).layout();
+
+    rstk::bind("<Return>", move |_| { button_2.invoke(); });
 
     rstk::mainloop();
 }
