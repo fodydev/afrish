@@ -31,11 +31,12 @@ pub fn make_check_button(parent: &impl widgets::TkWidget) -> TkCheckButton {
 }
 
 super::tkwidget!(TkCheckButton);
+super::tklayouts!(TkCheckButton);
 super::tklabelfunctions!(TkCheckButton);
 
 impl TkCheckButton {
     /// Sets the function to be called when the button is clicked.
-    pub fn command (&self, command: impl Fn(bool)->() + 'static) {
+    pub fn command (&self, command: impl Fn(bool)->() + Send + 'static) {
         wish::add_callback1_bool(&self.id, wish::mk_callback1_bool(command));
         let msg = format!("{} configure -command {{ puts cb1b-{}-${} ; flush stdout }}", self.id, self.id, self.var);
         wish::tell_wish(&msg);

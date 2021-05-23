@@ -16,6 +16,9 @@ pub use dialog::*;
 pub mod entry;
 pub use entry::*;
 
+pub mod font;
+pub use font::*;
+
 pub mod frame;
 pub use frame::*;
 

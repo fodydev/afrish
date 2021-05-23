@@ -35,6 +35,7 @@ pub fn make_combobox(parent: &impl widgets::TkWidget, values: &[&str]) -> TkComb
 }
 
 super::tkwidget!(TkCombobox);
+super::tklayouts!(TkCombobox);
 
 impl TkCombobox {
     /// Returns the current value 

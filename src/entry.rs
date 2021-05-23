@@ -29,6 +29,7 @@ pub fn make_entry(parent: &impl widgets::TkWidget) -> TkEntry {
 }
 
 super::tkwidget!(TkEntry);
+super::tklayouts!(TkEntry);
 
 impl TkEntry {
     /// Specifies the font to use for text.

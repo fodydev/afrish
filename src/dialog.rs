@@ -1,10 +1,13 @@
 //! Dialogs
 //!
-//! All of the dialogs are built using a "builder" style. 
-//! The named function creates a relevant struct value, and 
-//! then functions on the relevant TkWIDGET struct alter the 
+//! All of the dialogs (apart from the font chooser) are built using a 
+//! "builder" style. The named function creates a relevant struct value, 
+//! and then functions on the relevant TkWIDGET struct alter the 
 //! default values in that struct, until finally calling `show`
 //! will set up and display the dialog.
+//!
+//! There is only one font chooser dialog instance, and commands are 
+//! provided to interact with it directly.
 //!
 //! # Message boxes
 //!
@@ -37,6 +40,7 @@
 //! * [fontchooser](http://www.tcl-lang.org/man/tcl8.6/TkCmd/fontchooser.htm)
 //!
 
+use super::font;
 use super::toplevel;
 use super::widgets;
 use super::wish;
@@ -321,3 +325,299 @@ impl TkDirectoryChooser {
         }
     }
 }
+
+/// Refers to the settings for TkOpenFileChooser.
+#[derive(Clone)]
+pub struct TkOpenFileChooser {
+    parent: Option<String>,
+    title: Option<String>,
+    file_types: Option<Vec<(String, String)>>,
+    initial_directory: Option<String>,
+    initial_filename: Option<String>,
+}
+
+/// Creates an open-file dialog to complete in builder style.
+pub fn open_file_chooser() -> TkOpenFileChooser {
+    TkOpenFileChooser {
+        parent: None,
+        title: None,
+        file_types: None,
+        initial_directory: None,
+        initial_filename: None,
+    }
+}
+
+impl TkOpenFileChooser {
+
+    /// Sets parent widget - dialog is usually shown relative to parent.
+    pub fn parent(&mut self, value: &toplevel::TkTopLevel) -> &mut Self {
+        self.parent = Some(String::from(&value.id));
+        self
+    }
+
+    /// Sets title of the dialog window.
+    pub fn title(&mut self, text: &str) -> &mut Self {
+        self.title = Some(String::from(text));
+        self
+    }
+
+    /// Sets list of file types.
+    ///
+    /// File types are passed as a list of pairs, e.g.:
+    ///
+    ///```
+    /// let file_types = [("C++", ".cpp"), ("Rust", ".rs"), ("Any", "*")];
+    /// dialog.file_types(&file_types);
+    ///```
+    pub fn file_types(&mut self, file_types: &[(&str, &str)]) -> &mut Self {
+        let mut types: Vec<(String, String)> = vec![];
+        for (txt, pat) in file_types {
+            types.push((String::from(*txt), String::from(*pat)));
+        }
+        self.file_types = Some(types);
+
+        self
+    }
+
+    /// Sets initial directory of chooser.
+    pub fn initial_directory(&mut self, value: &str) -> &mut Self {
+        self.initial_directory = Some(String::from(value));
+        self
+    }
+
+    /// Sets initial filename of chooser.
+    pub fn initial_filename(&mut self, value: &str) -> &mut Self {
+        self.initial_filename = Some(String::from(value));
+        self
+    }
+
+    /// Once dialog is defined, this function will finally show it.
+    ///
+    /// Returns an option:
+    ///
+    /// * `Some(string)` - for the chosen filename, or
+    /// * `None` - if cancel pressed.
+    ///
+    pub fn show(&self) -> Option<String> {
+        let mut msg = format!("puts [tk_getOpenFile ");
+
+        if let Some(parent) = &self.parent {
+            msg.push_str(&format!("-parent {} ", parent));
+        }
+
+        if let Some(title) = &self.title {
+            msg.push_str(&format!("-title {{{}}} ", title));
+        }
+
+        if let Some(types) = &self.file_types {
+            if types.len() > 0 {
+                msg.push_str("-filetypes {");
+
+                for (txt, pat) in types {
+                    msg.push_str(&format!("{{{{{}}} {{{}}}}} ", *txt, *pat));
+                }
+
+                msg.push_str("} ");
+            }
+        }
+
+        if let Some(initial) = &self.initial_directory {
+            msg.push_str(&format!("-initialdir {{{}}} ", initial));
+        }
+
+        if let Some(initial) = &self.initial_filename {
+            msg.push_str(&format!("-initialfile {{{}}} ", initial));
+        }
+
+        msg.push_str("] ; flush stdout");
+
+        let result = wish::eval_wish(&msg);
+        if result == "" {
+            None
+        } else {
+            Some(result)
+        }
+    }
+}
+
+/// Refers to the settings for TkSaveFileChooser.
+#[derive(Clone)]
+pub struct TkSaveFileChooser {
+    parent: Option<String>,
+    title: Option<String>,
+    confirm_overwrite: bool,
+    file_types: Option<Vec<(String, String)>>,
+    initial_directory: Option<String>,
+    initial_filename: Option<String>,
+}
+
+/// Creates a save-file dialog to complete in builder style.
+pub fn save_file_chooser() -> TkSaveFileChooser {
+    TkSaveFileChooser {
+        parent: None,
+        title: None,
+        confirm_overwrite: true,
+        file_types: None,
+        initial_directory: None,
+        initial_filename: None,
+    }
+}
+
+impl TkSaveFileChooser {
+
+    /// Sets parent widget - dialog is usually shown relative to parent.
+    pub fn parent(&mut self, value: &toplevel::TkTopLevel) -> &mut Self {
+        self.parent = Some(String::from(&value.id));
+        self
+    }
+
+    /// Sets title of the dialog window.
+    pub fn title(&mut self, text: &str) -> &mut Self {
+        self.title = Some(String::from(text));
+        self
+    }
+
+    /// Set (by default) to show a warning dialog if user attempts to 
+    /// select an existing filename. Call this to unset and remove the 
+    /// warning.
+    pub fn confirm_overwrite(&mut self, value: bool) -> &mut Self {
+        self.confirm_overwrite = value;
+        self
+    }
+
+    /// Sets list of file types.
+    ///
+    /// File types are passed as a list of pairs, e.g.:
+    ///
+    ///```
+    /// let file_types = [("C++", ".cpp"), ("Rust", ".rs"), ("Any", "*")];
+    /// dialog.file_types(&file_types);
+    ///```
+    pub fn file_types(&mut self, file_types: &[(&str, &str)]) -> &mut Self {
+        let mut types: Vec<(String, String)> = vec![];
+        for (txt, pat) in file_types {
+            types.push((String::from(*txt), String::from(*pat)));
+        }
+        self.file_types = Some(types);
+
+        self
+    }
+
+    /// Sets initial directory of chooser.
+    pub fn initial_directory(&mut self, value: &str) -> &mut Self {
+        self.initial_directory = Some(String::from(value));
+        self
+    }
+
+    /// Sets initial filename of chooser.
+    pub fn initial_filename(&mut self, value: &str) -> &mut Self {
+        self.initial_filename = Some(String::from(value));
+        self
+    }
+
+    /// Once dialog is defined, this function will finally show it.
+    ///
+    /// Returns an option:
+    ///
+    /// * `Some(string)` - for the chosen filename, or
+    /// * `None` - if cancel pressed.
+    ///
+    pub fn show(&self) -> Option<String> {
+        let mut msg = format!("puts [tk_getSaveFile ");
+
+        if let Some(parent) = &self.parent {
+            msg.push_str(&format!("-parent {} ", parent));
+        }
+
+        if let Some(title) = &self.title {
+            msg.push_str(&format!("-title {{{}}} ", title));
+        }
+
+        msg.push_str(&format!("-confirmoverwrite {} ",
+                              if self.confirm_overwrite { "1" } else { "0" }));
+
+        if let Some(types) = &self.file_types {
+            if types.len() > 0 {
+                msg.push_str("-filetypes {");
+
+                for (txt, pat) in types {
+                    msg.push_str(&format!("{{{{{}}} {{{}}}}} ", *txt, *pat));
+                }
+
+                msg.push_str("} ");
+            }
+        }
+
+        if let Some(initial) = &self.initial_directory {
+            msg.push_str(&format!("-initialdir {{{}}} ", initial));
+        }
+
+        if let Some(initial) = &self.initial_filename {
+            msg.push_str(&format!("-initialfile {{{}}} ", initial));
+        }
+
+        msg.push_str("] ; flush stdout");
+
+        let result = wish::eval_wish(&msg);
+        if result == "" {
+            None
+        } else {
+            Some(result)
+        }
+    }
+}
+
+// -- font chooser is different - use individual functions
+
+/// Set the parent widget for the font-chooser.
+pub fn font_chooser_parent(parent: &impl widgets::TkWidget) {
+    let msg = format!("tk fontchooser configure -parent {}", parent.id());
+    wish::tell_wish(&msg);
+}
+
+/// Set the title for the font-chooser.
+pub fn font_chooser_title(title: &str) {
+    let msg = format!("tk fontchooser configure -title {}", title);
+    wish::tell_wish(&msg);
+}
+
+/// Set the command to be called when a font is chosen.
+pub fn font_chooser_command(command: impl Fn(font::TkFont)->() + Send + 'static) {
+    wish::add_callback1_font("font", wish::mk_callback1_font(command));
+    let msg = format!("tk fontchooser configure -command [list font_choice font]");
+    println!("{}", msg);
+    wish::tell_wish(&msg);
+}
+
+/// Get the font for the font-chooser.
+pub fn font_chooser_font() -> String {
+    let msg = format!("tk fontchooser configure -font ");
+    wish::eval_wish(&msg)
+}
+
+/// Set the font for the font-chooser.
+pub fn font_chooser_font_set(font: &str) {
+    let msg = format!("tk fontchooser configure -font {}", font);
+    wish::tell_wish(&msg);
+}
+
+/// Hide the font-chooser, making it not visible.
+pub fn font_chooser_hide() {
+    let msg = format!("tk fontchooser hide");
+    wish::tell_wish(&msg);
+}
+
+/// Show the font-chooser, making it visible.
+pub fn font_chooser_show() {
+    let msg = format!("tk fontchooser show");
+    wish::tell_wish(&msg);
+}
+
+/// Check if the font-chooser is currently visible.
+pub fn font_chooser_visible() -> bool {
+    let msg = format!("tk fontchooser configure -visible ");
+    let result = wish::eval_wish(&msg);
+    result == "1"
+}
+
+

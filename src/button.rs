@@ -27,11 +27,12 @@ pub fn make_button(parent: &impl widgets::TkWidget) -> TkButton {
 }
 
 super::tkwidget!(TkButton);
+super::tklayouts!(TkButton);
 super::tklabelfunctions!(TkButton);
 
 impl TkButton {
     /// Sets the function to be called when the button is clicked.
-    pub fn command(&self, command: impl Fn()->() + 'static) {
+    pub fn command(&self, command: impl Fn()->() + Send + 'static) {
         wish::add_callback0(&self.id, wish::mk_callback0(command));
         let msg = format!("{} configure -command {{ puts clicked-{} ; flush stdout }}", self.id, self.id);
         wish::tell_wish(&msg);

@@ -53,7 +53,7 @@ macro_rules! tkwidget {
 
         impl $widget {
             /// Binds a command to this widget to call on given event pattern
-            pub fn bind(&self, pattern: &str, command: impl Fn(widgets::TkEvent)->() + 'static) {
+            pub fn bind(&self, pattern: &str, command: impl Fn(widgets::TkEvent)->() + Send + 'static) {
                 widgets::bind_to(&self.id, pattern, command);
             }
 
@@ -78,6 +78,12 @@ macro_rules! tkwidget {
                 widgets::configure(&self.id, option, value);
             }
 
+            /// Destroys a widget and its children.
+            pub fn destroy(&self) {
+                let msg = format!("destroy {}", self.id);
+                wish::tell_wish(&msg);
+            }
+
             /// winfo retrieves information about widget.
             ///
             pub fn winfo(&self, option: &str) -> String {
@@ -90,37 +96,6 @@ macro_rules! tkwidget {
             /// Makes this widget the focus window (e.g. for key presses)
             pub fn focus(&self) {
                 let msg = format!("focus {}", self.id);
-                wish::tell_wish(&msg);
-            }
-
-            // --- grid layout functions
-
-            /// Creates a GridLayout instance for placing this widget within its parent
-            pub fn grid(&self) -> grid::GridLayout {
-                grid::GridLayout::new(&self.id)
-            }
-
-            /// Sets properties for widget layout
-            pub fn grid_configure(&self, option: &str, value: &str) {
-                let msg = format!("grid configure {} -{} {{{}}}", self.id, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Sets property for a given column
-            pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
-                let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id, index, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Sets property for a given row
-            pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
-                let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id, index, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Removes this widget from layout
-            pub fn grid_forget(&self) {
-                let msg = format!("grid forget {}", self.id);
                 wish::tell_wish(&msg);
             }
 
@@ -239,6 +214,69 @@ macro_rules! tkwidget {
                 } else {
                     0
                 }
+            }
+
+            // -- stacking order
+
+            /// Lowers the widget in stacking order.
+            pub fn lower(&self) {
+                let msg = format!("lower {}", self.id);
+                wish::tell_wish(&msg);
+            }
+
+            /// Raises the widget in stacking order.
+            pub fn raise(&self) {
+                let msg = format!("raise {}", self.id);
+                wish::tell_wish(&msg);
+            }
+
+
+        }
+    }
+}
+
+// macro to write the common layout functions for given struct
+
+#[macro_export]
+/// Expands to a set of common functions used to support layouts.
+///
+/// * grid layout
+///
+/// Also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/grid.htm)
+///
+macro_rules! tklayouts {
+    ($widget:ident) => {
+        impl $widget {
+
+            // --- grid layout functions
+
+            /// Creates a GridLayout instance for placing this widget within its parent
+            pub fn grid(&self) -> grid::GridLayout {
+                grid::GridLayout::new(&self.id)
+            }
+
+            /// Sets properties for widget layout
+            pub fn grid_configure(&self, option: &str, value: &str) {
+                let msg = format!("grid configure {} -{} {{{}}}", self.id, option, value);
+                wish::tell_wish(&msg);
+            }
+
+            /// Sets property for a given column
+            pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
+                let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id, index, option, value);
+                wish::tell_wish(&msg);
+            }
+
+            /// Sets property for a given row
+            pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
+                let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id, index, option, value);
+                wish::tell_wish(&msg);
+            }
+
+            /// Removes this widget from layout
+            pub fn grid_forget(&self) {
+                let msg = format!("grid forget {}", self.id);
+                wish::tell_wish(&msg);
             }
         }
     }
@@ -392,7 +430,7 @@ pub enum State {
 // --------------------------------------------------------------------------
 // Internal functions for within crate use
 
-pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent)->() + 'static) {
+pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
     // tag+pattern used as identifier, as multiple commands can be bound to each entity
     let tag_pattern = format!("{}{}", tag, pattern);  // TODO ? remove ':' ?
     wish::add_callback1_event(&tag_pattern, wish::mk_callback1_event(command));
@@ -463,6 +501,6 @@ pub(super) fn state(wid: &str, value: State) {
 // --------------------------------------------------------------------------
 
 /// Binds command for event pattern to _all_ widgets. 
-pub fn bind(pattern: &str, command: impl Fn(TkEvent)->() + 'static) {
+pub fn bind(pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
     bind_to("all", pattern, command);
 }

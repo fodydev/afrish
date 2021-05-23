@@ -26,6 +26,7 @@ pub fn make_frame(parent: &impl widgets::TkWidget) -> TkFrame {
 }
 
 super::tkwidget!(TkFrame);
+super::tklayouts!(TkFrame);
 
 impl TkFrame {
     /// Size of border around frame

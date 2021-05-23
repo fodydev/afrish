@@ -5,11 +5,15 @@ use std::collections::HashMap;
 use std::sync::mpsc;
 use std::io::{Read, Write};
 use std::process;
+use std::sync::Mutex;
 use std::thread;
 
+use super::font;
 use super::toplevel;
 use super::widgets;
 
+// TODO - change when available from 'nightly'
+use once_cell::sync::Lazy; 
 use once_cell::sync::OnceCell;
 
 static mut WISH: OnceCell<process::Child> = OnceCell::new();
@@ -51,93 +55,98 @@ pub(super) fn eval_wish(msg: &str) -> String {
 
 // -- Counter for making new ids
 
-static mut NEXT_ID: i32 = 0;
+static NEXT_ID: Lazy<Mutex<i32>> = Lazy::new(|| Mutex::new(0));
+// static mut NEXT_ID: i32 = 0;
 
 pub(super) fn next_wid(parent: &str) -> String {
-    unsafe {
-        NEXT_ID += 1;
-        if parent == "." {
-            format!(".r{}", NEXT_ID)
-        } else {
-            format!("{}.r{}", parent, NEXT_ID)
-        }
+    let mut nid = NEXT_ID.lock().unwrap();
+    *nid += 1;
+    if parent == "." {
+        format!(".r{}", nid)
+    } else {
+        format!("{}.r{}", parent, nid)
     }
 }
 
 pub(super) fn current_id() -> i32 {
-    unsafe {
-        NEXT_ID
-    }
+    let nid = NEXT_ID.lock().unwrap();
+    *nid
 }
 
 // -- Store for callback functions, such as on button clicks
 
-type Callback0 = Box<(dyn Fn()->() + 'static)>;
+type Callback0 = Box<(dyn Fn()->() + Send + 'static)>;
 pub(super) fn mk_callback0<F>(f: F) -> Callback0
-    where F: Fn()->() + 'static {
+    where F: Fn()->() + Send + 'static {
         Box::new(f) as Callback0
 }
 
-static mut CALLBACKS0: OnceCell<HashMap<String, Callback0>> = OnceCell::new();
+static CALLBACKS0: Lazy<Mutex<HashMap<String, Callback0>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 pub(super) fn add_callback0(wid: &str, callback: Callback0) {
-    unsafe {
-        CALLBACKS0.get_mut().unwrap().insert(String::from(wid), callback);
-    }
+    CALLBACKS0.lock().unwrap().insert(String::from(wid), callback);
 }
 
 fn eval_callback0(wid: &str) {
-    unsafe {
-        if let Some(command) = CALLBACKS0.get_mut().unwrap().get(wid) {
-            command();
-        } // TODO - error?
-    }
+    if let Some(command) = CALLBACKS0.lock().unwrap().get(wid) {
+        command();
+    } // TODO - error?
 }
 
-type Callback1Bool = Box<(dyn Fn(bool)->() + 'static)>;
+type Callback1Bool = Box<(dyn Fn(bool)->() + Send + 'static)>;
 pub(super) fn mk_callback1_bool<F>(f: F) -> Callback1Bool
-    where F: Fn(bool)->() + 'static {
+    where F: Fn(bool)->() + Send + 'static {
         Box::new(f) as Callback1Bool
 }
 
-static mut CALLBACKS1BOOL: OnceCell<HashMap<String, Callback1Bool>> = OnceCell::new();
+static CALLBACKS1BOOL: Lazy<Mutex<HashMap<String, Callback1Bool>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 pub(super) fn add_callback1_bool(wid: &str, callback: Callback1Bool) {
-    unsafe {
-        CALLBACKS1BOOL.get_mut().unwrap().insert(String::from(wid), callback);
-    }
+    CALLBACKS1BOOL.lock().unwrap().insert(String::from(wid), callback);
 }
 
 fn eval_callback1_bool(wid: &str, value: bool) {
-    unsafe {
-        if let Some(command) = CALLBACKS1BOOL.get_mut().unwrap().get(wid) {
-            command(value);
-        } // TODO - error?
-    }
+    if let Some(command) = CALLBACKS1BOOL.lock().unwrap().get(wid) {
+        command(value);
+    } // TODO - error?
 }
 
-type Callback1Event = Box<(dyn Fn(widgets::TkEvent)->() + 'static)>; 
+type Callback1Event = Box<(dyn Fn(widgets::TkEvent)->() + Send + 'static)>; 
 pub(super) fn mk_callback1_event<F>(f: F) -> Callback1Event
-    where F: Fn(widgets::TkEvent)->() + 'static {
-        Box::new(f) as Callback1Event
+where F: Fn(widgets::TkEvent)->() + Send + 'static {
+    Box::new(f) as Callback1Event
 }
 
 // for bound events, key is widgetid/all + pattern, as multiple events can be 
 // bound to same entity
-static mut CALLBACKS1EVENT: OnceCell<HashMap<String, Callback1Event>> = OnceCell::new();
+static CALLBACKS1EVENT: Lazy<Mutex<HashMap<String, Callback1Event>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 pub(super) fn add_callback1_event(wid: &str, callback: Callback1Event) {
-    unsafe {
-        CALLBACKS1EVENT.get_mut().unwrap().insert(String::from(wid), callback);
-    }
+    CALLBACKS1EVENT.lock().unwrap().insert(String::from(wid), callback);
 }
 
 fn eval_callback1_event(wid: &str, value: widgets::TkEvent) {
-    unsafe {
-        if let Some(command) = CALLBACKS1EVENT.get_mut().unwrap().get(wid) {
-            command(value);
-        } // TODO - error?
-    }
+    if let Some(command) = CALLBACKS1EVENT.lock().unwrap().get(wid) {
+        command(value);
+    } // TODO - error?
+}
+
+type Callback1Font = Box<(dyn Fn(font::TkFont)->() + Send + 'static)>; 
+pub(super) fn mk_callback1_font<F>(f: F) -> Callback1Font
+where F: Fn(font::TkFont)->() + Send + 'static {
+    Box::new(f) as Callback1Font
+}
+
+static CALLBACKS1FONT: Lazy<Mutex<HashMap<String, Callback1Font>>> = Lazy::new(|| Mutex::new(HashMap::new()));
+
+pub(super) fn add_callback1_font(wid: &str, callback: Callback1Font) {
+    CALLBACKS1FONT.lock().unwrap().insert(String::from(wid), callback);
+}
+
+fn eval_callback1_font(wid: &str, value: font::TkFont) {
+    if let Some(command) = CALLBACKS1FONT.lock().unwrap().get(wid) {
+        command(value);
+    } // TODO - error?
 }
 
 /// Loops while GUI events occur
@@ -157,12 +166,14 @@ pub fn mainloop () {
                             println!("Callback on |{}|", widget);
                             eval_callback0(widget);
                         }
-                    } else if input.starts_with("cb1b") { // -- callback 1
+
+                    } else if input.starts_with("cb1b") { // -- callback 1 with bool
                         let parts: Vec<&str> = input.split('-').collect();
                         let widget = parts[1].trim();
                         let value = parts[2].trim();
                         println!("Callback on |{}| with |{}|", widget, value);
                         eval_callback1_bool(widget, value=="1");
+
                     } else if input.starts_with("cb1e") { // -- callback 1 with event
                         let parts: Vec<&str> = input.split(':').collect();
                         let widget_pattern = parts[1].trim();
@@ -188,6 +199,12 @@ pub fn mainloop () {
                             mouse_button,
                         };
                         eval_callback1_event(widget_pattern, event);
+
+                    } else if input.starts_with("font") { // -- callback 1 with font
+                        let font = String::from(input[4..].trim());
+                        println!("Callback with font |{}|", font);
+                        eval_callback1_font("font", font::TkFont { description: font });
+
                     } else if input.starts_with("exit") { // -- wish has exited
                         println!("Counter: {}", counter);
                         kill_wish();
@@ -216,6 +233,10 @@ pub fn start_wish () -> toplevel::TkTopLevel {
 
         input.write(b"package require Tcl\n").unwrap();
         input.write(b"wm protocol . WM_DELETE_WINDOW { puts stdout {exit} ; flush stdout } \n").unwrap();
+        input.write(b"proc font_choice {w font args} {
+            puts font$font
+            flush stdout
+        }\n").unwrap();
 
         let (sender, receiver) = mpsc::channel();
         SENDER.set(sender).expect("Do not start wish twice");
@@ -234,14 +255,16 @@ pub fn start_wish () -> toplevel::TkTopLevel {
                 }
             }
         });
-        CALLBACKS0.set(HashMap::new());
-        CALLBACKS1BOOL.set(HashMap::new());
-        CALLBACKS1EVENT.set(HashMap::new());
     }
 
     toplevel::TkTopLevel {
         id: String::from("."),
     }
+}
+
+pub fn end_wish() {
+    kill_wish();
+    process::exit(0);
 }
 
 // -- independent functions

@@ -36,11 +36,12 @@ pub fn make_radio_button(parent: &impl widgets::TkWidget, group: &str, value: &s
 }
 
 super::tkwidget!(TkRadioButton);
+super::tklayouts!(TkRadioButton);
 super::tklabelfunctions!(TkRadioButton);
 
 impl TkRadioButton {
     /// Sets the function to be called when the button is clicked.
-    pub fn command (&self, command: impl Fn(bool)->() + 'static) {
+    pub fn command (&self, command: impl Fn(bool)->() + Send + 'static) {
         wish::add_callback1_bool(&self.id, wish::mk_callback1_bool(command));
         let msg = format!("{} configure -command {{ puts cb1-{}-${} ; flush stdout }}", self.id, self.id, self.var);
         wish::tell_wish(&msg);

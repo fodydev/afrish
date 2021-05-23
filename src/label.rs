@@ -27,6 +27,7 @@ pub fn make_label(parent: &impl widgets::TkWidget) -> TkLabel {
 }
 
 super::tkwidget!(TkLabel);
+super::tklayouts!(TkLabel);
 super::tklabelfunctions!(TkLabel);
 
 impl TkLabel {
