@@ -6,7 +6,7 @@
 
 use super::grid;
 use super::image;
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to a button widget 
@@ -16,7 +16,7 @@ pub struct TkButton {
 }
 
 /// Creates an instance of a button widget in given parent.
-pub fn make_button(parent: &impl widgets::TkWidget) -> TkButton {
+pub fn make_button(parent: &impl widget::TkWidget) -> TkButton {
     let id = wish::next_wid(parent.id());
     let msg = format!("ttk::button {}", id);
     wish::tell_wish(&msg);
@@ -45,8 +45,8 @@ impl TkButton {
     }
 
     /// Sets the state of the button (normal or disabled).
-    pub fn state(&self, value: widgets::State) {
-        widgets::state(&self.id, value);
+    pub fn state(&self, value: widget::State) {
+        widget::state(&self.id, value);
     }
 }
 

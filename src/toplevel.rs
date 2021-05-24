@@ -4,7 +4,7 @@
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/toplevel.htm)
 
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to a top-level widget (window)
@@ -14,7 +14,7 @@ pub struct TkTopLevel {
 }
 
 /// Creates an instance of a toplevel widget with given parent.
-pub fn make_toplevel(parent: &impl widgets::TkWidget) -> TkTopLevel {
+pub fn make_toplevel(parent: &impl widget::TkWidget) -> TkTopLevel {
     let id = wish::next_wid(parent.id());
     let msg = format!("toplevel {}", id);
     wish::tell_wish(&msg);
@@ -30,12 +30,12 @@ impl TkTopLevel {
 
     /// Specifies the background colour.
     pub fn background(&self, colour: &str) {
-        widgets::configure(&self.id, "background", colour);
+        widget::configure(&self.id, "background", colour);
     }
 
     /// Size of border around widget.
     pub fn border_width(&self, width: u32) {
-        widgets::configure(&self.id, "borderwidth", &width.to_string());
+        widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
     /// De-iconify the window.
@@ -79,7 +79,7 @@ impl TkTopLevel {
 
     /// Height of window, in rows.
     pub fn height(&self, height: u32) {
-        widgets::configure(&self.id, "height", &height.to_string());
+        widget::configure(&self.id, "height", &height.to_string());
     }
 
     /// Iconify the window.
@@ -114,17 +114,17 @@ impl TkTopLevel {
 
     /// Amount of horizontal padding for widget.
     pub fn padx(&self, value: u32) {
-        widgets::configure(&self.id, "padx", &value.to_string());
+        widget::configure(&self.id, "padx", &value.to_string());
     }
 
     /// Amount of vertical padding for widget.
     pub fn pady(&self, value: u32) {
-        widgets::configure(&self.id, "pady", &value.to_string());
+        widget::configure(&self.id, "pady", &value.to_string());
     }
 
     /// Style of border around label.
-    pub fn relief(&self, value: widgets::Relief) {
-        widgets::relief(&self.id, value);
+    pub fn relief(&self, value: widget::Relief) {
+        widget::relief(&self.id, value);
     }
 
     /// Sets if window can be resized vertically or horizontally.
@@ -149,7 +149,7 @@ impl TkTopLevel {
 
     /// Width of window, in columns.
     pub fn width(&self, width: u32) {
-        widgets::configure(&self.id, "width", &width.to_string());
+        widget::configure(&self.id, "width", &width.to_string());
     }
 
     /// Withdraw the window.

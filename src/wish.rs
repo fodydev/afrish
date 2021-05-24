@@ -1,5 +1,47 @@
 //! Core functions and data structures for interacting with the wish process.
 //!
+//! The basic structure of a program using wish is as follows:
+//!
+//! ```
+//! fn main() {
+//!   let root = rstk::start_wish();
+//!
+//!   // -- add code here to create program
+//!
+//!   rstk::mainloop();
+//! }
+//! ```
+//!
+//! The call to `start_wish` starts the "wish" program and sets up some 
+//! internal structure to store information about your program's interaction
+//! with wish. 
+//!
+//! If you are using a different program to "wish", e.g. a tclkit, then 
+//! call instead:
+//!
+//! ```
+//!   let root = rst::start_with("tclkit");
+//! ```
+//! 
+//! All construction of the GUI must be done after starting a wish process.
+//!
+//! Tk is event-driven, so the code sets up the content and design 
+//! of various widgets and associates commands to particular events: events 
+//! can be button-clicks or the movement of a mouse onto a canvas. 
+//!
+//! Once the GUI is created, then the `mainloop` must be started, which will 
+//! process and react to events: the call to `mainloop` is usually the last 
+//! statement in the program.
+//! 
+//! The other modules within "rstk" provide implementations of widgets, 
+//! including buttons, labels, menus, and text widgets, as well as associated
+//! data as fonts and images.
+//!
+//! ## Themes
+//!
+//! This module includes some functions to list and set the overall theme
+//! (look and feel) of the Tk program.
+//! 
 
 use std::collections::HashMap;
 use std::sync::mpsc;
@@ -10,7 +52,7 @@ use std::thread;
 
 use super::font;
 use super::toplevel;
-use super::widgets;
+use super::widget;
 
 // TODO - change when available from 'nightly'
 use once_cell::sync::Lazy; 
@@ -27,17 +69,23 @@ pub(super) fn kill_wish() {
     }
 }
 
-// Sends a message (tcl command) to wish
-pub(super) fn tell_wish(msg: &str) {
+/// Sends a message (tcl command) to wish.
+///
+/// Use with caution: the message must be valid tcl.
+///
+pub fn tell_wish(msg: &str) {
     unsafe {
         SENDER.get_mut().unwrap().send(String::from(msg)).unwrap();
         SENDER.get_mut().unwrap().send(String::from("\n")).unwrap();
     }
 }
 
-// Sends a message (tcl command) to wish and expects a result
-// returns a result as a string
-pub(super) fn eval_wish(msg: &str) -> String {
+/// Sends a message (tcl command) to wish and expects a result.
+/// Returns a result as a string
+///
+/// Use with caution: the message must be valid tcl.
+///
+pub fn eval_wish(msg: &str) -> String {
     tell_wish(msg);
     
     unsafe {
@@ -56,9 +104,14 @@ pub(super) fn eval_wish(msg: &str) -> String {
 // -- Counter for making new ids
 
 static NEXT_ID: Lazy<Mutex<i32>> = Lazy::new(|| Mutex::new(0));
-// static mut NEXT_ID: i32 = 0;
 
-pub(super) fn next_wid(parent: &str) -> String {
+/// Returns a new id string which can be used to name a new 
+/// widget instance. The new id will be in reference to the 
+/// parent, as is usual in Tk.
+///
+/// This is only for use when writing an extension library.
+///
+pub fn next_wid(parent: &str) -> String {
     let mut nid = NEXT_ID.lock().unwrap();
     *nid += 1;
     if parent == "." {
@@ -111,9 +164,9 @@ fn eval_callback1_bool(wid: &str, value: bool) {
     } // TODO - error?
 }
 
-type Callback1Event = Box<(dyn Fn(widgets::TkEvent)->() + Send + 'static)>; 
+type Callback1Event = Box<(dyn Fn(widget::TkEvent)->() + Send + 'static)>; 
 pub(super) fn mk_callback1_event<F>(f: F) -> Callback1Event
-where F: Fn(widgets::TkEvent)->() + Send + 'static {
+where F: Fn(widget::TkEvent)->() + Send + 'static {
     Box::new(f) as Callback1Event
 }
 
@@ -125,7 +178,7 @@ pub(super) fn add_callback1_event(wid: &str, callback: Callback1Event) {
     CALLBACKS1EVENT.lock().unwrap().insert(String::from(wid), callback);
 }
 
-fn eval_callback1_event(wid: &str, value: widgets::TkEvent) {
+fn eval_callback1_event(wid: &str, value: widget::TkEvent) {
     if let Some(command) = CALLBACKS1EVENT.lock().unwrap().get(wid) {
         command(value);
     } // TODO - error?
@@ -187,7 +240,7 @@ pub fn mainloop () {
                         let key_code = parts[8].parse::<u32>().unwrap_or(0);
                         let key_symbol = parts[9].parse::<String>().unwrap_or(String::from(""));
                         let mouse_button = parts[10].parse::<u32>().unwrap_or(0);
-                        let event = widgets::TkEvent {
+                        let event = widget::TkEvent {
                             x,
                             y,
                             root_x,
@@ -217,19 +270,26 @@ pub fn mainloop () {
     }
 }
 
-/// Creates a connection with the "wish" program
+/// Creates a connection with the "wish" program.
 pub fn start_wish () -> toplevel::TkTopLevel {
+    start_with("wish")
+}
+
+/// Creates a connection with the given wish/tclkit program.
+pub fn start_with(wish: &str) -> toplevel::TkTopLevel {
+    let err_msg = format!("Do not start {} twice", wish);
+
     unsafe {
-        WISH.set(process::Command::new("wish")
+        WISH.set(process::Command::new(wish)
                  .stdin(process::Stdio::piped())
                  .stdout(process::Stdio::piped())
                  .spawn()
                  .expect("failed to execute"))
-            .expect("Do not start wish twice");
+            .expect(&err_msg);
 
         let mut input = WISH.get_mut().unwrap().stdin.take().unwrap(); 
         OUTPUT.set(WISH.get_mut().unwrap().stdout.take().unwrap())
-            .expect("Do not start wish twice");
+            .expect(&err_msg);
 
         input.write(b"package require Tcl\n").unwrap();
         input.write(b"wm protocol . WM_DELETE_WINDOW { puts stdout {exit} ; flush stdout } \n").unwrap();
@@ -239,7 +299,7 @@ pub fn start_wish () -> toplevel::TkTopLevel {
         }\n").unwrap();
 
         let (sender, receiver) = mpsc::channel();
-        SENDER.set(sender).expect("Do not start wish twice");
+        SENDER.set(sender).expect(&err_msg);
 
         // create thread to receive strings to send on to wish
         thread::spawn(move || {
@@ -262,6 +322,7 @@ pub fn start_wish () -> toplevel::TkTopLevel {
     }
 }
 
+/// Used to cleanly end the wish process and current rust program.
 pub fn end_wish() {
     kill_wish();
     process::exit(0);
@@ -269,7 +330,28 @@ pub fn end_wish() {
 
 // -- independent functions
 
-/// Returns a list of the current themes
+/// Returns a list of the current themes.
+///
+/// For example:
+///
+/// ```
+/// let themes = rstk::theme_names();
+/// println!("{} available themes: ", themes.len());
+/// for theme in themes {
+///     println!(" - {}", theme);
+/// }
+/// ```
+/// 
+/// Lists the themes (on Linux):
+///
+/// ```text
+/// 4 available themes:
+///  - clam
+///  - alt
+///  - default
+///  - classic
+/// ```
+///
 pub fn theme_names() -> Vec<String> {
     let themes = eval_wish("puts [ttk::style theme names] ; flush stdout");
 

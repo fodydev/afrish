@@ -1,20 +1,34 @@
 //! Functions and definitions applying to all widgets or specific sub-classes 
 //! of widgets.
+//!
 
 use super::wish;
 
+/// Struct holding information from a bound event, 
+/// returned as a parameter to the bound closure.
 pub struct TkEvent {
+    /// x-coordinate relative to current widget
     pub x: i32,
+    /// y-coordinate relative to current widget
     pub y: i32,
+    /// x-coordinate relative to screen
     pub root_x: i32,
+    /// y-coordinate relative to screen
     pub root_y: i32,
+    /// vertical screen distance, e.g. for a drag event
     pub height: i32,
+    /// horizontal screen distance, e.g. for a drag event
     pub width: i32,
+    /// Numeric code representing key for current event
     pub key_code: u32,
+    /// Symbol representing key for current event, e.g. "space", "e".
     pub key_symbol: String,
+    /// Number of mouse button in current event: 1 for left, 3 for right, etc.
     pub mouse_button: u32,
 }
 
+/// Common trait for container widgets, so child widgets can access
+/// parent's id.
 pub trait TkWidget {
     /// Returns the widget's id reference - used within tk
     fn id(&self) -> &str;
@@ -24,28 +38,9 @@ pub trait TkWidget {
 
 #[macro_export]
 /// Expands to a set of common functions used in all widgets.
-///
-/// The first three provide direct access to the equivalent tk functions:
-///
-/// * bind
-/// * cget
-/// * configure
-/// * winfo
-///
-/// These functions handle layouts:
-///
-/// * grid
-/// * grid_configure
-/// * grid_configure_column
-/// * grid_configure_row
-///
-/// Miscellaneous: 
-///
-/// * focus
-///
 macro_rules! tkwidget {
     ($widget:ident) => {
-        impl widgets::TkWidget for $widget {
+        impl widget::TkWidget for $widget {
             fn id(&self) -> &str {
                 &self.id
             }
@@ -53,8 +48,8 @@ macro_rules! tkwidget {
 
         impl $widget {
             /// Binds a command to this widget to call on given event pattern
-            pub fn bind(&self, pattern: &str, command: impl Fn(widgets::TkEvent)->() + Send + 'static) {
-                widgets::bind_to(&self.id, pattern, command);
+            pub fn bind(&self, pattern: &str, command: impl Fn(widget::TkEvent)->() + Send + 'static) {
+                widget::bind_to(&self.id, pattern, command);
             }
 
             /// Retrieve the value of a configuration option
@@ -75,7 +70,7 @@ macro_rules! tkwidget {
             /// * `value` - the value to change it to
             ///
             pub fn configure(&self, option: &str, value: &str) {
-                widgets::configure(&self.id, option, value);
+                widget::configure(&self.id, option, value);
             }
 
             /// Destroys a widget and its children.
@@ -230,7 +225,21 @@ macro_rules! tkwidget {
                 wish::tell_wish(&msg);
             }
 
+            // -- for widgets that can contain other widgets
 
+            /// Sets property for a given column of the grid layout 
+            /// contained within this widget.
+            pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
+                let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id, index, option, value);
+                wish::tell_wish(&msg);
+            }
+
+            /// Sets property for a given row of the grid layout 
+            /// contained within this widget.
+            pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
+                let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id, index, option, value);
+                wish::tell_wish(&msg);
+            }
         }
     }
 }
@@ -258,18 +267,6 @@ macro_rules! tklayouts {
             /// Sets properties for widget layout
             pub fn grid_configure(&self, option: &str, value: &str) {
                 let msg = format!("grid configure {} -{} {{{}}}", self.id, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Sets property for a given column
-            pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
-                let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id, index, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Sets property for a given row
-            pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
-                let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id, index, option, value);
                 wish::tell_wish(&msg);
             }
 
@@ -302,23 +299,23 @@ macro_rules! tklabelfunctions {
     ($widget:ident) => {
         impl $widget {
             /// Specifies how to arrange the text relative to the image.
-            pub fn compound(&self, value: widgets::Compound) {
-                widgets::compound(&self.id, value);
+            pub fn compound(&self, value: widget::Compound) {
+                widget::compound(&self.id, value);
             }
 
             /// Specifies the font to use for text.
             pub fn font(&self, definition: &str) {
-                widgets::configure(&self.id, "font", definition);
+                widget::configure(&self.id, "font", definition);
             }
 
             /// Specifies the foreground (text) colour.
             pub fn foreground(&self, colour: &str) {
-                widgets::configure(&self.id, "foreground", colour);
+                widget::configure(&self.id, "foreground", colour);
             }
 
             /// Sets an image to display on the widget.
             pub fn image(&self, image: &image::TkImage) {
-                widgets::configure(&self.id, "image", &image.id);
+                widget::configure(&self.id, "image", &image.id);
             }
 
             /// Sets space around the widget. Takes 
@@ -329,17 +326,17 @@ macro_rules! tklabelfunctions {
             /// * [left top-bottom right]
             /// * [left top right bottom]
             pub fn padding(&self, values: &[u32]) {
-                widgets::padding(&self.id, values);
+                widget::padding(&self.id, values);
             }
 
             /// Sets the text label for the widget.
             pub fn text(&self, value: &str) {
-                widgets::configure(&self.id, "text", value);
+                widget::configure(&self.id, "text", value);
             }
 
             /// Underlines the character at the given index position.
             pub fn underline(&self, index: u32) {
-                widgets::configure(&self.id, "underline", &index.to_string());
+                widget::configure(&self.id, "underline", &index.to_string());
             }
 
             /// Sets the width of the widget, in characters

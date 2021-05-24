@@ -42,7 +42,7 @@
 
 use super::font;
 use super::toplevel;
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to the settings for TkMessageBox.
@@ -50,11 +50,11 @@ use super::wish;
 pub struct TkMessageBox {
     default: Option<String>,
     detail: Option<String>,
-    icon: widgets::IconImage,
+    icon: widget::IconImage,
     message: Option<String>,
     parent: Option<String>,
     title: Option<String>,
-    type_buttons: widgets::DialogType,
+    type_buttons: widget::DialogType,
 }
 
 /// Creates a message box to complete in builder style.
@@ -62,11 +62,11 @@ pub fn message_box() -> TkMessageBox {
     TkMessageBox {
         default: None,
         detail: None,
-        icon: widgets::IconImage::Error,
+        icon: widget::IconImage::Error,
         message: None,
         parent: None,
         title: None,
-        type_buttons: widgets::DialogType::Ok,
+        type_buttons: widget::DialogType::Ok,
     }
 }
 
@@ -85,7 +85,7 @@ impl TkMessageBox {
     }
 
     /// Sets icon type.
-    pub fn icon(&mut self, value: widgets::IconImage) -> &mut Self {
+    pub fn icon(&mut self, value: widget::IconImage) -> &mut Self {
         self.icon = value;
         self
     }
@@ -109,7 +109,7 @@ impl TkMessageBox {
     }
 
     /// Sets type of dialog, which specifies its buttons.
-    pub fn type_buttons(&mut self, value: widgets::DialogType) -> &mut Self {
+    pub fn type_buttons(&mut self, value: widget::DialogType) -> &mut Self {
         self.type_buttons = value;
         self
     }
@@ -130,10 +130,10 @@ impl TkMessageBox {
         }
 
         let icon = match self.icon {
-            widgets::IconImage::Error => "error",
-            widgets::IconImage::Information => "info",
-            widgets::IconImage::Question => "question",
-            widgets::IconImage::Warning => "warning",
+            widget::IconImage::Error => "error",
+            widget::IconImage::Information => "info",
+            widget::IconImage::Question => "question",
+            widget::IconImage::Warning => "warning",
         };
         msg.push_str(&format!("-icon {} ", icon));
 
@@ -150,12 +150,12 @@ impl TkMessageBox {
         }
 
         let buttons = match self.type_buttons {
-            widgets::DialogType::AbortRetryIgnore => "abortretryignore",
-            widgets::DialogType::Ok => "ok",
-            widgets::DialogType::OkCancel => "okcancel",
-            widgets::DialogType::RetryCancel => "retrycancel",
-            widgets::DialogType::YesNo => "yesno",
-            widgets::DialogType::YesNoCancel => "yesnocancel",
+            widget::DialogType::AbortRetryIgnore => "abortretryignore",
+            widget::DialogType::Ok => "ok",
+            widget::DialogType::OkCancel => "okcancel",
+            widget::DialogType::RetryCancel => "retrycancel",
+            widget::DialogType::YesNo => "yesno",
+            widget::DialogType::YesNoCancel => "yesnocancel",
         };
         msg.push_str(&format!("-type {} ", buttons));
         msg.push_str("] ; flush stdout");
@@ -570,7 +570,7 @@ impl TkSaveFileChooser {
 // -- font chooser is different - use individual functions
 
 /// Set the parent widget for the font-chooser.
-pub fn font_chooser_parent(parent: &impl widgets::TkWidget) {
+pub fn font_chooser_parent(parent: &impl widget::TkWidget) {
     let msg = format!("tk fontchooser configure -parent {}", parent.id());
     wish::tell_wish(&msg);
 }

@@ -8,7 +8,7 @@
 
 use super::grid;
 use super::image;
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to a radio-button widget
@@ -22,7 +22,7 @@ pub struct TkRadioButton {
 /// Radio buttons are arranged in groups, with each button in the group
 /// having its own value. For this reason, the group and value are 
 /// required when making a radio button.
-pub fn make_radio_button(parent: &impl widgets::TkWidget, group: &str, value: &str) -> TkRadioButton {
+pub fn make_radio_button(parent: &impl widget::TkWidget, group: &str, value: &str) -> TkRadioButton {
     let id = wish::next_wid(parent.id());
     let var = format!("::rb_group_{}", group);
     let msg = format!("ttk::radiobutton {} -value {} -variable {}", 
@@ -47,9 +47,15 @@ impl TkRadioButton {
         wish::tell_wish(&msg);
     }
 
+    /// Calls the button's command.
+    pub fn invoke(&self) {
+        let msg = format!("{} invoke", self.id);
+        wish::tell_wish(&msg);
+    }
+
     /// Sets the state of the button (normal or disabled).
-    pub fn state(&self, value: widgets::State) {
-        widgets::state(&self.id, value);
+    pub fn state(&self, value: widget::State) {
+        widget::state(&self.id, value);
     }
 
     /// Returns the selected value from this radio-button's group.

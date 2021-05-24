@@ -5,7 +5,7 @@
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_frame.htm)
 
 use super::grid;
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to a frame widget
@@ -15,7 +15,7 @@ pub struct TkFrame {
 }
 
 /// Creates an instance of a frame widget in given parent.
-pub fn make_frame(parent: &impl widgets::TkWidget) -> TkFrame {
+pub fn make_frame(parent: &impl widget::TkWidget) -> TkFrame {
     let id = wish::next_wid(parent.id());
     let msg = format!("ttk::frame {}", id);
     wish::tell_wish(&msg);
@@ -31,12 +31,12 @@ super::tklayouts!(TkFrame);
 impl TkFrame {
     /// Size of border around frame
     pub fn border_width(&self, width: u32) {
-        widgets::configure(&self.id, "borderwidth", &width.to_string());
+        widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
     /// Height of frame, in rows
     pub fn height(&self, height: u32) {
-        widgets::configure(&self.id, "height", &height.to_string());
+        widget::configure(&self.id, "height", &height.to_string());
     }
 
     /// Padding to place around the frame. Takes 
@@ -47,17 +47,17 @@ impl TkFrame {
     /// * [left top-bottom right]
     /// * [left top right bottom]
     pub fn padding(&self, values: &[u32]) {
-        widgets::padding(&self.id, values);
+        widget::padding(&self.id, values);
     }
 
     /// Style of border around frame
-    pub fn relief(&self, value: widgets::Relief) {
-        widgets::relief(&self.id, value);
+    pub fn relief(&self, value: widget::Relief) {
+        widget::relief(&self.id, value);
     }
 
     /// Width of frame, in columns
     pub fn width(&self, width: u32) {
-        widgets::configure(&self.id, "width", &width.to_string());
+        widget::configure(&self.id, "width", &width.to_string());
     }
 
 }

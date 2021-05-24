@@ -9,7 +9,7 @@ The library provides:
 
 * low-level functions to directly communicate with wish, suitable for 
   writing additional extensions
-* high-level API to write GUI applications without direct knowledge of Tk.
+* high-level API to write GUI applications with minimal knowledge of Tk.
 
 ## Example
 

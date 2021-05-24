@@ -1,5 +1,84 @@
 //! A Rust binding for the Tk graphics toolkit.
 //!
+//! rstk opens and communicates with Tk's wish program as a separate process.
+//! The library provides:
+//! 
+//! * low-level functions to directly communicate with wish, suitable for 
+//!   writing additional extensions
+//! * high-level API to write GUI applications with minimal knowledge of Tk.
+//!
+//! The top-level functions to start/stop the GUI are contained 
+//! in the [wish] module.
+//!
+//! The remaining modules describe a widget or supporting component
+//! (such as a font or image). Within these modules, functions usually
+//! act as constructors/modifiers for the widget or component. 
+//!
+//! Click on the struct name to get a list of methods supported by the 
+//! widget.
+//!
+//! # Example
+//!
+//! A simple hello-world example:
+//! 
+//! ```
+//! use rstk;
+//! 
+//! fn main() {
+//!   let root = rstk::start_wish();
+//! 
+//!   let hello = rstk::make_label(&root);
+//!   hello.text("Hello from Rust/Tk");
+//! 
+//!   hello.grid().layout();
+//! 
+//!   rstk::mainloop();
+//! }
+//! ```
+//!
+//! For more examples and documentation, see the project 
+//! [webpage](https://peterlane.netlify.app/rstk/).
+//! 
+//! ## Low-level API 
+//! 
+//! The main wrapper aims to provide a rust-friendly, type-checked set of structs 
+//! and methods for using the Tk library.
+//! 
+//! However, there are many features in Tk and not all of it is likely to be
+//! wrapped. If there is a feature missing, it is possible to directly use Tk
+//! commands to access it.
+//! 
+//! 1. every widget has an `id` field, which gives the Tk identifier. 
+//! 2. [wish::tell_wish] sends a given string directly to wish
+//! 3. [wish::eval_wish] sends a given string directly to wish and returns, as a 
+//!    [String], the response.
+//! 
+//! For example, label's
+//! [takefocus](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
+//! flag is not wrapped. You can nevertheless set it using:
+//! 
+//! ```
+//! let label = rstk::make_label(&root);
+//! 
+//! rstk::tell_wish(&format!("{} -takefocus 0", label.id));
+//! ```
+//! 
+//! Also useful are:
+//! 
+//! * `cget` - queries any option and returns its current value
+//! * `configure` - used to set any option to a value
+//! * `winfo` - returns window-related information
+//! 
+//! ## Extensions
+//! 
+//! Extensions can be created with the help of [wish::next_wid], which returns a new,
+//! unique ID in Tk format. Writing an extension requires:
+//! 
+//! 1. importing the tcl/tk library (using `tell_wish`)
+//! 2. creating an instance of the underlying Tk widget using a unique id
+//! 3. retaining that id in a struct, for later reference
+//! 4. wrapping the widget's functions as methods, calling out to Tk with
+//!    the stored id as a reference.
 
 pub mod button;
 pub use button::*;
@@ -31,14 +110,26 @@ pub use image::*;
 pub mod label;
 pub use label::*;
 
+pub mod label_frame;
+pub use label_frame::*;
+
+pub mod notebook;
+pub use notebook::*;
+
+pub mod paned_window;
+pub use paned_window::*;
+
 pub mod radio_button;
 pub use radio_button::*;
+
+pub mod separator;
+pub use separator::*;
 
 pub mod toplevel;
 pub use toplevel::*;
 
-pub mod widgets;
-pub use widgets::*;
+pub mod widget;
+pub use widget::*;
 
 pub mod wish;
 pub use wish::*;

@@ -5,7 +5,7 @@
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_combobox.htm)
 
 use super::grid;
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to a combobox widget 
@@ -16,7 +16,7 @@ pub struct TkCombobox {
 
 /// Creates an instance of a combo-box widget in given parent, 
 /// populating the drop-down list with the given set of values.
-pub fn make_combobox(parent: &impl widgets::TkWidget, values: &[&str]) -> TkCombobox {
+pub fn make_combobox(parent: &impl widget::TkWidget, values: &[&str]) -> TkCombobox {
     let id = wish::next_wid(parent.id());
     let mut values_str = String::from("");
     for value in values {
@@ -51,8 +51,8 @@ impl TkCombobox {
     }
 
     /// Alignment of text within widget
-    pub fn justify(&self, value: widgets::Justify) {
-        widgets::justify(&self.id, value);
+    pub fn justify(&self, value: widget::Justify) {
+        widget::justify(&self.id, value);
     }
 
     /// Sets the current value 
@@ -62,8 +62,8 @@ impl TkCombobox {
     }
 
     /// Sets the state of the widget (readonly, normal or disabled).
-    pub fn state(&self, value: widgets::State) {
-        widgets::state(&self.id, value);
+    pub fn state(&self, value: widget::State) {
+        widget::state(&self.id, value);
     }
 
     /// Sets the width of the widget, in characters

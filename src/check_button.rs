@@ -7,7 +7,7 @@
 
 use super::grid;
 use super::image;
-use super::widgets;
+use super::widget;
 use super::wish;
 
 /// Refers to a check-button widget
@@ -18,7 +18,7 @@ pub struct TkCheckButton {
 }
 
 /// Creates an instance of a check-button widget in given parent.
-pub fn make_check_button(parent: &impl widgets::TkWidget) -> TkCheckButton {
+pub fn make_check_button(parent: &impl widget::TkWidget) -> TkCheckButton {
     let id = wish::next_wid(parent.id());
     let var = format!("::cb{}", wish::current_id());
     let msg = format!("set {} 0 ; ttk::checkbutton {} -variable {}", var, id, var);
@@ -42,6 +42,12 @@ impl TkCheckButton {
         wish::tell_wish(&msg);
     }
 
+    /// Calls the button's command.
+    pub fn invoke(&self) {
+        let msg = format!("{} invoke", self.id);
+        wish::tell_wish(&msg);
+    }
+
     /// Returns true/false if button is selected (checked) or not.
     pub fn is_selected(&self) -> bool {
         let msg = format!("puts ${} ; flush stdout", self.var);
@@ -56,7 +62,7 @@ impl TkCheckButton {
     }
 
     /// Sets the state of the button (normal or disabled).
-    pub fn state(&self, value: widgets::State) {
-        widgets::state(&self.id, value);
+    pub fn state(&self, value: widget::State) {
+        widget::state(&self.id, value);
     }
 }
