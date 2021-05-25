@@ -15,7 +15,7 @@
 //! act as constructors/modifiers for the widget or component. 
 //!
 //! Click on the struct name to get a list of methods supported by the 
-//! widget.
+//! widget; functionality is divided between various traits.
 //!
 //! # Example
 //!
@@ -49,9 +49,9 @@
 //! commands to access it.
 //! 
 //! 1. every widget has an `id` field, which gives the Tk identifier. 
-//! 2. [wish::tell_wish] sends a given string directly to wish
-//! 3. [wish::eval_wish] sends a given string directly to wish and returns, as a 
-//!    [String], the response.
+//! 2. [tell_wish](wish::tell_wish) sends a given string directly to wish
+//! 3. [eval_wish](wish::eval_wish) sends a given string directly to wish and 
+//!    returns, as a [String], the response.
 //! 
 //! For example, label's
 //! [takefocus](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
@@ -65,14 +65,14 @@
 //! 
 //! Also useful are:
 //! 
-//! * `cget` - queries any option and returns its current value
-//! * `configure` - used to set any option to a value
-//! * `winfo` - returns window-related information
+//! * [cget](widget::TkWidget::cget) - queries any option and returns its current value
+//! * [configure](widget::TkWidget::configure) - used to set any option to a value
+//! * [winfo](widget::TkWidget::winfo) - returns window-related information
 //! 
 //! ## Extensions
 //! 
-//! Extensions can be created with the help of [wish::next_wid], which returns a new,
-//! unique ID in Tk format. Writing an extension requires:
+//! Extensions can be created with the help of [next_wid](wish::next_wid), 
+//! which returns a new, unique ID in Tk format. Writing an extension requires:
 //! 
 //! 1. importing the tcl/tk library (using `tell_wish`)
 //! 2. creating an instance of the underlying Tk widget using a unique id
@@ -82,6 +82,9 @@
 
 pub mod button;
 pub use button::*;
+
+pub mod canvas;
+pub use canvas::*;
 
 pub mod check_button;
 pub use check_button::*;

@@ -17,6 +17,7 @@
 //! 3. zero or more options are added to the GridLayout, to control the position
 //!   and layout of the widget.
 
+use super::widget;
 use super::wish;
 
 /// Refers to the settings for a GridLayout.
@@ -138,6 +139,26 @@ impl GridLayout {
             msg.push_str(&format!("-sticky {} ", sticky));
         }
 
+        wish::tell_wish(&msg);
+    }
+}
+
+/// Common functions for widgets that can be arranged using GridLayouts
+pub trait TkGridLayout: widget::TkWidget {
+    /// Creates a GridLayout instance for placing this widget within its parent
+    fn grid(&self) -> GridLayout {
+        GridLayout::new(&self.id())
+    }
+
+    /// Sets properties for widget layout
+    fn grid_configure(&self, option: &str, value: &str) {
+        let msg = format!("grid configure {} -{} {{{}}}", self.id(), option, value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Removes this widget from layout
+    fn grid_forget(&self) {
+        let msg = format!("grid forget {}", self.id());
         wish::tell_wish(&msg);
     }
 }

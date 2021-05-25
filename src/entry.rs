@@ -28,8 +28,14 @@ pub fn make_entry(parent: &impl widget::TkWidget) -> TkEntry {
     }
 }
 
-super::tkwidget!(TkEntry);
-super::tklayouts!(TkEntry);
+impl widget::TkWidget for TkEntry {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkEntry {
+}
 
 impl TkEntry {
     /// Specifies the font to use for text.

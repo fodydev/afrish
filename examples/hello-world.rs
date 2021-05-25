@@ -1,4 +1,4 @@
-use rstk;
+use rstk::*;
 
 fn main() {
   let root = rstk::start_wish();

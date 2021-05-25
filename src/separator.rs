@@ -35,6 +35,12 @@ pub fn make_vertical_separator(parent: &impl widget::TkWidget) -> TkSeparator {
     }
 }
 
-super::tkwidget!(TkSeparator);
-super::tklayouts!(TkSeparator);
+impl widget::TkWidget for TkSeparator {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
 
+impl grid::TkGridLayout for TkSeparator {
+}

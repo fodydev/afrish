@@ -5,7 +5,6 @@
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_label.htm)
 
 use super::grid;
-use super::image;
 use super::widget;
 use super::wish;
 
@@ -26,9 +25,16 @@ pub fn make_label(parent: &impl widget::TkWidget) -> TkLabel {
     }
 }
 
-super::tkwidget!(TkLabel);
-super::tklayouts!(TkLabel);
-super::tklabelfunctions!(TkLabel);
+impl widget::TkWidget for TkLabel {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkLabel {
+}
+impl widget::TkLabelOptions for TkLabel {
+}
 
 impl TkLabel {
     /// Positioning of information with respect to internal margins.

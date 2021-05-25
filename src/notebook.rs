@@ -26,8 +26,14 @@ pub fn make_notebook(parent: &impl widget::TkWidget) -> TkNotebook {
     }
 }
 
-super::tkwidget!(TkNotebook);
-super::tklayouts!(TkNotebook);
+impl widget::TkWidget for TkNotebook {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkNotebook {
+}
 
 impl TkNotebook {
     /// TODO: use builder pattern to support images+text

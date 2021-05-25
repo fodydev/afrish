@@ -38,8 +38,14 @@ pub fn make_vertical_paned_window(parent: &impl widget::TkWidget) -> TkPanedWind
     }
 }
 
-super::tkwidget!(TkPanedWindow);
-super::tklayouts!(TkPanedWindow);
+impl widget::TkWidget for TkPanedWindow {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkPanedWindow {
+}
 
 impl TkPanedWindow {
     /// Adds given widget to the pane.

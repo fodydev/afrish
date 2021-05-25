@@ -5,7 +5,6 @@
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_button.htm)
 
 use super::grid;
-use super::image;
 use super::widget;
 use super::wish;
 
@@ -26,9 +25,16 @@ pub fn make_button(parent: &impl widget::TkWidget) -> TkButton {
     }
 }
 
-super::tkwidget!(TkButton);
-super::tklayouts!(TkButton);
-super::tklabelfunctions!(TkButton);
+impl widget::TkWidget for TkButton {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkButton {
+}
+impl widget::TkLabelOptions for TkButton {
+}
 
 impl TkButton {
     /// Sets the function to be called when the button is clicked.

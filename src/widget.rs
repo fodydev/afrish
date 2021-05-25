@@ -2,6 +2,7 @@
 //! of widgets.
 //!
 
+use super::image;
 use super::wish;
 
 /// Struct holding information from a bound event, 
@@ -27,324 +28,259 @@ pub struct TkEvent {
     pub mouse_button: u32,
 }
 
-/// Common trait for container widgets, so child widgets can access
-/// parent's id.
+/// Common trait for container widgets. Child widgets should implement the `id`
+/// method. The remaining methods are standard Tk methods and convenient, 
+/// type-save versions of them.
 pub trait TkWidget {
     /// Returns the widget's id reference - used within tk
     fn id(&self) -> &str;
-}
 
-// macro to write the common widget functions for given struct
+    /// Binds a command to this widget to call on given event pattern
+    fn bind(&self, pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
+        bind_to(&self.id(), pattern, command);
+    }
 
-#[macro_export]
-/// Expands to a set of common functions used in all widgets.
-macro_rules! tkwidget {
-    ($widget:ident) => {
-        impl widget::TkWidget for $widget {
-            fn id(&self) -> &str {
-                &self.id
-            }
+    /// Retrieve the value of a configuration option
+    /// as a string. 
+    ///
+    /// * `option` - the option to read
+    ///
+    fn cget(&self, option: &str) -> String {
+        let msg = format!("{} cget {}", self.id(), option);
+        wish::eval_wish(&msg)
+    }
+
+    /// Used to change properties of a widget. 
+    /// This function can be used to directly configure
+    /// the widget using an option-value string pair: 
+    ///
+    /// * `option` - the option to change
+    /// * `value` - the value to change it to
+    ///
+    fn configure(&self, option: &str, value: &str) {
+        configure(&self.id(), option, value);
+    }
+
+    /// Destroys a widget and its children.
+    fn destroy(&self) {
+        let msg = format!("destroy {}", self.id());
+        wish::tell_wish(&msg);
+    }
+
+    /// winfo retrieves information about widget.
+    ///
+    fn winfo(&self, option: &str) -> String {
+        let msg = format!("winfo {} {}", option, self.id());
+        wish::eval_wish(&msg)
+    }
+
+    // -- TODO should be here, or more specific?
+
+    /// Makes this widget the focus window (e.g. for key presses)
+    fn focus(&self) {
+        let msg = format!("focus {}", self.id());
+        wish::tell_wish(&msg);
+    }
+
+    // -- winfo functions
+
+    /// Returns the widget x position in pixels, within its parent.
+    fn position_x(&self) -> u32 {
+        let msg = format!("winfo x {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
         }
+    }
 
-        impl $widget {
-            /// Binds a command to this widget to call on given event pattern
-            pub fn bind(&self, pattern: &str, command: impl Fn(widget::TkEvent)->() + Send + 'static) {
-                widget::bind_to(&self.id, pattern, command);
-            }
-
-            /// Retrieve the value of a configuration option
-            /// as a string. 
-            ///
-            /// * `option` - the option to read
-            ///
-            pub fn cget(&self, option: &str) -> String {
-                let msg = format!("{} cget {}", self.id, option);
-                wish::eval_wish(&msg)
-            }
-
-            /// Used to change properties of a widget. 
-            /// This function can be used to directly configure
-            /// the widget using an option-value string pair: 
-            ///
-            /// * `option` - the option to change
-            /// * `value` - the value to change it to
-            ///
-            pub fn configure(&self, option: &str, value: &str) {
-                widget::configure(&self.id, option, value);
-            }
-
-            /// Destroys a widget and its children.
-            pub fn destroy(&self) {
-                let msg = format!("destroy {}", self.id);
-                wish::tell_wish(&msg);
-            }
-
-            /// winfo retrieves information about widget.
-            ///
-            pub fn winfo(&self, option: &str) -> String {
-                let msg = format!("winfo {} {}", option, self.id);
-                wish::eval_wish(&msg)
-            }
-
-            // -- TODO should be here, or more specific?
-
-            /// Makes this widget the focus window (e.g. for key presses)
-            pub fn focus(&self) {
-                let msg = format!("focus {}", self.id);
-                wish::tell_wish(&msg);
-            }
-
-            // -- winfo functions
-
-            /// Returns the widget x position in pixels, within its parent.
-            pub fn position_x(&self) -> u32 {
-                let msg = format!("winfo x {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Returns the widget y position in pixels, within its parent.
-            pub fn position_y(&self) -> u32 {
-                let msg = format!("winfo y {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Returns the widget height in pixels.
-            pub fn widget_height(&self) -> u32 {
-                let msg = format!("winfo height {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Returns the widget width in pixels.
-            pub fn widget_width(&self) -> u32 {
-                let msg = format!("winfo width {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Returns the position of the mouse on screen of widget as (x,y).
-            pub fn mouse_position(&self) -> (i32, i32) {
-                (self.mouse_x(), self.mouse_y())
-            }
-
-            /// Gives the x position of the mouse on screen of widget.
-            pub fn mouse_x(&self) -> i32 {
-                let msg = format!("winfo pointerx {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<i32>() {
-                    value
-                } else {
-                    -1
-                }
-            }
-
-            /// Gives the y position of the mouse on screen of widget.
-            pub fn mouse_y(&self) -> i32 {
-                let msg = format!("winfo pointery {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<i32>() {
-                    value
-                } else {
-                    -1
-                }
-            }
-
-            /// Height of screen of widget in pixels.
-            pub fn screen_height(&self) -> u32 {
-                let msg = format!("winfo screenheight {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Height of screen of widget in millimetres.
-            pub fn screen_height_mm(&self) -> u32 {
-                let msg = format!("winfo screenmmheight {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Width of screen of widget in pixels.
-            pub fn screen_width(&self) -> u32 {
-                let msg = format!("winfo screenwidth {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            /// Width of screen of widget in millimetres.
-            pub fn screen_width_mm(&self) -> u32 {
-                let msg = format!("winfo screenmmwidth {}", self.id);
-                let result = wish::eval_wish(&msg);
-                if let Ok(value) = result.parse::<u32>() {
-                    value
-                } else {
-                    0
-                }
-            }
-
-            // -- stacking order
-
-            /// Lowers the widget in stacking order.
-            pub fn lower(&self) {
-                let msg = format!("lower {}", self.id);
-                wish::tell_wish(&msg);
-            }
-
-            /// Raises the widget in stacking order.
-            pub fn raise(&self) {
-                let msg = format!("raise {}", self.id);
-                wish::tell_wish(&msg);
-            }
-
-            // -- for widgets that can contain other widgets
-
-            /// Sets property for a given column of the grid layout 
-            /// contained within this widget.
-            pub fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
-                let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id, index, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Sets property for a given row of the grid layout 
-            /// contained within this widget.
-            pub fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
-                let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id, index, option, value);
-                wish::tell_wish(&msg);
-            }
+    /// Returns the widget y position in pixels, within its parent.
+    fn position_y(&self) -> u32 {
+        let msg = format!("winfo y {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
         }
+    }
+
+    /// Returns the widget height in pixels.
+    fn widget_height(&self) -> u32 {
+        let msg = format!("winfo height {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
+        }
+    }
+
+    /// Returns the widget width in pixels.
+    fn widget_width(&self) -> u32 {
+        let msg = format!("winfo width {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
+        }
+    }
+
+    /// Returns the position of the mouse on screen of widget as (x,y).
+    fn mouse_position(&self) -> (i32, i32) {
+        (self.mouse_x(), self.mouse_y())
+    }
+
+    /// Gives the x position of the mouse on screen of widget.
+    fn mouse_x(&self) -> i32 {
+        let msg = format!("winfo pointerx {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<i32>() {
+            value
+        } else {
+            -1
+        }
+    }
+
+    /// Gives the y position of the mouse on screen of widget.
+    fn mouse_y(&self) -> i32 {
+        let msg = format!("winfo pointery {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<i32>() {
+            value
+        } else {
+            -1
+        }
+    }
+
+    /// Height of screen of widget in pixels.
+    fn screen_height(&self) -> u32 {
+        let msg = format!("winfo screenheight {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
+        }
+    }
+
+    /// Height of screen of widget in millimetres.
+    fn screen_height_mm(&self) -> u32 {
+        let msg = format!("winfo screenmmheight {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
+        }
+    }
+
+    /// Width of screen of widget in pixels.
+    fn screen_width(&self) -> u32 {
+        let msg = format!("winfo screenwidth {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
+        }
+    }
+
+    /// Width of screen of widget in millimetres.
+    fn screen_width_mm(&self) -> u32 {
+        let msg = format!("winfo screenmmwidth {}", self.id());
+        let result = wish::eval_wish(&msg);
+        if let Ok(value) = result.parse::<u32>() {
+            value
+        } else {
+            0
+        }
+    }
+
+    // -- stacking order
+
+    /// Lowers the widget in stacking order.
+    fn lower(&self) {
+        let msg = format!("lower {}", self.id());
+        wish::tell_wish(&msg);
+    }
+
+    /// Raises the widget in stacking order.
+    fn raise(&self) {
+        let msg = format!("raise {}", self.id());
+        wish::tell_wish(&msg);
+    }
+
+    // -- for widgets that can contain other widgets
+
+    /// Sets property for a given column of the grid layout 
+    /// contained within this widget.
+    fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
+        let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id(), index, option, value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets property for a given row of the grid layout 
+    /// contained within this widget.
+    fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
+        let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id(), index, option, value);
+        wish::tell_wish(&msg);
     }
 }
 
-// macro to write the common layout functions for given struct
 
-#[macro_export]
-/// Expands to a set of common functions used to support layouts.
+/// A set of common functions used in all label, button and similar widgets.
 ///
-/// * grid layout
+/// * also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_widget.htm#M6)
 ///
-/// Also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/grid.htm)
-///
-macro_rules! tklayouts {
-    ($widget:ident) => {
-        impl $widget {
-
-            // --- grid layout functions
-
-            /// Creates a GridLayout instance for placing this widget within its parent
-            pub fn grid(&self) -> grid::GridLayout {
-                grid::GridLayout::new(&self.id)
-            }
-
-            /// Sets properties for widget layout
-            pub fn grid_configure(&self, option: &str, value: &str) {
-                let msg = format!("grid configure {} -{} {{{}}}", self.id, option, value);
-                wish::tell_wish(&msg);
-            }
-
-            /// Removes this widget from layout
-            pub fn grid_forget(&self) {
-                let msg = format!("grid forget {}", self.id);
-                wish::tell_wish(&msg);
-            }
-        }
+pub trait TkLabelOptions: TkWidget {
+    /// Specifies how to arrange the text relative to the image.
+    fn compound(&self, value: Compound) {
+        compound(&self.id(), value);
     }
-}
 
-// macro to write the common label functions for given struct
+    /// Specifies the font to use for text.
+    fn font(&self, definition: &str) {
+        configure(&self.id(), "font", definition);
+    }
 
-#[macro_export]
-/// Expands to a set of common functions used in all label, button and 
-/// similar widgets.
-///
-/// * compound
-/// * font
-/// * foreground
-/// * image
-/// * padding
-/// * text
-/// * width
-///
-/// Also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_widget.htm#M6)
-///
-macro_rules! tklabelfunctions {
-    ($widget:ident) => {
-        impl $widget {
-            /// Specifies how to arrange the text relative to the image.
-            pub fn compound(&self, value: widget::Compound) {
-                widget::compound(&self.id, value);
-            }
+    /// Specifies the foreground (text) colour.
+    fn foreground(&self, colour: &str) {
+        configure(&self.id(), "foreground", colour);
+    }
 
-            /// Specifies the font to use for text.
-            pub fn font(&self, definition: &str) {
-                widget::configure(&self.id, "font", definition);
-            }
+    /// Sets an image to display on the widget.
+    fn image(&self, image: &image::TkImage) {
+        configure(&self.id(), "image", &image.id);
+    }
 
-            /// Specifies the foreground (text) colour.
-            pub fn foreground(&self, colour: &str) {
-                widget::configure(&self.id, "foreground", colour);
-            }
+    /// Sets space around the widget. Takes 
+    /// an array of up to four values, specifying: 
+    ///
+    /// * \[all]
+    /// * [left-right top-bottom]
+    /// * [left top-bottom right]
+    /// * [left top right bottom]
+    fn padding(&self, values: &[u32]) {
+        padding(&self.id(), values);
+    }
 
-            /// Sets an image to display on the widget.
-            pub fn image(&self, image: &image::TkImage) {
-                widget::configure(&self.id, "image", &image.id);
-            }
+    /// Sets the text label for the widget.
+    fn text(&self, value: &str) {
+        configure(&self.id(), "text", value);
+    }
 
-            /// Sets space around the widget. Takes 
-            /// an array of up to four values, specifying: 
-            ///
-            /// * \[all]
-            /// * [left-right top-bottom]
-            /// * [left top-bottom right]
-            /// * [left top right bottom]
-            pub fn padding(&self, values: &[u32]) {
-                widget::padding(&self.id, values);
-            }
+    /// Underlines the character at the given index position.
+    fn underline(&self, index: u32) {
+        configure(&self.id(), "underline", &index.to_string());
+    }
 
-            /// Sets the text label for the widget.
-            pub fn text(&self, value: &str) {
-                widget::configure(&self.id, "text", value);
-            }
-
-            /// Underlines the character at the given index position.
-            pub fn underline(&self, index: u32) {
-                widget::configure(&self.id, "underline", &index.to_string());
-            }
-
-            /// Sets the width of the widget, in characters
-            pub fn width(&self, value: i32) {
-                let msg = format!("{} configure -width {{{}}}", self.id, value);
-                wish::tell_wish(&msg);
-            }
-        }
+    /// Sets the width of the widget, in characters
+    fn width(&self, value: i32) {
+        let msg = format!("{} configure -width {{{}}}", self.id(), value);
+        wish::tell_wish(&msg);
     }
 }
 

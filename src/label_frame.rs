@@ -26,8 +26,14 @@ pub fn make_label_frame(parent: &impl widget::TkWidget) -> TkLabelFrame {
     }
 }
 
-super::tkwidget!(TkLabelFrame);
-super::tklayouts!(TkLabelFrame);
+impl widget::TkWidget for TkLabelFrame {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkLabelFrame {
+}
 
 impl TkLabelFrame {
     /// Size of border around frame

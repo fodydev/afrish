@@ -7,7 +7,6 @@
 //!
 
 use super::grid;
-use super::image;
 use super::widget;
 use super::wish;
 
@@ -35,9 +34,16 @@ pub fn make_radio_button(parent: &impl widget::TkWidget, group: &str, value: &st
     }
 }
 
-super::tkwidget!(TkRadioButton);
-super::tklayouts!(TkRadioButton);
-super::tklabelfunctions!(TkRadioButton);
+impl widget::TkWidget for TkRadioButton {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkRadioButton {
+}
+impl widget::TkLabelOptions for TkRadioButton {
+}
 
 impl TkRadioButton {
     /// Sets the function to be called when the button is clicked.

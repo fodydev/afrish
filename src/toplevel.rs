@@ -24,7 +24,12 @@ pub fn make_toplevel(parent: &impl widget::TkWidget) -> TkTopLevel {
     }
 }
 
-super::tkwidget!(TkTopLevel);
+impl widget::TkWidget for TkTopLevel {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
 
 impl TkTopLevel {
 

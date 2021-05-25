@@ -6,7 +6,6 @@
 //!
 
 use super::grid;
-use super::image;
 use super::widget;
 use super::wish;
 
@@ -30,9 +29,16 @@ pub fn make_check_button(parent: &impl widget::TkWidget) -> TkCheckButton {
     }
 }
 
-super::tkwidget!(TkCheckButton);
-super::tklayouts!(TkCheckButton);
-super::tklabelfunctions!(TkCheckButton);
+impl widget::TkWidget for TkCheckButton {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkCheckButton {
+}
+impl widget::TkLabelOptions for TkCheckButton {
+}
 
 impl TkCheckButton {
     /// Sets the function to be called when the button is clicked.

@@ -34,8 +34,14 @@ pub fn make_combobox(parent: &impl widget::TkWidget, values: &[&str]) -> TkCombo
     }
 }
 
-super::tkwidget!(TkCombobox);
-super::tklayouts!(TkCombobox);
+impl widget::TkWidget for TkCombobox {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkCombobox {
+}
 
 impl TkCombobox {
     /// Returns the current value 

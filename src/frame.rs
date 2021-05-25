@@ -25,8 +25,14 @@ pub fn make_frame(parent: &impl widget::TkWidget) -> TkFrame {
     }
 }
 
-super::tkwidget!(TkFrame);
-super::tklayouts!(TkFrame);
+impl widget::TkWidget for TkFrame {
+    /// Returns the widget's id reference - used within tk
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+impl grid::TkGridLayout for TkFrame {
+}
 
 impl TkFrame {
     /// Size of border around frame
