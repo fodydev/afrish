@@ -32,7 +32,7 @@ pub struct GridLayout {
     pady: Option<u32>,
     row: Option<u32>,
     row_span: Option<u32>,
-    sticky: Option<String>,
+    sticky: widget::Sticky,
 }
 
 impl GridLayout {
@@ -47,7 +47,7 @@ impl GridLayout {
             pady: None,
             row: None,
             row_span: None,
-            sticky: None,
+            sticky: widget::Sticky::None,
         }
     }
 
@@ -74,7 +74,7 @@ impl GridLayout {
         self.ipady = Some(pad);
         self
     }
-    
+
     /// Horizontal padding (outside content border).
     pub fn padx (&mut self, pad: u32) -> &mut Self {
         self.padx = Some(pad);
@@ -102,8 +102,8 @@ impl GridLayout {
     /// When a widget is smaller than its containing space, this 
     /// setting controls how the widget is expanded or positioned
     /// within that space.
-    pub fn sticky (&mut self, sticky: &str) -> &mut Self {
-        self.sticky = Some(String::from(sticky));
+    pub fn sticky (&mut self, sticky: widget::Sticky) -> &mut Self {
+        self.sticky = sticky;
         self
     }
 
@@ -135,7 +135,26 @@ impl GridLayout {
         if let Some(span) = self.row_span {
             msg.push_str(&format!("-rowspan {} ", span));
         }
-        if let Some(sticky) = &self.sticky {
+
+        let sticky = match self.sticky {
+            widget::Sticky::N => "n",
+            widget::Sticky::NE => "ne",
+            widget::Sticky::NES => "nes",
+            widget::Sticky::NEW => "new",
+            widget::Sticky::NESW => "nesw",
+            widget::Sticky::NS => "ns",
+            widget::Sticky::NSW => "nsw",
+            widget::Sticky::NW => "nw",
+            widget::Sticky::E => "e",
+            widget::Sticky::ES => "es",
+            widget::Sticky::EW => "ew",
+            widget::Sticky::ESW => "esw",
+            widget::Sticky::S => "s",
+            widget::Sticky::SW => "sw",
+            widget::Sticky::W => "w",
+            widget::Sticky::None => "",
+        };
+        if sticky != "" {
             msg.push_str(&format!("-sticky {} ", sticky));
         }
 

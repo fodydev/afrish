@@ -288,6 +288,7 @@ pub trait TkLabelOptions: TkWidget {
 // --------------------------------------------------------------------------
 // Enums to type-check values
 
+#[derive(Clone)]
 pub enum Anchor {
     N, 
     NE, 
@@ -301,14 +302,23 @@ pub enum Anchor {
     Centre,
 }
 
+/// Arrangement of image relative to text in a 
+/// label-like widget.
+///
+/// So `Bottom` places the image below its text, etc.
+///
+#[derive(Clone)]
 pub enum Compound {
     Bottom,
     Center,
     Centre,
+    /// Show only the image
     Image,
     Left,
+    /// Shows image if present, otherwise the text
     None,
     Right,
+    /// Show only the text
     Text,
     Top,
 }
@@ -331,6 +341,8 @@ pub enum IconImage {
     Warning,
 }
 
+/// Arrangement of text
+#[derive(Clone)]
 pub enum Justify {
     Center,
     Centre,
@@ -338,6 +350,7 @@ pub enum Justify {
     Right,
 }
 
+#[derive(Clone)]
 pub enum Relief {
     Flat,
     Groove,
@@ -345,6 +358,26 @@ pub enum Relief {
     Ridge,
     Solid,
     Sunken,
+}
+
+#[derive(Clone)]
+pub enum Sticky {
+    N,
+    NE,
+    NES,
+    NEW,
+    NESW,
+    NS,
+    NSW,
+    NW,
+    E,
+    ES,
+    ESW,
+    EW,
+    S,
+    SW,
+    W,
+    None,
 }
 
 /// The kinds of activity state for a widget, e.g. if it is currently

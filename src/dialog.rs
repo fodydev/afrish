@@ -181,11 +181,6 @@ pub fn colour_chooser() -> TkColourChooser {
     }
 }
 
-/// Creates a colour-chooser to complete in builder style.
-pub fn color_chooser() -> TkColourChooser {
-    colour_chooser()
-}
-
 impl TkColourChooser {
 
     /// Sets parent widget - dialog is usually shown relative to parent.

@@ -5,12 +5,62 @@
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm)
 
 use super::grid;
+use super::image;
 use super::widget;
 use super::wish;
 
 /// Refers to a canvas widget
 #[derive(Clone)]
 pub struct TkCanvas {
+    pub id: String,
+}
+
+/// Refers to a canvas arc
+#[derive(Clone)]
+pub struct TkCanvasArc {
+    pub canvas: String,
+    pub id: String,
+}
+
+/// Refers to a canvas image
+#[derive(Clone)]
+pub struct TkCanvasImage {
+    pub canvas: String,
+    pub id: String,
+}
+
+/// Refers to a canvas line
+#[derive(Clone)]
+pub struct TkCanvasLine {
+    pub canvas: String,
+    pub id: String,
+}
+
+/// Refers to a canvas oval
+#[derive(Clone)]
+pub struct TkCanvasOval {
+    pub canvas: String,
+    pub id: String,
+}
+
+/// Refers to a canvas polygon
+#[derive(Clone)]
+pub struct TkCanvasPolygon {
+    pub canvas: String,
+    pub id: String,
+}
+
+/// Refers to a canvas rectangle
+#[derive(Clone)]
+pub struct TkCanvasRectangle {
+    pub canvas: String,
+    pub id: String,
+}
+
+/// Refers to a canvas text
+#[derive(Clone)]
+pub struct TkCanvasText {
+    pub canvas: String,
     pub id: String,
 }
 
@@ -34,4 +84,566 @@ impl widget::TkWidget for TkCanvas {
 impl grid::TkGridLayout for TkCanvas {
 }
 
+impl TkCanvas {
+    /// Creates an arc where (x1, y1) (x2, y2) define a rectangle
+    /// enclosing the oval which defines the arc.
+    pub fn create_arc(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasArc {
+        let msg = format!("{} create arc {} {} {} {}", &self.id, x1, y1, x2, y2);
+        let id = wish::eval_wish(&msg);
 
+        TkCanvasArc {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Creates an image at (x, y) according to given image reference.
+    pub fn create_image(&self, x: u32, y: u32, image: &image::TkImage) -> TkCanvasImage {
+        let msg = format!("{} create image {} {} {}", &self.id, x, y, &image.id);
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasImage {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Creates a line using slice of (x, y) coordinates.
+    pub fn create_line(&self, points: &[(u32, u32)]) -> TkCanvasLine {
+        let mut line_defn = String::from("");
+        for (x, y) in points {
+            line_defn.push_str(&format!("{} {} ", x, y));
+        }
+
+        let msg = format!("{} create line {}", &self.id, &line_defn);
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasLine {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Creates an oval where (x1, y1) (x2, y2) define a rectangle
+    /// enclosing the oval.
+    pub fn create_oval(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasOval {
+        let msg = format!("{} create oval {} {} {} {}", &self.id, x1, y1, x2, y2);
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasOval {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+    
+    /// Creates a polygon using slice of (x, y) coordinates.
+    pub fn create_polygon(&self, points: &[(u32, u32)]) -> TkCanvasPolygon {
+        let mut line_defn = String::from("");
+        for (x, y) in points {
+            line_defn.push_str(&format!("{} {} ", x, y));
+        }
+
+        let msg = format!("{} create polygon {}", &self.id, &line_defn);
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasPolygon {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Creates a rectangle with opposite corners (x1, y1) (x2, y2).
+    pub fn create_rectangle(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasRectangle {
+        let msg = format!("{} create rectangle {} {} {} {}", &self.id, x1, y1, x2, y2);
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasRectangle {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Creates a text item at (x, y) with given contents.
+    pub fn create_text(&self, x: u32, y: u32, text: &str) -> TkCanvasText {
+        let msg = format!("{} create text {} {} {{{}}}", &self.id, x, y, text);
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasText {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Height of canvas, in pixels.
+    pub fn height(&self, height: u32) {
+        widget::configure(&self.id, "height", &height.to_string());
+    }
+
+    /// Style of interior relative to exterior.
+    pub fn relief(&self, value: widget::Relief) {
+        widget::relief(&self.id, value);
+    }
+
+    /// Sets the state of the widget.
+    pub fn state(&self, value: widget::State) {
+        widget::state(&self.id, value);
+    }
+
+    /// Width of canvas, in pixels.
+    pub fn width(&self, width: u32) {
+        widget::configure(&self.id, "width", &width.to_string());
+    }
+}
+
+// -- functionality for each of the canvas items
+
+/// Common functionality for all items
+pub trait TkCanvasItem {
+    fn canvas(&self) -> &str;
+    fn id(&self) -> &str;
+
+    /// Configures the individual item.
+    fn configure(&self, option: &str, value: &str) {
+        let msg = format!("{} itemconfigure {} -{} {}", 
+                          self.canvas(), self.id(), option, value);
+        wish::tell_wish(&msg);
+    }
+}
+
+/// Each item can have one or more named tags attached to them.
+/// These tags can be used to configure groups of items.
+pub trait TkCanvasTags: TkCanvasItem {
+    /// Adds given tag to this canvas item.
+    fn add_tag(&self, tag: &str) {
+        let msg = format!("{} addtag {} withtag {}", 
+                          &self.canvas(), tag, &self.id());
+        wish::tell_wish(&msg);
+    }
+
+    /// Deletes tag from this canvas item.
+    fn delete_tag(&self, tag: &str) {
+        let msg = format!("{} dtag {} {}", 
+                          &self.canvas(), &self.id(), tag);
+        wish::tell_wish(&msg);
+    }
+
+    /// Returns all tags associated with this canvas item.
+    fn get_tags(&self) -> Vec<String> {
+        let msg = format!("{} gettags {}", &self.canvas(), &self.id());
+        let tags = wish::eval_wish(&msg);
+
+        let mut result: Vec<String> = vec![];
+        for tag in tags.split_whitespace() {
+            result.push(String::from(tag));
+        }
+
+        result
+    }
+}
+
+/// Specifies which or both ends of lines to draw arrows.
+pub enum TkArrowWhere {
+    Both,
+    First,
+    Last,
+    None,
+}
+
+/// Specifies how to draw an arc.
+pub enum TkArcStyle {
+    Arc,
+    Chord,
+    PieSlice,
+}
+
+/// Specifies how ends of lines are drawn.
+pub enum TkCapStyle {
+    Butt,
+    Projecting,
+    Round,
+}
+
+/// Specifies pattern with which to draw lines.
+pub enum TkDash {
+    Dot,
+    Dash,
+    DashDot,
+    DashDotDot,
+}
+
+/// Specifies how lines are connected.
+pub enum TkJoinStyle {
+    Bevel,
+    Miter,
+    Round,
+}
+
+impl TkCanvasItem for TkCanvasArc {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasArc {
+}
+
+impl TkCanvasArc {
+    /// Pattern for drawing line.
+    pub fn dash(&self, dash: TkDash) {
+        let dash = match dash {
+            TkDash::Dot => ".",
+            TkDash::Dash => "-",
+            TkDash::DashDot => "-.",
+            TkDash::DashDotDot => "-..",
+        };
+        self.configure("dash", dash);
+    }
+
+    /// Fill colour for area.
+    pub fn fill(&self, colour: &str) {
+        self.configure("fill", colour);
+    }
+
+    /// Colour for outline.
+    pub fn outline(&self, colour: &str) {
+        self.configure("outline", colour);
+    }
+
+    /// Width of outline, in pixels.
+    pub fn width(&self, value: u32) {
+        self.configure("width", &value.to_string());
+    }
+
+    /// Extent is amount in degrees that arc extends counter-clockwise
+    /// from its start angle.
+    pub fn extent(&self, degrees: u32) {
+        self.configure("extent", &degrees.to_string());
+    }
+
+    /// Start is starting angle in degrees, measured counter-clockwise
+    /// from the 3 o'clock/x-axis position.
+    pub fn start(&self, degrees: u32) {
+        self.configure("start", &degrees.to_string());
+    }
+
+    /// Style in which to draw the arc: a pieslice, chord or arc-only.
+    pub fn style(&self, value: TkArcStyle) {
+        let value = match value {
+            TkArcStyle::Arc => "arc",
+            TkArcStyle::Chord => "chord",
+            TkArcStyle::PieSlice => "pieslice",
+        };
+        self.configure("style", value);
+    }
+}
+
+impl TkCanvasItem for TkCanvasImage {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasImage {
+}
+
+impl TkCanvasImage {
+    /// Positioning of image with respect to internal margins.
+    pub fn anchor(&self, value: widget::Anchor) {
+        let value = match value {
+            widget::Anchor::N => "n",
+            widget::Anchor::NE => "ne",
+            widget::Anchor::E => "e",
+            widget::Anchor::SE => "se",
+            widget::Anchor::S => "s",
+            widget::Anchor::SW => "sw",
+            widget::Anchor::W => "w",
+            widget::Anchor::NW => "nw",
+            widget::Anchor::Center | widget::Anchor::Centre => "center",
+        };
+        self.configure("anchor", value);
+    }
+}
+
+impl TkCanvasItem for TkCanvasLine {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasLine {
+}
+
+impl TkCanvasLine {
+    /// Colour for line (same as Tk's "fill" option).
+    pub fn colour(&self, colour: &str) {
+        self.configure("fill", colour);
+    }
+
+    /// Pattern for drawing line.
+    pub fn dash(&self, dash: TkDash) {
+        let dash = match dash {
+            TkDash::Dot => ".",
+            TkDash::Dash => "-",
+            TkDash::DashDot => "-.",
+            TkDash::DashDotDot => "-..",
+        };
+        self.configure("dash", dash);
+    }
+
+    /// Width of line, in pixels.
+    pub fn width(&self, value: u32) {
+        self.configure("width", &value.to_string());
+    }
+
+    /// Location of arrow(s) on line.
+    pub fn arrow(&self, value: TkArrowWhere) {
+        let value = match value {
+            TkArrowWhere::Both => "both",
+            TkArrowWhere::First => "first",
+            TkArrowWhere::Last => "last",
+            TkArrowWhere::None => "none",
+        };
+        self.configure("arrow", value);
+    }
+
+    /// Shape of arrow(s) to draw: see Tk
+    /// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm#M145).
+    pub fn arrow_shape(&self, v1: u32, v2: u32, v3: u32) {
+        let msg = format!("{{{} {} {} }}", v1, v2, v3);
+        self.configure("arrowshape", &msg);
+    }
+
+    /// Style of ends of lines.
+    pub fn cap_style(&self, value: TkCapStyle) {
+        let value = match value {
+            TkCapStyle::Butt => "butt",
+            TkCapStyle::Projecting => "projecting",
+            TkCapStyle::Round => "round",
+        };
+        self.configure("capstyle", value);
+    }
+
+    /// Style in which lines are connected.
+    pub fn join_style(&self, value: TkJoinStyle) {
+        let value = match value {
+            TkJoinStyle::Bevel => "bevel",
+            TkJoinStyle::Miter => "miter",
+            TkJoinStyle::Round => "round",
+        };
+        self.configure("joinstyle", value);
+    }
+}
+
+impl TkCanvasItem for TkCanvasOval {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasOval {
+}
+
+impl TkCanvasOval {
+    /// Pattern for drawing line.
+    pub fn dash(&self, dash: TkDash) {
+        let dash = match dash {
+            TkDash::Dot => ".",
+            TkDash::Dash => "-",
+            TkDash::DashDot => "-.",
+            TkDash::DashDotDot => "-..",
+        };
+        self.configure("dash", dash);
+    }
+
+    /// Fill colour for area.
+    pub fn fill(&self, colour: &str) {
+        self.configure("fill", colour);
+    }
+
+    /// Colour for outline.
+    pub fn outline(&self, colour: &str) {
+        self.configure("outline", colour);
+    }
+ 
+    /// Width of outline, in pixels.
+    pub fn width(&self, value: u32) {
+        self.configure("width", &value.to_string());
+    }
+}
+
+impl TkCanvasItem for TkCanvasPolygon {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasPolygon {
+}
+
+impl TkCanvasPolygon {
+    /// Pattern for drawing line.
+    pub fn dash(&self, dash: TkDash) {
+        let dash = match dash {
+            TkDash::Dot => ".",
+            TkDash::Dash => "-",
+            TkDash::DashDot => "-.",
+            TkDash::DashDotDot => "-..",
+        };
+        self.configure("dash", dash);
+    }
+
+    /// Fill colour for area.
+    pub fn fill(&self, colour: &str) {
+        self.configure("fill", colour);
+    }
+
+    /// Colour for outline.
+    pub fn outline(&self, colour: &str) {
+        self.configure("outline", colour);
+    }
+
+    /// Width of outline, in pixels.
+    pub fn width(&self, value: u32) {
+        self.configure("width", &value.to_string());
+    }
+
+    /// Style in which lines are connected.
+    pub fn join_style(&self, value: TkJoinStyle) {
+        let value = match value {
+            TkJoinStyle::Bevel => "bevel",
+            TkJoinStyle::Miter => "miter",
+            TkJoinStyle::Round => "round",
+        };
+        self.configure("joinstyle", value);
+    }
+}
+
+impl TkCanvasItem for TkCanvasRectangle {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasRectangle {
+}
+
+impl TkCanvasRectangle {
+    /// Pattern for drawing line.
+    pub fn dash(&self, dash: TkDash) {
+        let dash = match dash {
+            TkDash::Dot => ".",
+            TkDash::Dash => "-",
+            TkDash::DashDot => "-.",
+            TkDash::DashDotDot => "-..",
+        };
+        self.configure("dash", dash);
+    }
+
+    /// Fill colour for area.
+    pub fn fill(&self, colour: &str) {
+        self.configure("fill", colour);
+    }
+
+    /// Colour for outline.
+    pub fn outline(&self, colour: &str) {
+        self.configure("outline", colour);
+    }
+
+    /// Width of outline, in pixels.
+    pub fn width(&self, value: u32) {
+        self.configure("width", &value.to_string());
+    }
+}
+
+impl TkCanvasItem for TkCanvasText {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasText {
+}
+
+impl TkCanvasText {
+    /// Positioning of image with respect to internal margins.
+    pub fn anchor(&self, value: widget::Anchor) {
+        let value = match value {
+            widget::Anchor::N => "n",
+            widget::Anchor::NE => "ne",
+            widget::Anchor::E => "e",
+            widget::Anchor::SE => "se",
+            widget::Anchor::S => "s",
+            widget::Anchor::SW => "sw",
+            widget::Anchor::W => "w",
+            widget::Anchor::NW => "nw",
+            widget::Anchor::Center | widget::Anchor::Centre => "center",
+        };
+        self.configure("anchor", value);
+    }
+    
+    /// Colour for line (same as Tk's "fill" option).
+    pub fn colour(&self, colour: &str) {
+        self.configure("fill", colour);
+    }
+
+    /// Angle of text - float in range 0 to 360 degrees.
+    pub fn angle(&self, degrees: f32) {
+        // - silently ensure value is in valid range
+        let degrees = degrees.max(0.0);
+        let degrees = degrees.min(360.0);
+        self.configure("angle", &degrees.to_string());
+    }
+
+    /// Specifies the font to use for text.
+    pub fn font(&self, definition: &str) {
+        self.configure("font", definition);
+    }
+
+    /// Alignment of text within its bounding region.
+    pub fn justify(&self, value: widget::Justify) {
+        widget::justify(&self.id, value);
+    }
+
+    /// Sets the text to display.
+    pub fn text(&self, value: &str) {
+        self.configure("text", value);
+    }
+
+    /// Underlines the character at the given index position.
+    pub fn underline(&self, index: u32) {
+        self.configure("underline", &index.to_string());
+    }
+
+    /// Sets the width of the text item, in pixels
+    pub fn width(&self, value: i32) {
+        self.configure("width", &value.to_string());
+    }
+}

@@ -37,11 +37,6 @@
 //! including buttons, labels, menus, and text widgets, as well as associated
 //! data as fonts and images.
 //!
-//! ## Themes
-//!
-//! This module includes some functions to list and set the overall theme
-//! (look and feel) of the Tk program.
-//! 
 
 use std::collections::HashMap;
 use std::sync::mpsc;
@@ -328,43 +323,3 @@ pub fn end_wish() {
     process::exit(0);
 }
 
-// -- independent functions
-
-/// Returns a list of the current themes.
-///
-/// For example:
-///
-/// ```
-/// let themes = rstk::theme_names();
-/// println!("{} available themes: ", themes.len());
-/// for theme in themes {
-///     println!(" - {}", theme);
-/// }
-/// ```
-/// 
-/// Lists the themes (on Linux):
-///
-/// ```text
-/// 4 available themes:
-///  - clam
-///  - alt
-///  - default
-///  - classic
-/// ```
-///
-pub fn theme_names() -> Vec<String> {
-    let themes = eval_wish("puts [ttk::style theme names] ; flush stdout");
-
-    let mut result: Vec<String> = vec![];
-    for theme in themes.split_whitespace() {
-        result.push(String::from(theme));
-    }
-
-    result
-}
-
-/// Sets the current theme to the given theme-name
-pub fn use_theme(name: &str) {
-    let msg = format!("ttk::style theme use {}", name);
-    tell_wish(&msg);
-}

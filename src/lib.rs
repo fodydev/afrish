@@ -128,6 +128,9 @@ pub use radio_button::*;
 pub mod separator;
 pub use separator::*;
 
+pub mod theme;
+pub use theme::*;
+
 pub mod toplevel;
 pub use toplevel::*;
 
