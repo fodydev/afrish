@@ -470,3 +470,11 @@ pub(super) fn state(wid: &str, value: State) {
 pub fn bind(pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
     bind_to("all", pattern, command);
 }
+
+/// Checks what the current OS system is: see 
+/// Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/tk.htm#M12).
+///
+/// Returns one of x11, win32, aqua
+pub fn windowing_system() -> String {
+    wish::eval_wish("tk windowingsystem")
+}

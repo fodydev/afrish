@@ -85,10 +85,28 @@ impl grid::TkGridLayout for TkCanvas {
 }
 
 impl TkCanvas {
+    /// Colour of canvas background.
+    pub fn background(&self, colour: &str) {
+        widget::configure(&self.id, "background", colour);
+    }
+
+    /// Size of border around widget.
+    pub fn border_width(&self, width: u32) {
+        widget::configure(&self.id, "borderwidth", &width.to_string());
+    }
+
+    /// Configures the item(s) with given tag.
+    pub fn configure_tag(&self, tag: &str, option: &str, value: &str) {
+        let msg = format!("{} itemconfigure {} -{} {{{}}}", 
+                          &self.id, tag, option, value);
+        wish::tell_wish(&msg);
+    }
+
     /// Creates an arc where (x1, y1) (x2, y2) define a rectangle
     /// enclosing the oval which defines the arc.
     pub fn create_arc(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasArc {
-        let msg = format!("{} create arc {} {} {} {}", &self.id, x1, y1, x2, y2);
+        let msg = format!("puts [{} create arc {} {} {} {}] ; flush stdout", 
+                          &self.id, x1, y1, x2, y2);
         let id = wish::eval_wish(&msg);
 
         TkCanvasArc {
@@ -99,7 +117,8 @@ impl TkCanvas {
 
     /// Creates an image at (x, y) according to given image reference.
     pub fn create_image(&self, x: u32, y: u32, image: &image::TkImage) -> TkCanvasImage {
-        let msg = format!("{} create image {} {} {}", &self.id, x, y, &image.id);
+        let msg = format!("puts [{} create image {} {} {}] ; flush stdout", 
+                          &self.id, x, y, &image.id);
         let id = wish::eval_wish(&msg);
 
         TkCanvasImage {
@@ -115,7 +134,8 @@ impl TkCanvas {
             line_defn.push_str(&format!("{} {} ", x, y));
         }
 
-        let msg = format!("{} create line {}", &self.id, &line_defn);
+        let msg = format!("puts [{} create line {}] ; flush stdout", 
+                          &self.id, &line_defn);
         let id = wish::eval_wish(&msg);
 
         TkCanvasLine {
@@ -127,7 +147,8 @@ impl TkCanvas {
     /// Creates an oval where (x1, y1) (x2, y2) define a rectangle
     /// enclosing the oval.
     pub fn create_oval(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasOval {
-        let msg = format!("{} create oval {} {} {} {}", &self.id, x1, y1, x2, y2);
+        let msg = format!("puts [{} create oval {} {} {} {}] ; flush stdout", 
+                          &self.id, x1, y1, x2, y2);
         let id = wish::eval_wish(&msg);
 
         TkCanvasOval {
@@ -143,7 +164,8 @@ impl TkCanvas {
             line_defn.push_str(&format!("{} {} ", x, y));
         }
 
-        let msg = format!("{} create polygon {}", &self.id, &line_defn);
+        let msg = format!("puts [{} create polygon {}] ; flush stdout", 
+                          &self.id, &line_defn);
         let id = wish::eval_wish(&msg);
 
         TkCanvasPolygon {
@@ -154,7 +176,8 @@ impl TkCanvas {
 
     /// Creates a rectangle with opposite corners (x1, y1) (x2, y2).
     pub fn create_rectangle(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasRectangle {
-        let msg = format!("{} create rectangle {} {} {} {}", &self.id, x1, y1, x2, y2);
+        let msg = format!("puts [{} create rectangle {} {} {} {}] ; flush stdout", 
+                          &self.id, x1, y1, x2, y2);
         let id = wish::eval_wish(&msg);
 
         TkCanvasRectangle {
@@ -165,7 +188,8 @@ impl TkCanvas {
 
     /// Creates a text item at (x, y) with given contents.
     pub fn create_text(&self, x: u32, y: u32, text: &str) -> TkCanvasText {
-        let msg = format!("{} create text {} {} {{{}}}", &self.id, x, y, text);
+        let msg = format!("puts [{} create text {} {} {{{}}}] ; flush stdout", 
+                          &self.id, x, y, text);
         let id = wish::eval_wish(&msg);
 
         TkCanvasText {
@@ -202,9 +226,19 @@ pub trait TkCanvasItem {
     fn canvas(&self) -> &str;
     fn id(&self) -> &str;
 
+    /// Binds event to item.
+    fn bind(&self, pattern: &str, command: impl Fn(widget::TkEvent)->() + Send + 'static) {
+        // tag+pattern used as identifier, as multiple commands can be bound to each entity
+        let tag_pattern = format!("{}{}{}", self.canvas(), self.id(), pattern);  
+        wish::add_callback1_event(&tag_pattern, wish::mk_callback1_event(command));
+        let msg = format!("{} bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
+                          self.canvas(), self.id(), pattern, tag_pattern);
+        wish::tell_wish(&msg); 
+    }
+
     /// Configures the individual item.
     fn configure(&self, option: &str, value: &str) {
-        let msg = format!("{} itemconfigure {} -{} {}", 
+        let msg = format!("{} itemconfigure {} -{} {{{}}}", 
                           self.canvas(), self.id(), option, value);
         wish::tell_wish(&msg);
     }

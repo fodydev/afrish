@@ -21,6 +21,10 @@ use super::widget;
 use super::wish;
 
 /// Refers to the settings for a GridLayout.
+///
+/// Apart from `layout`, the methods on this struct set the values of different
+/// options in a builder style: call `layout` to finish the layout.
+///
 #[derive(Clone)]
 pub struct GridLayout {
     id: String,

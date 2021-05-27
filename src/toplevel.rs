@@ -4,6 +4,7 @@
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/toplevel.htm)
 
+use super::menu;
 use super::widget;
 use super::wish;
 
@@ -99,8 +100,9 @@ impl TkTopLevel {
         wish::tell_wish(&msg);
     }
 
-    /// TODO: set the menu of the top-level window.
-    pub fn menu(&self, menu: &str) {
+    /// Sets the menu of the top-level window.
+    pub fn menu(&self, menu: &menu::TkMenu) {
+        widget::configure(&self.id, "menu", &menu.id);
     }
 
     /// Sets the minimum width/height in pixels for the window.

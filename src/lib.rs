@@ -60,7 +60,7 @@
 //! ```
 //! let label = rstk::make_label(&root);
 //! 
-//! rstk::tell_wish(&format!("{} -takefocus 0", label.id));
+//! rstk::tell_wish(&format!("{} configure -takefocus 0", label.id));
 //! ```
 //! 
 //! Also useful are:
@@ -115,6 +115,9 @@ pub use label::*;
 
 pub mod label_frame;
 pub use label_frame::*;
+
+pub mod menu;
+pub use menu::*;
 
 pub mod notebook;
 pub use notebook::*;

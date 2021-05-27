@@ -286,8 +286,15 @@ pub fn start_with(wish: &str) -> toplevel::TkTopLevel {
         OUTPUT.set(WISH.get_mut().unwrap().stdout.take().unwrap())
             .expect(&err_msg);
 
+        // -- initial setup of Tcl/Tk environment
+ 
+        // include the Tcl package itself
         input.write(b"package require Tcl\n").unwrap();
+        // set close button to output 'exit' message, so rust can close connection
         input.write(b"wm protocol . WM_DELETE_WINDOW { puts stdout {exit} ; flush stdout } \n").unwrap();
+        // remove the 'tearoff' menu option
+        input.write(b"option add *tearOff 0\n").unwrap();
+        // tcl function to help working with font chooser
         input.write(b"proc font_choice {w font args} {
             puts font$font
             flush stdout
