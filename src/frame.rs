@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a frame widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkFrame {
     pub id: String,
 }

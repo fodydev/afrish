@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a label widget 
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkLabel {
     pub id: String,
 }

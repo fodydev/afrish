@@ -69,6 +69,7 @@ pub(super) fn kill_wish() {
 /// Use with caution: the message must be valid tcl.
 ///
 pub fn tell_wish(msg: &str) {
+    println!("wish: {}", msg);
     unsafe {
         SENDER.get_mut().unwrap().send(String::from(msg)).unwrap();
         SENDER.get_mut().unwrap().send(String::from("\n")).unwrap();
@@ -179,6 +180,24 @@ fn eval_callback1_event(wid: &str, value: widget::TkEvent) {
     } // TODO - error?
 }
 
+type Callback1Float = Box<(dyn Fn(f32)->() + Send + 'static)>;
+pub(super) fn mk_callback1_float<F>(f: F) -> Callback1Float
+    where F: Fn(f32)->() + Send + 'static {
+        Box::new(f) as Callback1Float
+}
+
+static CALLBACKS1FLOAT: Lazy<Mutex<HashMap<String, Callback1Float>>> = Lazy::new(|| Mutex::new(HashMap::new()));
+
+pub(super) fn add_callback1_float(wid: &str, callback: Callback1Float) {
+    CALLBACKS1FLOAT.lock().unwrap().insert(String::from(wid), callback);
+}
+
+fn eval_callback1_float(wid: &str, value: f32) {
+    if let Some(command) = CALLBACKS1FLOAT.lock().unwrap().get(wid) {
+        command(value);
+    } // TODO - error?
+}
+
 type Callback1Font = Box<(dyn Fn(font::TkFont)->() + Send + 'static)>; 
 pub(super) fn mk_callback1_font<F>(f: F) -> Callback1Font
 where F: Fn(font::TkFont)->() + Send + 'static {
@@ -248,6 +267,12 @@ pub fn mainloop () {
                         };
                         eval_callback1_event(widget_pattern, event);
 
+                    } else if input.starts_with("cb1f") { // -- callback 1 with float
+                        let parts: Vec<&str> = input.split('-').collect();
+                        let widget = parts[1].trim();
+                        let value = parts[2].trim().parse::<f32>().unwrap_or(0.0);
+                        eval_callback1_float(widget, value);
+
                     } else if input.starts_with("font") { // -- callback 1 with font
                         let font = String::from(input[4..].trim());
                         println!("Callback with font |{}|", font);
@@ -297,6 +322,11 @@ pub fn start_with(wish: &str) -> toplevel::TkTopLevel {
         // tcl function to help working with font chooser
         input.write(b"proc font_choice {w font args} {
             puts font$font
+            flush stdout
+        }\n").unwrap();
+        // tcl function to help working with scale widget
+        input.write(b"proc scale_value {w value args} {
+            puts cb1f-$w-$value
             flush stdout
         }\n").unwrap();
 

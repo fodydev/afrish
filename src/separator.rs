@@ -8,7 +8,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a separator widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkSeparator {
     pub id: String,
 }

@@ -46,7 +46,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to the settings for TkMessageBox.
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct TkMessageBox {
     default: Option<String>,
     detail: Option<String>,
@@ -129,13 +129,7 @@ impl TkMessageBox {
             msg.push_str(&format!("-detail {{{}}} ", detail));
         }
 
-        let icon = match self.icon {
-            widget::IconImage::Error => "error",
-            widget::IconImage::Information => "info",
-            widget::IconImage::Question => "question",
-            widget::IconImage::Warning => "warning",
-        };
-        msg.push_str(&format!("-icon {} ", icon));
+        msg.push_str(&format!("-icon {} ", self.icon));
 
         if let Some(message) = &self.message {
             msg.push_str(&format!("-message {{{}}} ", message));
@@ -149,15 +143,7 @@ impl TkMessageBox {
             msg.push_str(&format!("-title {{{}}} ", title));
         }
 
-        let buttons = match self.type_buttons {
-            widget::DialogType::AbortRetryIgnore => "abortretryignore",
-            widget::DialogType::Ok => "ok",
-            widget::DialogType::OkCancel => "okcancel",
-            widget::DialogType::RetryCancel => "retrycancel",
-            widget::DialogType::YesNo => "yesno",
-            widget::DialogType::YesNoCancel => "yesnocancel",
-        };
-        msg.push_str(&format!("-type {} ", buttons));
+        msg.push_str(&format!("-type {} ", self.type_buttons));
         msg.push_str("] ; flush stdout");
 
         wish::eval_wish(&msg)
@@ -165,7 +151,7 @@ impl TkMessageBox {
 }
 
 /// Refers to the settings for TkColourChooser.
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct TkColourChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -240,7 +226,7 @@ impl TkColourChooser {
 }
 
 /// Refers to the settings for TkDirectoryChooser.
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct TkDirectoryChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -322,7 +308,7 @@ impl TkDirectoryChooser {
 }
 
 /// Refers to the settings for TkOpenFileChooser.
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct TkOpenFileChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -436,7 +422,7 @@ impl TkOpenFileChooser {
 }
 
 /// Refers to the settings for TkSaveFileChooser.
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct TkSaveFileChooser {
     parent: Option<String>,
     title: Option<String>,

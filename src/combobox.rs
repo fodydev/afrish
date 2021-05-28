@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a combobox widget 
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCombobox {
     pub id: String,
 }

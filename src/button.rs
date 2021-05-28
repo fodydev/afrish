@@ -1,4 +1,4 @@
-//! Button widgets
+//! Button widget
 //!
 //! A label-like widget, which executes a command when clicked.
 //!
@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a button widget 
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkButton {
     pub id: String,
 }
@@ -33,6 +33,7 @@ impl widget::TkWidget for TkButton {
 }
 impl grid::TkGridLayout for TkButton {
 }
+
 impl widget::TkLabelOptions for TkButton {
 }
 

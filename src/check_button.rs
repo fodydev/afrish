@@ -10,7 +10,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a check-button widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCheckButton {
     pub id: String,
     var: String,
@@ -44,7 +44,8 @@ impl TkCheckButton {
     /// Sets the function to be called when the button is clicked.
     pub fn command (&self, command: impl Fn(bool)->() + Send + 'static) {
         wish::add_callback1_bool(&self.id, wish::mk_callback1_bool(command));
-        let msg = format!("{} configure -command {{ puts cb1b-{}-${} ; flush stdout }}", self.id, self.id, self.var);
+        let msg = format!("{} configure -command {{ puts cb1b-{}-${} ; flush stdout }}", 
+                          self.id, self.id, self.var);
         wish::tell_wish(&msg);
     }
 

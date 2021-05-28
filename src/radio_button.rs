@@ -11,13 +11,14 @@ use super::widget;
 use super::wish;
 
 /// Refers to a radio-button widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkRadioButton {
     pub id: String,
     var: String,
 }
 
 /// Creates an instance of a radio-button widget in given parent.
+///
 /// Radio buttons are arranged in groups, with each button in the group
 /// having its own value. For this reason, the group and value are 
 /// required when making a radio button.

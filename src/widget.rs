@@ -2,11 +2,14 @@
 //! of widgets.
 //!
 
+use std::fmt;
+
 use super::image;
 use super::wish;
 
 /// Struct holding information from a bound event, 
 /// returned as a parameter to the bound closure.
+#[derive(Clone,Debug)]
 pub struct TkEvent {
     /// x-coordinate relative to current widget
     pub x: i32,
@@ -288,7 +291,8 @@ pub trait TkLabelOptions: TkWidget {
 // --------------------------------------------------------------------------
 // Enums to type-check values
 
-#[derive(Clone)]
+/// Defines position of a displayed item within some bounds.
+#[derive(Clone,Debug,PartialEq)]
 pub enum Anchor {
     N, 
     NE, 
@@ -302,12 +306,29 @@ pub enum Anchor {
     Centre,
 }
 
+impl fmt::Display for Anchor {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Anchor::N => "n",
+            Anchor::NE => "ne",
+            Anchor::E => "e",
+            Anchor::SE => "se",
+            Anchor::S => "s",
+            Anchor::SW => "sw",
+            Anchor::W => "w",
+            Anchor::NW => "nw",
+            Anchor::Center | Anchor::Centre => "center",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Arrangement of image relative to text in a 
 /// label-like widget.
 ///
 /// So `Bottom` places the image below its text, etc.
 ///
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub enum Compound {
     Bottom,
     Center,
@@ -323,7 +344,24 @@ pub enum Compound {
     Top,
 }
 
-#[derive(Clone)]
+impl fmt::Display for Compound {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Compound::Bottom => "bottom",
+            Compound::Center | Compound::Centre => "center",
+            Compound::Image => "image",
+            Compound::Left => "left",
+            Compound::None => "none",
+            Compound::Right => "right",
+            Compound::Text => "text",
+            Compound::Top => "top",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Type of message-box dialog.
+#[derive(Clone,Debug,PartialEq)]
 pub enum DialogType {
     AbortRetryIgnore,
     Ok,
@@ -333,7 +371,22 @@ pub enum DialogType {
     YesNoCancel,
 }
 
-#[derive(Clone)]
+impl fmt::Display for DialogType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            DialogType::AbortRetryIgnore => "abortretryignore",
+            DialogType::Ok => "ok",
+            DialogType::OkCancel => "okcancel",
+            DialogType::RetryCancel => "retrycancel",
+            DialogType::YesNo => "yesno",
+            DialogType::YesNoCancel => "yesnocancel",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Type of icon to use in message-box dialog.
+#[derive(Clone,Debug,PartialEq)]
 pub enum IconImage {
     Error,
     Information,
@@ -341,8 +394,20 @@ pub enum IconImage {
     Warning,
 }
 
+impl fmt::Display for IconImage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            IconImage::Error => "error",
+            IconImage::Information => "info",
+            IconImage::Question => "question",
+            IconImage::Warning => "warning",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Arrangement of text
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub enum Justify {
     Center,
     Centre,
@@ -350,7 +415,19 @@ pub enum Justify {
     Right,
 }
 
-#[derive(Clone)]
+impl fmt::Display for Justify {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Justify::Left => "left",
+            Justify::Center | Justify::Centre => "center",
+            Justify::Right => "right",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Defines shape of border around widget.
+#[derive(Clone,Debug,PartialEq)]
 pub enum Relief {
     Flat,
     Groove,
@@ -360,7 +437,23 @@ pub enum Relief {
     Sunken,
 }
 
-#[derive(Clone)]
+impl fmt::Display for Relief {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Relief::Flat => "flat",
+            Relief::Groove => "groove",
+            Relief::Raised => "raised",
+            Relief::Ridge => "ridge",
+            Relief::Solid => "solid",
+            Relief::Sunken => "sunken",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Specifies which sides of its container a widget 'sticks' to,
+/// especially when it is resized.
+#[derive(Clone,Debug,PartialEq)]
 pub enum Sticky {
     N,
     NE,
@@ -380,8 +473,33 @@ pub enum Sticky {
     None,
 }
 
+impl fmt::Display for Sticky {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Sticky::N => "n",
+            Sticky::NE => "ne",
+            Sticky::NES => "nes",
+            Sticky::NEW => "new",
+            Sticky::NESW => "nesw",
+            Sticky::NS => "ns",
+            Sticky::NSW => "nsw",
+            Sticky::NW => "nw",
+            Sticky::E => "e",
+            Sticky::ES => "es",
+            Sticky::EW => "ew",
+            Sticky::ESW => "esw",
+            Sticky::S => "s",
+            Sticky::SW => "sw",
+            Sticky::W => "w",
+            Sticky::None => "",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// The kinds of activity state for a widget, e.g. if it is currently
 /// available to use or disabled.
+#[derive(Clone,Debug,PartialEq)]
 pub enum State {
     /// Used, e.g., for buttons, to highlight when a mouse pointer is over them.
     Active,
@@ -391,6 +509,18 @@ pub enum State {
     Normal,
     /// State cannot be changed, for those widgets with editable state.
     Readonly,
+}
+
+impl fmt::Display for State {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            State::Active => "active",
+            State::Disabled => "disabled",
+            State::Normal => "normal",
+            State::Readonly => "readonly",
+        };
+        write!(f, "{}", &value)
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -406,17 +536,7 @@ pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent)->() + 
 }
 
 pub(super) fn compound(wid: &str, value: Compound) {
-    let value = match value {
-        Compound::Bottom => "bottom",
-        Compound::Center | Compound::Centre => "center",
-        Compound::Image => "image",
-        Compound::Left => "left",
-        Compound::None => "none",
-        Compound::Right => "right",
-        Compound::Text => "text",
-        Compound::Top => "top",
-    };
-    configure(wid, "compound", value);
+    configure(wid, "compound", &value.to_string());
 }
 
 pub(super) fn configure(wid: &str, option: &str, value: &str) {
@@ -425,12 +545,7 @@ pub(super) fn configure(wid: &str, option: &str, value: &str) {
 }
 
 pub(super) fn justify(wid: &str, value: Justify) {
-    let value = match value {
-        Justify::Left => "left",
-        Justify::Center | Justify::Centre => "center",
-        Justify::Right => "right",
-    };
-    configure(wid, "justify", value);
+    configure(wid, "justify", &value.to_string());
 }
 
 pub(super) fn padding(wid: &str, values: &[u32]) {
@@ -443,25 +558,11 @@ pub(super) fn padding(wid: &str, values: &[u32]) {
 }
 
 pub(super) fn relief(wid: &str, value: Relief) {
-    let value = match value {
-        Relief::Flat => "flat",
-        Relief::Groove => "groove",
-        Relief::Raised => "raised",
-        Relief::Ridge => "ridge",
-        Relief::Solid => "solid",
-        Relief::Sunken => "sunken",
-    };
-    configure(wid, "relief", value);
+    configure(wid, "relief", &value.to_string());
 }
 
 pub(super) fn state(wid: &str, value: State) {
-    let value = match value {
-        State::Active => "active",
-        State::Disabled => "disabled",
-        State::Normal => "normal",
-        State::Readonly => "readonly",
-    };
-    configure(wid, "state", value);
+    configure(wid, "state", &value.to_string());
 }
 
 // --------------------------------------------------------------------------

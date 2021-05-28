@@ -128,8 +128,14 @@ pub use paned_window::*;
 pub mod radio_button;
 pub use radio_button::*;
 
+pub mod scale;
+pub use scale::*;
+
 pub mod separator;
 pub use separator::*;
+
+pub mod spinbox;
+pub use spinbox::*;
 
 pub mod theme;
 pub use theme::*;

@@ -4,7 +4,7 @@
 use super::wish;
 
 /// Refers to an image
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkImage {
     pub id: String,
 }

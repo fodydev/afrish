@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a top-level widget (window)
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkTopLevel {
     pub id: String,
 }

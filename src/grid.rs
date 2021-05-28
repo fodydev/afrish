@@ -25,7 +25,7 @@ use super::wish;
 /// Apart from `layout`, the methods on this struct set the values of different
 /// options in a builder style: call `layout` to finish the layout.
 ///
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct GridLayout {
     id: String,
     column: Option<u32>,
@@ -140,26 +140,8 @@ impl GridLayout {
             msg.push_str(&format!("-rowspan {} ", span));
         }
 
-        let sticky = match self.sticky {
-            widget::Sticky::N => "n",
-            widget::Sticky::NE => "ne",
-            widget::Sticky::NES => "nes",
-            widget::Sticky::NEW => "new",
-            widget::Sticky::NESW => "nesw",
-            widget::Sticky::NS => "ns",
-            widget::Sticky::NSW => "nsw",
-            widget::Sticky::NW => "nw",
-            widget::Sticky::E => "e",
-            widget::Sticky::ES => "es",
-            widget::Sticky::EW => "ew",
-            widget::Sticky::ESW => "esw",
-            widget::Sticky::S => "s",
-            widget::Sticky::SW => "sw",
-            widget::Sticky::W => "w",
-            widget::Sticky::None => "",
-        };
-        if sticky != "" {
-            msg.push_str(&format!("-sticky {} ", sticky));
+        if self.sticky != widget::Sticky::None {
+            msg.push_str(&format!("-sticky {} ", self.sticky));
         }
 
         wish::tell_wish(&msg);

@@ -10,7 +10,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a notebook widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkNotebook {
     pub id: String,
 }

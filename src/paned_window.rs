@@ -10,7 +10,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a paned-window widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkPanedWindow {
     pub id: String,
 }

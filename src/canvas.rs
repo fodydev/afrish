@@ -10,55 +10,55 @@ use super::widget;
 use super::wish;
 
 /// Refers to a canvas widget
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvas {
     pub id: String,
 }
 
 /// Refers to a canvas arc
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasArc {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas image
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasImage {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas line
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasLine {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas oval
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasOval {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas polygon
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasPolygon {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas rectangle
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasRectangle {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas text
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkCanvasText {
     pub canvas: String,
     pub id: String,
@@ -391,18 +391,7 @@ impl TkCanvasTags for TkCanvasImage {
 impl TkCanvasImage {
     /// Positioning of image with respect to internal margins.
     pub fn anchor(&self, value: widget::Anchor) {
-        let value = match value {
-            widget::Anchor::N => "n",
-            widget::Anchor::NE => "ne",
-            widget::Anchor::E => "e",
-            widget::Anchor::SE => "se",
-            widget::Anchor::S => "s",
-            widget::Anchor::SW => "sw",
-            widget::Anchor::W => "w",
-            widget::Anchor::NW => "nw",
-            widget::Anchor::Center | widget::Anchor::Centre => "center",
-        };
-        self.configure("anchor", value);
+        self.configure("anchor", &value.to_string());
     }
 }
 
@@ -629,18 +618,7 @@ impl TkCanvasTags for TkCanvasText {
 impl TkCanvasText {
     /// Positioning of image with respect to internal margins.
     pub fn anchor(&self, value: widget::Anchor) {
-        let value = match value {
-            widget::Anchor::N => "n",
-            widget::Anchor::NE => "ne",
-            widget::Anchor::E => "e",
-            widget::Anchor::SE => "se",
-            widget::Anchor::S => "s",
-            widget::Anchor::SW => "sw",
-            widget::Anchor::W => "w",
-            widget::Anchor::NW => "nw",
-            widget::Anchor::Center | widget::Anchor::Centre => "center",
-        };
-        self.configure("anchor", value);
+        self.configure("anchor", &value.to_string());
     }
     
     /// Colour for line (same as Tk's "fill" option).

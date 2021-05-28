@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to an entry widget 
-#[derive(Clone)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct TkEntry {
     pub id: String,
     var: String,
