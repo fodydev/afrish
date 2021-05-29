@@ -15,22 +15,12 @@ pub struct TkPanedWindow {
     pub id: String,
 }
 
-/// Creates an instance of a horizontally aligned paned-window, in given 
-/// parent. Child panes will be stacked left-to-right.
-pub fn make_horizontal_paned_window(parent: &impl widget::TkWidget) -> TkPanedWindow {
+/// Creates an instance of a paned-window, in given parent. 
+/// Child panes will be stacked based on given orientation.
+pub fn make_paned_window(parent: &impl widget::TkWidget,
+                         orientation: widget::Orientation) -> TkPanedWindow {
     let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::panedwindow {} -orient horizontal", id);
-    wish::tell_wish(&msg);
-
-    TkPanedWindow {
-        id,
-    }
-}
-/// Creates an instance of a vertically aligned paned-window, in given 
-/// parent. Child panes will be stacked top-to-bottom.
-pub fn make_vertical_paned_window(parent: &impl widget::TkWidget) -> TkPanedWindow {
-    let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::panedwindow {} -orient vertical", id);
+    let msg = format!("ttk::panedwindow {} -orient {}", id, orientation);
     wish::tell_wish(&msg);
 
     TkPanedWindow {

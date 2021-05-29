@@ -210,7 +210,7 @@ impl TkCanvas {
 
     /// Sets the state of the widget.
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
 
     /// Width of canvas, in pixels.

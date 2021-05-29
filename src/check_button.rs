@@ -70,6 +70,6 @@ impl TkCheckButton {
 
     /// Sets the state of the button (normal or disabled).
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
 }

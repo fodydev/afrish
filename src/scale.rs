@@ -17,22 +17,11 @@ pub struct TkScale {
 }
 
 /// Creates an instance of a scale widget in given parent,
-/// oriented horizontally.
-pub fn make_horizontal_scale(parent: &impl widget::TkWidget) -> TkScale {
+/// with given orientation.
+pub fn make_scale(parent: &impl widget::TkWidget,
+                  orientation: widget::Orientation) -> TkScale {
     let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::scale {} -orient horizontal", id);
-    wish::tell_wish(&msg);
-
-    TkScale {
-        id,
-    }
-}
-
-/// Creates an instance of a scale widget in given parent,
-/// oriented vertically.
-pub fn make_vertical_scale(parent: &impl widget::TkWidget) -> TkScale {
-    let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::scale {} -orient vertical", id);
+    let msg = format!("ttk::scale {} -orient {}", id, orientation);
     wish::tell_wish(&msg);
 
     TkScale {
@@ -92,7 +81,7 @@ impl TkScale {
 
     /// Sets the state of the widget (normal or disabled).
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
 }
 

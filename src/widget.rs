@@ -426,6 +426,40 @@ impl fmt::Display for Justify {
     }
 }
 
+/// Defines orientation of widget.
+#[derive(Clone,Debug,PartialEq)]
+pub enum Orientation {
+    Horizontal,
+    Vertical,
+}
+
+impl fmt::Display for Orientation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Orientation::Horizontal => "horizontal",
+            Orientation::Vertical => "vertical",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Defines mode of progressbar.
+#[derive(Clone,Debug,PartialEq)]
+pub enum ProgressMode {
+    Determinate,
+    Indeterminate,
+}
+
+impl fmt::Display for ProgressMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            ProgressMode::Determinate => "determinate",
+            ProgressMode::Indeterminate => "indeterminate",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Defines shape of border around widget.
 #[derive(Clone,Debug,PartialEq)]
 pub enum Relief {
@@ -446,6 +480,27 @@ impl fmt::Display for Relief {
             Relief::Ridge => "ridge",
             Relief::Solid => "solid",
             Relief::Sunken => "sunken",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Defines mode of selection.
+#[derive(Clone,Debug,PartialEq)]
+pub enum Selection {
+    Browse,
+    Extended,
+    Multiple,
+    Single,
+}
+
+impl fmt::Display for Selection {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Selection::Browse => "browse",
+            Selection::Extended => "extended",
+            Selection::Multiple => "multiple",
+            Selection::Single => "single",
         };
         write!(f, "{}", &value)
     }
@@ -523,6 +578,25 @@ impl fmt::Display for State {
     }
 }
 
+/// Types of word wrapping.
+#[derive(Clone,Debug,PartialEq)]
+pub enum Wrapping {
+    Char,
+    None,
+    Word,
+}
+
+impl fmt::Display for Wrapping {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Wrapping::Char => "char",
+            Wrapping::None => "none",
+            Wrapping::Word => "word",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 // --------------------------------------------------------------------------
 // Internal functions for within crate use
 
@@ -559,10 +633,6 @@ pub(super) fn padding(wid: &str, values: &[u32]) {
 
 pub(super) fn relief(wid: &str, value: Relief) {
     configure(wid, "relief", &value.to_string());
-}
-
-pub(super) fn state(wid: &str, value: State) {
-    configure(wid, "state", &value.to_string());
 }
 
 // --------------------------------------------------------------------------

@@ -46,7 +46,7 @@ impl TkSpinboxRange {
     /// Sets the state of the widget; Readonly means user cannot enter
     /// their own value, but must pick from the given selection.
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
     
     /// Retrieves the spinbox's value.
@@ -107,7 +107,7 @@ impl TkSpinboxValues {
     /// Sets the state of the widget; Readonly means user cannot enter
     /// their own value, but must pick from the given selection.
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
     
     /// Retrieves the spinbox's value.

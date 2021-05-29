@@ -3,6 +3,11 @@
 //! A text field with a drop-down list of options
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_combobox.htm)
+//! # Events
+//!
+//! Use [bind](widget::TkWidget::bind) to call a function on following event:
+//!
+//! * `<<ComboboxSelected>>` - when an element is selected
 
 use super::grid;
 use super::widget;
@@ -69,7 +74,7 @@ impl TkCombobox {
 
     /// Sets the state of the widget (readonly, normal or disabled).
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
 
     /// Sets the width of the widget, in characters

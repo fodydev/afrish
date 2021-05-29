@@ -61,7 +61,7 @@ impl TkEntry {
 
     /// Sets the state of the widget (readonly, normal or disabled).
     pub fn state(&self, value: widget::State) {
-        widget::state(&self.id, value);
+        widget::configure(&self.id, "state", &value.to_string());
     }
 
     /// Returns the current entry value 

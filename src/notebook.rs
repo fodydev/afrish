@@ -4,6 +4,12 @@
 //! one pane at a time.
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_notebook.htm)
+//!
+//! # Events
+//!
+//! Use [bind](widget::TkWidget::bind) to call a function on following event:
+//!
+//! * `<<NotebookTabChanged>>` - when new tab selected
 
 use super::grid;
 use super::widget;
@@ -32,6 +38,7 @@ impl widget::TkWidget for TkNotebook {
         &self.id
     }
 }
+
 impl grid::TkGridLayout for TkNotebook {
 }
 

@@ -38,7 +38,37 @@
 //!
 //! For more examples and documentation, see the project 
 //! [webpage](https://peterlane.netlify.app/rstk/).
+//!
+//! ## Widget lifetimes
+//!
+//! The Tk process operates independently of your rust program. All references 
+//! to widgets in rust are merely string names used to 'lookup' the widget 
+//! when calling out to Tk. As such, widgets will remain live and visible even
+//! if a variable referring to them goes out of scope in your rust code. 
+//! If you wish to destroy a widget, use the [destroy](widget::TkWidget::destroy)
+//! method available on all widgets.
 //! 
+//! The above example can be rewritten in separate functions as:
+//!
+//! ```
+//! use rstk::*;
+//! 
+//! fn setup(root: &impl rstk::TkWidget) {
+//!     let hello = rstk::make_label(root);
+//!     hello.text("Hello from Rust/Tk");
+//! 
+//!     hello.grid().layout();
+//! }
+//! 
+//! fn main() {
+//!     let root = rstk::start_wish();
+//! 
+//!     setup(&root);
+//! 
+//!     rstk::mainloop();
+//! }
+//! ```
+//!
 //! ## Low-level API 
 //! 
 //! The main wrapper aims to provide a rust-friendly, type-checked set of structs 
@@ -116,6 +146,9 @@ pub use label::*;
 pub mod label_frame;
 pub use label_frame::*;
 
+pub mod listbox;
+pub use listbox::*;
+
 pub mod menu;
 pub use menu::*;
 
@@ -125,17 +158,26 @@ pub use notebook::*;
 pub mod paned_window;
 pub use paned_window::*;
 
+pub mod progressbar;
+pub use progressbar::*;
+
 pub mod radio_button;
 pub use radio_button::*;
 
 pub mod scale;
 pub use scale::*;
 
+pub mod scrollbar;
+pub use scrollbar::*;
+
 pub mod separator;
 pub use separator::*;
 
 pub mod spinbox;
 pub use spinbox::*;
+
+pub mod text;
+pub use text::*;
 
 pub mod theme;
 pub use theme::*;
