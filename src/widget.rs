@@ -4,6 +4,7 @@
 
 use std::fmt;
 
+use super::font;
 use super::image;
 use super::wish;
 
@@ -49,7 +50,7 @@ pub trait TkWidget {
     /// * `option` - the option to read
     ///
     fn cget(&self, option: &str) -> String {
-        let msg = format!("{} cget {}", self.id(), option);
+        let msg = format!("puts [{} cget -{}] ; flush stdout", self.id(), option);
         wish::eval_wish(&msg)
     }
 
@@ -238,15 +239,20 @@ pub trait TkWidget {
 ///
 /// * also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_widget.htm#M6)
 ///
+/// Colours are specified as strings, by either:
+///
+/// * `name` - using one of the values in the tk [colours](https://tcl.tk/man/tcl8.6/TkCmd/colors.htm) list
+/// * `rgb` - as a 6-digit hexadecimal value in form "#RRGGBB"
+///
 pub trait TkLabelOptions: TkWidget {
     /// Specifies how to arrange the text relative to the image.
     fn compound(&self, value: Compound) {
-        compound(&self.id(), value);
+        configure(&self.id(), "compound", &value.to_string());
     }
 
     /// Specifies the font to use for text.
-    fn font(&self, definition: &str) {
-        configure(&self.id(), "font", definition);
+    fn font(&self, definition: &font::TkFont) {
+        configure(&self.id(), "font", &definition.to_string());
     }
 
     /// Specifies the foreground (text) colour.
@@ -609,17 +615,9 @@ pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent)->() + 
     wish::tell_wish(&msg);
 }
 
-pub(super) fn compound(wid: &str, value: Compound) {
-    configure(wid, "compound", &value.to_string());
-}
-
 pub(super) fn configure(wid: &str, option: &str, value: &str) {
     let msg = format!("{} configure -{} {{{}}}", wid, option, value);
     wish::tell_wish(&msg);
-}
-
-pub(super) fn justify(wid: &str, value: Justify) {
-    configure(wid, "justify", &value.to_string());
 }
 
 pub(super) fn padding(wid: &str, values: &[u32]) {
@@ -629,10 +627,6 @@ pub(super) fn padding(wid: &str, values: &[u32]) {
         value_str.push(' ');
     }
     configure(wid, "padding", &value_str);
-}
-
-pub(super) fn relief(wid: &str, value: Relief) {
-    configure(wid, "relief", &value.to_string());
 }
 
 // --------------------------------------------------------------------------

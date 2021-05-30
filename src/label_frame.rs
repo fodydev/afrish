@@ -80,7 +80,7 @@ impl TkLabelFrame {
 
     /// Style of border around frame
     pub fn relief(&self, value: widget::Relief) {
-        widget::relief(&self.id, value);
+        widget::configure(&self.id, "relief", &value.to_string());
     }
 
     /// Sets the state of the button (normal or disabled).

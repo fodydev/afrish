@@ -58,7 +58,7 @@ impl TkFrame {
 
     /// Style of border around frame
     pub fn relief(&self, value: widget::Relief) {
-        widget::relief(&self.id, value);
+        widget::configure(&self.id, "relief", &value.to_string());
     }
 
     /// Width of frame, in columns

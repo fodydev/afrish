@@ -35,6 +35,11 @@ impl widget::TkWidget for TkTopLevel {
 impl TkTopLevel {
 
     /// Specifies the background colour.
+    ///
+    /// Colours are specified as a string, by either:
+    ///
+    /// * `name` - using one of the values in the tk [colours](https://tcl.tk/man/tcl8.6/TkCmd/colors.htm) list
+    /// * `rgb` - as a 6-digit hexadecimal value in form "#RRGGBB"
     pub fn background(&self, colour: &str) {
         widget::configure(&self.id, "background", colour);
     }
@@ -131,7 +136,7 @@ impl TkTopLevel {
 
     /// Style of border around label.
     pub fn relief(&self, value: widget::Relief) {
-        widget::relief(&self.id, value);
+        widget::configure(&self.id, "relief", &value.to_string());
     }
 
     /// Sets if window can be resized vertically or horizontally.

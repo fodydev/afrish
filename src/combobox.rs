@@ -63,7 +63,7 @@ impl TkCombobox {
 
     /// Alignment of text within widget
     pub fn justify(&self, value: widget::Justify) {
-        widget::justify(&self.id, value);
+        widget::configure(&self.id, "justify", &value.to_string());
     }
 
     /// Sets the current value 

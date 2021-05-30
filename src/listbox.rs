@@ -53,6 +53,12 @@ impl grid::TkGridLayout for TkListbox {
 }
 
 impl TkListbox {
+    /// Adds item to end of list.
+    pub fn append(&self, item: &str) {
+        let msg = format!("{} insert end {{{}}}", &self.id, item);
+        wish::tell_wish(&msg);
+    }
+
     /// Size of border around listbox.
     pub fn border_width(&self, width: u32) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
@@ -89,12 +95,12 @@ impl TkListbox {
 
     /// Alignment of text within widget.
     pub fn justify(&self, value: widget::Justify) {
-        widget::justify(&self.id, value);
+        widget::configure(&self.id, "justify", &value.to_string());
     }
     
     /// Style of border around listbox.
     pub fn relief(&self, value: widget::Relief) {
-        widget::relief(&self.id, value);
+        widget::configure(&self.id, "relief", &value.to_string());
     }
 
     /// Selection mode, one of "single", "browse", "multiple" or "extended".

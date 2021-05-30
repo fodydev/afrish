@@ -86,6 +86,11 @@ impl grid::TkGridLayout for TkCanvas {
 
 impl TkCanvas {
     /// Colour of canvas background.
+    ///
+    /// Colours are specified as a string, by either:
+    ///
+    /// * `name` - using one of the values in the tk [colours](https://tcl.tk/man/tcl8.6/TkCmd/colors.htm) list
+    /// * `rgb` - as a 6-digit hexadecimal value in form "#RRGGBB"
     pub fn background(&self, colour: &str) {
         widget::configure(&self.id, "background", colour);
     }
@@ -156,7 +161,7 @@ impl TkCanvas {
             id,
         }
     }
-    
+
     /// Creates a polygon using slice of (x, y) coordinates.
     pub fn create_polygon(&self, points: &[(u32, u32)]) -> TkCanvasPolygon {
         let mut line_defn = String::from("");
@@ -205,7 +210,7 @@ impl TkCanvas {
 
     /// Style of interior relative to exterior.
     pub fn relief(&self, value: widget::Relief) {
-        widget::relief(&self.id, value);
+        widget::configure(&self.id, "relief", &value.to_string());
     }
 
     /// Sets the state of the widget.
@@ -503,7 +508,7 @@ impl TkCanvasOval {
     pub fn outline(&self, colour: &str) {
         self.configure("outline", colour);
     }
- 
+
     /// Width of outline, in pixels.
     pub fn width(&self, value: u32) {
         self.configure("width", &value.to_string());
@@ -620,7 +625,7 @@ impl TkCanvasText {
     pub fn anchor(&self, value: widget::Anchor) {
         self.configure("anchor", &value.to_string());
     }
-    
+
     /// Colour for line (same as Tk's "fill" option).
     pub fn colour(&self, colour: &str) {
         self.configure("fill", colour);
@@ -641,7 +646,7 @@ impl TkCanvasText {
 
     /// Alignment of text within its bounding region.
     pub fn justify(&self, value: widget::Justify) {
-        widget::justify(&self.id, value);
+        widget::configure(&self.id, "justify", &value.to_string());
     }
 
     /// Sets the text to display.

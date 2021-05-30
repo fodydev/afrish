@@ -44,13 +44,18 @@ impl TkEntry {
     }
 
     /// Specifies the foreground (text) colour.
+    ///
+    /// Colours are specified as a string, by either:
+    ///
+    /// * `name` - using one of the values in the tk [colours](https://tcl.tk/man/tcl8.6/TkCmd/colors.htm) list
+    /// * `rgb` - as a 6-digit hexadecimal value in form "#RRGGBB"
     pub fn foreground(&self, colour: &str) {
         widget::configure(&self.id, "foreground", colour);
     }
 
     /// Alignment of text within widget
     pub fn justify(&self, value: widget::Justify) {
-        widget::justify(&self.id, value);
+        widget::configure(&self.id, "justify", &value.to_string());
     }
 
     /// Used e.g. for a password, shows the given character instead of 

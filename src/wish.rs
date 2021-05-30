@@ -85,10 +85,10 @@ pub fn eval_wish(msg: &str) -> String {
     tell_wish(msg);
     
     unsafe {
-        let mut input = [32; 100];
+        let mut input = [32; 10000]; // TODO - long inputs can get split?
         if let Ok(_) = OUTPUT.get_mut().unwrap().read(&mut input) {
             if let Ok(input) = String::from_utf8(input.to_vec()) {
-                println!("Result {:?}", &input);
+                println!("Result {:?}", &input.trim());
                 return String::from(input).trim().to_string();
             }
         }
@@ -221,10 +221,10 @@ pub fn mainloop () {
     unsafe {
         let mut counter = 1;
         loop {
-            let mut input = [32; 100];
+            let mut input = [32; 10000];
             if let Ok(_) = OUTPUT.get_mut().unwrap().read(&mut input) {
                 if let Ok(input) = String::from_utf8(input.to_vec()) {
-                    println!("Input {:?}", &input);
+                    println!("Input {:?}", &input.trim());
 
                     // here - do a match or similar on what was read from wish
                     if input.starts_with("clicked") { // -- callbacks
@@ -274,9 +274,11 @@ pub fn mainloop () {
                         eval_callback1_float(widget, value);
 
                     } else if input.starts_with("font") { // -- callback 1 with font
-                        let font = String::from(input[4..].trim());
+                        let font = String::from(input[4..].trim()); 
                         println!("Callback with font |{}|", font);
-                        eval_callback1_font("font", font::TkFont { description: font });
+                        if let Ok(font) = font.parse::<font::TkFont>() {
+                            eval_callback1_font("font", font);
+                        }
 
                     } else if input.starts_with("exit") { // -- wish has exited
                         println!("Counter: {}", counter);
@@ -321,7 +323,9 @@ pub fn start_with(wish: &str) -> toplevel::TkTopLevel {
         input.write(b"option add *tearOff 0\n").unwrap();
         // tcl function to help working with font chooser
         input.write(b"proc font_choice {w font args} {
-            puts font$font
+            set res {font }
+            append res [font actual $font]
+            puts $res
             flush stdout
         }\n").unwrap();
         // tcl function to help working with scale widget

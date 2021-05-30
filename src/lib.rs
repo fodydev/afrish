@@ -185,6 +185,9 @@ pub use theme::*;
 pub mod toplevel;
 pub use toplevel::*;
 
+pub mod treeview;
+pub use treeview::*;
+
 pub mod widget;
 pub use widget::*;
 
