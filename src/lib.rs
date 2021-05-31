@@ -22,10 +22,10 @@
 //! A simple hello-world example:
 //! 
 //! ```
-//! use rstk;
+//! use rstk::*;
 //! 
 //! fn main() {
-//!   let root = rstk::start_wish();
+//!   let root = rstk::start_wish().unwrap();
 //! 
 //!   let hello = rstk::make_label(&root);
 //!   hello.text("Hello from Rust/Tk");
@@ -61,7 +61,7 @@
 //! }
 //! 
 //! fn main() {
-//!     let root = rstk::start_wish();
+//!     let root = rstk::start_wish().unwrap();
 //! 
 //!     setup(&root);
 //! 

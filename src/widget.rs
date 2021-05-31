@@ -492,21 +492,28 @@ impl fmt::Display for Relief {
 }
 
 /// Defines mode of selection.
+///
+/// Note: rstk diverges from the Tk terminology:
+///
+/// * 'Single' is equivalent to Tk's "browse"
+/// * 'Multiple' is equivalent to Tk's "extended"
+///
+/// (Tk's "single" and "multiple" options are now rarely used (see
+/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/listbox.htm#M56)).)
+///
 #[derive(Clone,Debug,PartialEq)]
 pub enum Selection {
-    Browse,
-    Extended,
     Multiple,
     Single,
+    None,
 }
 
 impl fmt::Display for Selection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let value = match self {
-            Selection::Browse => "browse",
-            Selection::Extended => "extended",
-            Selection::Multiple => "multiple",
-            Selection::Single => "single",
+            Selection::Multiple => "extended",
+            Selection::None => "none",
+            Selection::Single => "browse",
         };
         write!(f, "{}", &value)
     }

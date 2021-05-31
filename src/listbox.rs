@@ -103,9 +103,14 @@ impl TkListbox {
         widget::configure(&self.id, "relief", &value.to_string());
     }
 
-    /// Selection mode, one of "single", "browse", "multiple" or "extended".
+    /// Selection mode, one of "single" or "multiple" ("none" is made "single").
     pub fn selection_mode(&self, value: widget::Selection) {
-        widget::configure(&self.id, "selectmode", &value.to_string());
+        let value = if value == widget::Selection::None {
+            widget::Selection::Single.to_string() 
+        } else {
+            value.to_string() 
+        };
+        widget::configure(&self.id, "selectmode", &value);
     }
 
     /// Returns list of indices for selected items.

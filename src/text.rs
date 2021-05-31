@@ -1,4 +1,4 @@
-//! Text widget - TO COMPLETE
+//! Text widget
 //!
 //! A widget for displaying text.
 //!
