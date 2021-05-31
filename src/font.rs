@@ -276,81 +276,15 @@ pub fn tk_tooltip_font() -> TkFont {
     font_from_name("TkTooltipFont")
 }
 
-fn split_families(text: &str) -> Vec<String> {
-    let mut result: Vec<String> = vec![];
-
-    let mut remaining = text.trim();
-    while remaining.len() > 0 {
-        if let Some(start) = remaining.find('{') {
-            // -- add any words before first {
-            for word in remaining[..start].split_whitespace() {
-                result.push(String::from(word));
-            }
-
-            if let Some(end) = remaining.find('}') {
-                result.push(String::from(&remaining[start+1..end]));
-                remaining = remaining[end+1..].trim();
-            } else { // TODO keep what we have
-                break; // panic!("Incorrectly formed font family string");
-            }
-        } else {
-            // no { }, so just split all the words and end
-            for word in remaining.split_whitespace() {
-                result.push(String::from(word));
-            }
-            break;
-        }
-    }
-
-    result
-}
-
 /// Return list of font families available on current platform.
 pub fn font_families() -> Vec<String> {
     let result = wish::eval_wish("puts [font families] ; flush stdout");
-    split_families(&result)
+    wish::split_items(&result)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn split_families_1() {
-        let result = split_families("");
-        assert_eq!(0, result.len());
-    }
-
-    #[test]
-    fn split_families_2() {
-        let result = split_families("abc");
-        assert_eq!(1, result.len());
-        assert_eq!("abc", result[0]);
-    }
-
-    #[test]
-    fn split_families_3() {
-        let result = split_families("  abc  def  ");
-        assert_eq!(2, result.len());
-        assert_eq!("abc", result[0]);
-        assert_eq!("def", result[1]);
-    }
-
-    #[test]
-    fn split_families_4() {
-        let result = split_families("{abc def}");
-        assert_eq!(1, result.len());
-        assert_eq!("abc def", result[0]);
-    }
-
-    #[test]
-    fn split_families_5() {
-        let result = split_families("{abc def} xy_z {another}");
-        assert_eq!(3, result.len());
-        assert_eq!("abc def", result[0]);
-        assert_eq!("xy_z", result[1]);
-        assert_eq!("another", result[2]);
-    }
 
     #[test]
     fn font_to_str() {

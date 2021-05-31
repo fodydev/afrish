@@ -364,3 +364,75 @@ pub fn end_wish() {
     process::exit(0);
 }
 
+// Splits tcl string where items can be single words or grouped in {..}
+pub(super) fn split_items(text: &str) -> Vec<String> {
+    let mut result: Vec<String> = vec![];
+
+    let mut remaining = text.trim();
+    while remaining.len() > 0 {
+        if let Some(start) = remaining.find('{') {
+            // -- add any words before first {
+            for word in remaining[..start].split_whitespace() {
+                result.push(String::from(word));
+            }
+
+            if let Some(end) = remaining.find('}') {
+                result.push(String::from(&remaining[start+1..end]));
+                remaining = remaining[end+1..].trim();
+            } else { // TODO keep what we have
+                break; // panic!("Incorrectly formed font family string");
+            }
+        } else {
+            // no { }, so just split all the words and end
+            for word in remaining.split_whitespace() {
+                result.push(String::from(word));
+            }
+            break;
+        }
+    }
+
+    result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn split_items_1() {
+        let result = split_items("");
+        assert_eq!(0, result.len());
+    }
+
+    #[test]
+    fn split_items_2() {
+        let result = split_items("abc");
+        assert_eq!(1, result.len());
+        assert_eq!("abc", result[0]);
+    }
+
+    #[test]
+    fn split_items_3() {
+        let result = split_items("  abc  def  ");
+        assert_eq!(2, result.len());
+        assert_eq!("abc", result[0]);
+        assert_eq!("def", result[1]);
+    }
+
+    #[test]
+    fn split_items_4() {
+        let result = split_items("{abc def}");
+        assert_eq!(1, result.len());
+        assert_eq!("abc def", result[0]);
+    }
+
+    #[test]
+    fn split_items_5() {
+        let result = split_items("{abc def} xy_z {another}");
+        assert_eq!(3, result.len());
+        assert_eq!("abc def", result[0]);
+        assert_eq!("xy_z", result[1]);
+        assert_eq!("another", result[2]);
+    }
+}
+

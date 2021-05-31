@@ -64,6 +64,13 @@ pub struct TkCanvasText {
     pub id: String,
 }
 
+/// Refers to a canvas widget
+#[derive(Clone,Debug,PartialEq)]
+pub struct TkCanvasWidget {
+    pub canvas: String,
+    pub id: String,
+}
+
 /// Creates an instance of a canvas widget in given parent.
 pub fn make_canvas(parent: &impl widget::TkWidget) -> TkCanvas {
     let id = wish::next_wid(parent.id());
@@ -201,6 +208,25 @@ impl TkCanvas {
             canvas: self.id.clone(),
             id,
         }
+    }
+
+    /// Creates a widget at (x, y) according to given widget reference.
+    pub fn create_widget(&self, x: u32, y: u32, 
+                         widget: &impl widget::TkWidget) -> TkCanvasWidget {
+        let msg = format!("puts [{} create window {} {} {}] ; flush stdout", 
+                          &self.id, x, y, widget.id());
+        let id = wish::eval_wish(&msg);
+
+        TkCanvasWidget {
+            canvas: self.id.clone(),
+            id,
+        }
+    }
+
+    /// Deletes given item from canvas.
+    pub fn delete(&self, item: &impl TkCanvasItem) {
+        let msg = format!("{} delete {}", &self.id, item.id());
+        wish::tell_wish(&msg);
     }
 
     /// Height of canvas, in pixels.
@@ -664,3 +690,25 @@ impl TkCanvasText {
         self.configure("width", &value.to_string());
     }
 }
+
+impl TkCanvasItem for TkCanvasWidget {
+    fn canvas(&self) -> &str {
+        &self.canvas
+    }
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+}
+
+impl TkCanvasTags for TkCanvasWidget {
+}
+
+impl TkCanvasWidget {
+    /// Positioning of widget with respect to internal margins.
+    pub fn anchor(&self, value: widget::Anchor) {
+        self.configure("anchor", &value.to_string());
+    }
+}
+
+
