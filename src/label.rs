@@ -8,8 +8,8 @@ use super::grid;
 use super::widget;
 use super::wish;
 
-/// Refers to a label widget 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to a label widget
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkLabel {
     pub id: String,
 }
@@ -20,9 +20,7 @@ pub fn make_label(parent: &impl widget::TkWidget) -> TkLabel {
     let msg = format!("ttk::label {}", id);
     wish::tell_wish(&msg);
 
-    TkLabel {
-        id,
-    }
+    TkLabel { id }
 }
 
 impl widget::TkWidget for TkLabel {
@@ -31,10 +29,8 @@ impl widget::TkWidget for TkLabel {
         &self.id
     }
 }
-impl grid::TkGridLayout for TkLabel {
-}
-impl widget::TkLabelOptions for TkLabel {
-}
+impl grid::TkGridLayout for TkLabel {}
+impl widget::TkLabelOptions for TkLabel {}
 
 impl TkLabel {
     /// Positioning of information with respect to internal margins.
@@ -73,11 +69,10 @@ impl TkLabel {
         widget::configure(&self.id, "relief", &value.to_string());
     }
 
-    /// Sets the maximum line length, in pixels. 
-    /// When set, displayed text is separated into lines, not exceeding 
+    /// Sets the maximum line length, in pixels.
+    /// When set, displayed text is separated into lines, not exceeding
     /// the given length.
     pub fn wrap_length(&self, length: u32) {
         widget::configure(&self.id, "wraplength", &length.to_string());
     }
 }
-

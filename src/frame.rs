@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a frame widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkFrame {
     pub id: String,
 }
@@ -20,9 +20,7 @@ pub fn make_frame(parent: &impl widget::TkWidget) -> TkFrame {
     let msg = format!("ttk::frame {}", id);
     wish::tell_wish(&msg);
 
-    TkFrame {
-        id,
-    }
+    TkFrame { id }
 }
 
 impl widget::TkWidget for TkFrame {
@@ -31,8 +29,7 @@ impl widget::TkWidget for TkFrame {
         &self.id
     }
 }
-impl grid::TkGridLayout for TkFrame {
-}
+impl grid::TkGridLayout for TkFrame {}
 
 impl TkFrame {
     /// Size of border around frame
@@ -45,8 +42,8 @@ impl TkFrame {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
-    /// Padding to place around the frame. Takes 
-    /// an array of up to four values, specifying: 
+    /// Padding to place around the frame. Takes
+    /// an array of up to four values, specifying:
     ///
     /// * \[all]
     /// * [left-right top-bottom]
@@ -65,6 +62,4 @@ impl TkFrame {
     pub fn width(&self, width: u32) {
         widget::configure(&self.id, "width", &width.to_string());
     }
-
 }
-

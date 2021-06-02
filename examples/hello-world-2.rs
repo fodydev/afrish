@@ -8,7 +8,7 @@ fn setup(root: &impl rstk::TkWidget) {
 }
 
 fn main() {
-    let root = rstk::start_wish();
+    let root = rstk::start_wish().unwrap();
 
     setup(&root);
 

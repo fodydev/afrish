@@ -8,8 +8,8 @@ use super::grid;
 use super::widget;
 use super::wish;
 
-/// Refers to a button widget 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to a button widget
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkButton {
     pub id: String,
 }
@@ -20,9 +20,7 @@ pub fn make_button(parent: &impl widget::TkWidget) -> TkButton {
     let msg = format!("ttk::button {}", id);
     wish::tell_wish(&msg);
 
-    TkButton {
-        id,
-    }
+    TkButton { id }
 }
 
 impl widget::TkWidget for TkButton {
@@ -32,17 +30,18 @@ impl widget::TkWidget for TkButton {
     }
 }
 
-impl grid::TkGridLayout for TkButton {
-}
+impl grid::TkGridLayout for TkButton {}
 
-impl widget::TkLabelOptions for TkButton {
-}
+impl widget::TkLabelOptions for TkButton {}
 
 impl TkButton {
     /// Sets the function to be called when the button is clicked.
-    pub fn command(&self, command: impl Fn()->() + Send + 'static) {
+    pub fn command(&self, command: impl Fn() + Send + 'static) {
         wish::add_callback0(&self.id, wish::mk_callback0(command));
-        let msg = format!("{} configure -command {{ puts clicked-{} ; flush stdout }}", self.id, self.id);
+        let msg = format!(
+            "{} configure -command {{ puts clicked-{} ; flush stdout }}",
+            self.id, self.id
+        );
         wish::tell_wish(&msg);
     }
 
@@ -57,4 +56,3 @@ impl TkButton {
         widget::configure(&self.id, "state", &value.to_string());
     }
 }
-

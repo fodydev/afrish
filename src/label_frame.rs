@@ -1,6 +1,6 @@
 //! Label-frame widget
 //!
-//! A container widget for other widgets, like frames but with an optional 
+//! A container widget for other widgets, like frames but with an optional
 //! text label.
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_labelframe.htm)
@@ -21,9 +21,7 @@ pub fn make_label_frame(parent: &impl widget::TkWidget) -> TkLabelFrame {
     let msg = format!("ttk::labelframe {}", id);
     wish::tell_wish(&msg);
 
-    TkLabelFrame {
-        id,
-    }
+    TkLabelFrame { id }
 }
 
 impl widget::TkWidget for TkLabelFrame {
@@ -32,8 +30,7 @@ impl widget::TkWidget for TkLabelFrame {
         &self.id
     }
 }
-impl grid::TkGridLayout for TkLabelFrame {
-}
+impl grid::TkGridLayout for TkLabelFrame {}
 
 impl TkLabelFrame {
     /// Size of border around frame
@@ -62,13 +59,14 @@ impl TkLabelFrame {
             widget::Anchor::NW => "nw",
             widget::Anchor::Center | widget::Anchor::Centre => "center",
         };
-        if value != "center" { // ignore centre
+        if value != "center" {
+            // ignore centre
             widget::configure(&self.id, "anchor", value);
         }
     }
-    
-    /// Padding to place around the frame. Takes 
-    /// an array of up to four values, specifying: 
+
+    /// Padding to place around the frame. Takes
+    /// an array of up to four values, specifying:
     ///
     /// * \[all]
     /// * [left-right top-bottom]
@@ -102,6 +100,4 @@ impl TkLabelFrame {
     pub fn width(&self, width: u32) {
         widget::configure(&self.id, "width", &width.to_string());
     }
-
 }
-

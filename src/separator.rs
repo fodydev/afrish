@@ -8,21 +8,21 @@ use super::widget;
 use super::wish;
 
 /// Refers to a separator widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkSeparator {
     pub id: String,
 }
 
 /// Creates an instance of a separator in given parent.
-pub fn make_separator(parent: &impl widget::TkWidget,
-                      orientation: widget::Orientation) -> TkSeparator {
+pub fn make_separator(
+    parent: &impl widget::TkWidget,
+    orientation: widget::Orientation,
+) -> TkSeparator {
     let id = wish::next_wid(parent.id());
     let msg = format!("ttk::separator {} -orient {}", id, orientation);
     wish::tell_wish(&msg);
 
-    TkSeparator {
-        id,
-    }
+    TkSeparator { id }
 }
 
 impl widget::TkWidget for TkSeparator {
@@ -32,5 +32,4 @@ impl widget::TkWidget for TkSeparator {
     }
 }
 
-impl grid::TkGridLayout for TkSeparator {
-}
+impl grid::TkGridLayout for TkSeparator {}

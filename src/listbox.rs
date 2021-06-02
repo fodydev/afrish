@@ -14,8 +14,8 @@ use super::grid;
 use super::widget;
 use super::wish;
 
-/// Refers to a listbox widget 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to a listbox widget
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkListbox {
     pub id: String,
 }
@@ -37,9 +37,7 @@ pub fn make_listbox(parent: &impl widget::TkWidget, values: &[&str]) -> TkListbo
     let msg = format!("{} selection set 0", id);
     wish::tell_wish(&msg);
 
-    TkListbox {
-        id,
-    }
+    TkListbox { id }
 }
 
 impl widget::TkWidget for TkListbox {
@@ -49,8 +47,7 @@ impl widget::TkWidget for TkListbox {
     }
 }
 
-impl grid::TkGridLayout for TkListbox {
-}
+impl grid::TkGridLayout for TkListbox {}
 
 impl TkListbox {
     /// Adds item to end of list.
@@ -63,7 +60,7 @@ impl TkListbox {
     pub fn border_width(&self, width: u32) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
     }
-    
+
     /// Delete item at given index.
     pub fn delete(&self, index: u32) {
         let msg = format!("{} delete {}", &self.id, index);
@@ -74,7 +71,7 @@ impl TkListbox {
     pub fn font(&self, definition: &str) {
         widget::configure(&self.id, "font", definition);
     }
-    
+
     /// Height of listbox, in rows.
     pub fn height(&self, height: u32) {
         widget::configure(&self.id, "height", &height.to_string());
@@ -88,8 +85,10 @@ impl TkListbox {
 
     /// Set configuration option for given item index.
     pub fn item_configure(&self, index: u32, option: &str, value: &str) {
-        let msg = format!("{} itemconfigure {} -{} {{{}}}",
-                          &self.id, index, option, value);
+        let msg = format!(
+            "{} itemconfigure {} -{} {{{}}}",
+            &self.id, index, option, value
+        );
         wish::tell_wish(&msg);
     }
 
@@ -97,7 +96,7 @@ impl TkListbox {
     pub fn justify(&self, value: widget::Justify) {
         widget::configure(&self.id, "justify", &value.to_string());
     }
-    
+
     /// Style of border around listbox.
     pub fn relief(&self, value: widget::Relief) {
         widget::configure(&self.id, "relief", &value.to_string());
@@ -106,9 +105,9 @@ impl TkListbox {
     /// Selection mode, one of "single" or "multiple" ("none" is made "single").
     pub fn selection_mode(&self, value: widget::Selection) {
         let value = if value == widget::Selection::None {
-            widget::Selection::Single.to_string() 
+            widget::Selection::Single.to_string()
         } else {
-            value.to_string() 
+            value.to_string()
         };
         widget::configure(&self.id, "selectmode", &value);
     }

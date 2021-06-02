@@ -9,7 +9,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a top-level widget (window)
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkTopLevel {
     pub id: String,
 }
@@ -20,9 +20,7 @@ pub fn make_toplevel(parent: &impl widget::TkWidget) -> TkTopLevel {
     let msg = format!("toplevel {}", id);
     wish::tell_wish(&msg);
 
-    TkTopLevel {
-        id,
-    }
+    TkTopLevel { id }
 }
 
 impl widget::TkWidget for TkTopLevel {
@@ -33,7 +31,6 @@ impl widget::TkWidget for TkTopLevel {
 }
 
 impl TkTopLevel {
-
     /// Specifies the background colour.
     ///
     /// Colours are specified as a string, by either:
@@ -64,7 +61,7 @@ impl TkTopLevel {
     /// Retrieves the geometry of the window.
     ///
     /// TODO: parse out of tcl format
-    pub fn geometry(&self) -> String {
+    pub fn geometry_get(&self) -> String {
         let msg = format!("puts [wm geometry {}] ; flush stdout", self.id);
         wish::eval_wish(&msg)
     }
@@ -77,14 +74,17 @@ impl TkTopLevel {
     ///         and a negative value gives position relative to _right_ edge.
     /// * `y` - a positive value gives position relative to _top_ edge of screen,
     ///         and a negative value gives position relative to _bottom_ edge.
-    pub fn geometry_set(&self, width: u32, height: u32, x: i32, y: i32) {
-        let msg = format!("wm geometry {} {}x{}{}{}{}{}",
-                          self.id,
-                          width, height,
-                          if x < 0 { "-" } else { "+" },
-                          x.abs(),
-                          if y < 0 { "-" } else { "+" },
-                          y.abs());
+    pub fn geometry(&self, width: u32, height: u32, x: i32, y: i32) {
+        let msg = format!(
+            "wm geometry {} {}x{}{}{}{}{}",
+            self.id,
+            width,
+            height,
+            if x < 0 { "-" } else { "+" },
+            x.abs(),
+            if y < 0 { "-" } else { "+" },
+            y.abs()
+        );
         wish::tell_wish(&msg);
     }
 
@@ -117,10 +117,12 @@ impl TkTopLevel {
     }
 
     /// Call given command on closing the window.
-    pub fn on_close(&self, command: impl Fn()->() + Send + 'static) {
+    pub fn on_close(&self, command: impl Fn() + Send + 'static) {
         wish::add_callback0(&self.id, wish::mk_callback0(command));
-        let msg = format!("wm protocol {} WM_DELETE_WINDOW {{ puts clicked-{} ; flush stdout }}", 
-                          self.id, self.id);
+        let msg = format!(
+            "wm protocol {} WM_DELETE_WINDOW {{ puts clicked-{} ; flush stdout }}",
+            self.id, self.id
+        );
         wish::tell_wish(&msg);
     }
 
@@ -141,10 +143,12 @@ impl TkTopLevel {
 
     /// Sets if window can be resized vertically or horizontally.
     pub fn resizable(&self, width: bool, height: bool) {
-        let msg = format!("wm resizable {} {} {}",
-                          self.id,
-                          if width { "1" } else { "0" },
-                          if height { "1" } else { "0" });
+        let msg = format!(
+            "wm resizable {} {} {}",
+            self.id,
+            if width { "1" } else { "0" },
+            if height { "1" } else { "0" }
+        );
         wish::tell_wish(&msg);
     }
 
@@ -169,6 +173,4 @@ impl TkTopLevel {
         let msg = format!("wm withdraw {}", self.id);
         wish::tell_wish(&msg);
     }
-
- 
 }

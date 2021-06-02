@@ -8,8 +8,8 @@ use super::grid;
 use super::widget;
 use super::wish;
 
-/// Refers to an entry widget 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to an entry widget
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkEntry {
     pub id: String,
     var: String,
@@ -22,10 +22,7 @@ pub fn make_entry(parent: &impl widget::TkWidget) -> TkEntry {
     let msg = format!("ttk::entry {} -textvariable {}", id, var);
     wish::tell_wish(&msg);
 
-    TkEntry {
-        id,
-        var,
-    }
+    TkEntry { id, var }
 }
 
 impl widget::TkWidget for TkEntry {
@@ -34,8 +31,7 @@ impl widget::TkWidget for TkEntry {
         &self.id
     }
 }
-impl grid::TkGridLayout for TkEntry {
-}
+impl grid::TkGridLayout for TkEntry {}
 
 impl TkEntry {
     /// Specifies the font to use for text.
@@ -58,7 +54,7 @@ impl TkEntry {
         widget::configure(&self.id, "justify", &value.to_string());
     }
 
-    /// Used e.g. for a password, shows the given character instead of 
+    /// Used e.g. for a password, shows the given character instead of
     /// what is typed.
     pub fn show(&self, c: char) {
         widget::configure(&self.id, "show", &c.to_string());
@@ -69,8 +65,8 @@ impl TkEntry {
         widget::configure(&self.id, "state", &value.to_string());
     }
 
-    /// Returns the current entry value 
-    pub fn value(&self) -> String {
+    /// Returns the current entry value
+    pub fn value_get(&self) -> String {
         let msg = format!("puts ${} ; flush stdout", self.var);
         wish::eval_wish(&msg)
     }
@@ -81,4 +77,3 @@ impl TkEntry {
         wish::tell_wish(&msg);
     }
 }
-

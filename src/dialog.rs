@@ -1,19 +1,19 @@
 //! Dialogs
 //!
-//! All of the dialogs (apart from the font chooser) are built using a 
-//! "builder" style. The named function creates a relevant struct value, 
-//! and then functions on the relevant TkWIDGET struct alter the 
+//! All of the dialogs (apart from the font chooser) are built using a
+//! "builder" style. The named function creates a relevant struct value,
+//! and then functions on the relevant TkWIDGET struct alter the
 //! default values in that struct, until finally calling `show`
 //! will set up and display the dialog.
 //!
-//! There is only one font chooser dialog instance, and commands are 
+//! There is only one font chooser dialog instance, and commands are
 //! provided to interact with it directly.
 //!
 //! # Message boxes
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/messageBox.htm)
 //!
-//! The message-box is used to set up a simple alert, confirmation or 
+//! The message-box is used to set up a simple alert, confirmation or
 //! information dialog:
 //!
 //! ```
@@ -46,7 +46,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to the settings for TkMessageBox.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkMessageBox {
     default: Option<String>,
     detail: Option<String>,
@@ -71,7 +71,6 @@ pub fn message_box() -> TkMessageBox {
 }
 
 impl TkMessageBox {
-
     /// Sets name used for default button.
     pub fn default(&mut self, name: &str) -> &mut Self {
         self.default = Some(String::from(name));
@@ -119,12 +118,12 @@ impl TkMessageBox {
     /// Returns a string for the name of the button pressed.
     ///
     pub fn show(&self) -> String {
-        let mut msg = format!("puts [tk_messageBox ");
+        let mut msg = String::from("puts [tk_messageBox ");
 
         if let Some(default) = &self.default {
             msg.push_str(&format!("-default {{{}}} ", default));
         }
-        
+
         if let Some(detail) = &self.detail {
             msg.push_str(&format!("-detail {{{}}} ", detail));
         }
@@ -151,7 +150,7 @@ impl TkMessageBox {
 }
 
 /// Refers to the settings for TkColourChooser.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkColourChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -168,7 +167,6 @@ pub fn colour_chooser() -> TkColourChooser {
 }
 
 impl TkColourChooser {
-
     /// Sets parent widget - dialog is usually shown relative to parent.
     pub fn parent(&mut self, value: &toplevel::TkTopLevel) -> &mut Self {
         self.parent = Some(String::from(&value.id));
@@ -200,7 +198,7 @@ impl TkColourChooser {
     /// * `None` - if cancel pressed.
     ///
     pub fn show(&self) -> Option<String> {
-        let mut msg = format!("puts [tk_chooseColor ");
+        let mut msg = String::from("puts [tk_chooseColor ");
 
         if let Some(parent) = &self.parent {
             msg.push_str(&format!("-parent {} ", parent));
@@ -217,7 +215,7 @@ impl TkColourChooser {
         msg.push_str("] ; flush stdout");
 
         let result = wish::eval_wish(&msg);
-        if result == "" {
+        if result.is_empty() {
             None
         } else {
             Some(result)
@@ -226,7 +224,7 @@ impl TkColourChooser {
 }
 
 /// Refers to the settings for TkDirectoryChooser.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkDirectoryChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -245,7 +243,6 @@ pub fn directory_chooser() -> TkDirectoryChooser {
 }
 
 impl TkDirectoryChooser {
-
     /// Sets parent widget - dialog is usually shown relative to parent.
     pub fn parent(&mut self, value: &toplevel::TkTopLevel) -> &mut Self {
         self.parent = Some(String::from(&value.id));
@@ -278,7 +275,7 @@ impl TkDirectoryChooser {
     /// * `None` - if cancel pressed.
     ///
     pub fn show(&self) -> Option<String> {
-        let mut msg = format!("puts [tk_chooseDirectory ");
+        let mut msg = String::from("puts [tk_chooseDirectory ");
 
         if let Some(parent) = &self.parent {
             msg.push_str(&format!("-parent {} ", parent));
@@ -292,14 +289,15 @@ impl TkDirectoryChooser {
             msg.push_str(&format!("-initialdir {{{}}} ", initial));
         }
 
-        if self.must_exist { // default is false, so only change for true
-            msg.push_str(&format!("-mustexist 1 "));
+        if self.must_exist {
+            // default is false, so only change for true
+            msg.push_str("-mustexist 1 ");
         }
 
         msg.push_str("] ; flush stdout");
 
         let result = wish::eval_wish(&msg);
-        if result == "" {
+        if result.is_empty() {
             None
         } else {
             Some(result)
@@ -308,7 +306,7 @@ impl TkDirectoryChooser {
 }
 
 /// Refers to the settings for TkOpenFileChooser.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkOpenFileChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -329,7 +327,6 @@ pub fn open_file_chooser() -> TkOpenFileChooser {
 }
 
 impl TkOpenFileChooser {
-
     /// Sets parent widget - dialog is usually shown relative to parent.
     pub fn parent(&mut self, value: &toplevel::TkTopLevel) -> &mut Self {
         self.parent = Some(String::from(&value.id));
@@ -380,7 +377,7 @@ impl TkOpenFileChooser {
     /// * `None` - if cancel pressed.
     ///
     pub fn show(&self) -> Option<String> {
-        let mut msg = format!("puts [tk_getOpenFile ");
+        let mut msg = String::from("puts [tk_getOpenFile ");
 
         if let Some(parent) = &self.parent {
             msg.push_str(&format!("-parent {} ", parent));
@@ -391,7 +388,7 @@ impl TkOpenFileChooser {
         }
 
         if let Some(types) = &self.file_types {
-            if types.len() > 0 {
+            if !types.is_empty() {
                 msg.push_str("-filetypes {");
 
                 for (txt, pat) in types {
@@ -413,7 +410,7 @@ impl TkOpenFileChooser {
         msg.push_str("] ; flush stdout");
 
         let result = wish::eval_wish(&msg);
-        if result == "" {
+        if result.is_empty() {
             None
         } else {
             Some(result)
@@ -422,7 +419,7 @@ impl TkOpenFileChooser {
 }
 
 /// Refers to the settings for TkSaveFileChooser.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkSaveFileChooser {
     parent: Option<String>,
     title: Option<String>,
@@ -445,7 +442,6 @@ pub fn save_file_chooser() -> TkSaveFileChooser {
 }
 
 impl TkSaveFileChooser {
-
     /// Sets parent widget - dialog is usually shown relative to parent.
     pub fn parent(&mut self, value: &toplevel::TkTopLevel) -> &mut Self {
         self.parent = Some(String::from(&value.id));
@@ -458,8 +454,8 @@ impl TkSaveFileChooser {
         self
     }
 
-    /// Set (by default) to show a warning dialog if user attempts to 
-    /// select an existing filename. Call this to unset and remove the 
+    /// Set (by default) to show a warning dialog if user attempts to
+    /// select an existing filename. Call this to unset and remove the
     /// warning.
     pub fn confirm_overwrite(&mut self, value: bool) -> &mut Self {
         self.confirm_overwrite = value;
@@ -504,7 +500,7 @@ impl TkSaveFileChooser {
     /// * `None` - if cancel pressed.
     ///
     pub fn show(&self) -> Option<String> {
-        let mut msg = format!("puts [tk_getSaveFile ");
+        let mut msg = String::from("puts [tk_getSaveFile ");
 
         if let Some(parent) = &self.parent {
             msg.push_str(&format!("-parent {} ", parent));
@@ -514,11 +510,13 @@ impl TkSaveFileChooser {
             msg.push_str(&format!("-title {{{}}} ", title));
         }
 
-        msg.push_str(&format!("-confirmoverwrite {} ",
-                              if self.confirm_overwrite { "1" } else { "0" }));
+        msg.push_str(&format!(
+            "-confirmoverwrite {} ",
+            if self.confirm_overwrite { "1" } else { "0" }
+        ));
 
         if let Some(types) = &self.file_types {
-            if types.len() > 0 {
+            if !types.is_empty() {
                 msg.push_str("-filetypes {");
 
                 for (txt, pat) in types {
@@ -540,7 +538,7 @@ impl TkSaveFileChooser {
         msg.push_str("] ; flush stdout");
 
         let result = wish::eval_wish(&msg);
-        if result == "" {
+        if result.is_empty() {
             None
         } else {
             Some(result)
@@ -563,16 +561,15 @@ pub fn font_chooser_title(title: &str) {
 }
 
 /// Set the command to be called when a font is chosen.
-pub fn font_chooser_command(command: impl Fn(font::TkFont)->() + Send + 'static) {
+pub fn font_chooser_command(command: impl Fn(font::TkFont) + Send + 'static) {
     wish::add_callback1_font("font", wish::mk_callback1_font(command));
-    let msg = format!("tk fontchooser configure -command [list font_choice font]");
-    println!("{}", msg);
+    let msg = "tk fontchooser configure -command [list font_choice font]";
     wish::tell_wish(&msg);
 }
 
 /// Get the font for the font-chooser.
-pub fn font_chooser_font() -> String {
-    let msg = format!("tk fontchooser configure -font ");
+pub fn font_chooser_font_get() -> String {
+    let msg = "tk fontchooser configure -font ";
     wish::eval_wish(&msg)
 }
 
@@ -584,21 +581,19 @@ pub fn font_chooser_font_set(font: &str) {
 
 /// Hide the font-chooser, making it not visible.
 pub fn font_chooser_hide() {
-    let msg = format!("tk fontchooser hide");
+    let msg = "tk fontchooser hide";
     wish::tell_wish(&msg);
 }
 
 /// Show the font-chooser, making it visible.
 pub fn font_chooser_show() {
-    let msg = format!("tk fontchooser show");
+    let msg = "tk fontchooser show";
     wish::tell_wish(&msg);
 }
 
 /// Check if the font-chooser is currently visible.
 pub fn font_chooser_visible() -> bool {
-    let msg = format!("tk fontchooser configure -visible ");
+    let msg = "tk fontchooser configure -visible ";
     let result = wish::eval_wish(&msg);
     result == "1"
 }
-
-

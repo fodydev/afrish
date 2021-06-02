@@ -2,7 +2,7 @@
 //!
 //! Functions to list and set the overall theme
 //! (look and feel) of the Tk program.
-//! 
+//!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_style.htm#M17)
 
 use super::wish;
@@ -18,7 +18,7 @@ use super::wish;
 ///     println!(" - {}", theme);
 /// }
 /// ```
-/// 
+///
 /// Lists the themes (on Linux):
 ///
 /// ```text

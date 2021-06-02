@@ -1,6 +1,6 @@
 //! Paned-window widget.
-//! 
-//! A container widget which contains multiple panes. 
+//!
+//! A container widget which contains multiple panes.
 //! Resizable sizers separate each pane.
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_panedwindow.htm)
@@ -10,22 +10,22 @@ use super::widget;
 use super::wish;
 
 /// Refers to a paned-window widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkPanedWindow {
     pub id: String,
 }
 
-/// Creates an instance of a paned-window, in given parent. 
+/// Creates an instance of a paned-window, in given parent.
 /// Child panes will be stacked based on given orientation.
-pub fn make_paned_window(parent: &impl widget::TkWidget,
-                         orientation: widget::Orientation) -> TkPanedWindow {
+pub fn make_paned_window(
+    parent: &impl widget::TkWidget,
+    orientation: widget::Orientation,
+) -> TkPanedWindow {
     let id = wish::next_wid(parent.id());
     let msg = format!("ttk::panedwindow {} -orient {}", id, orientation);
     wish::tell_wish(&msg);
 
-    TkPanedWindow {
-        id,
-    }
+    TkPanedWindow { id }
 }
 
 impl widget::TkWidget for TkPanedWindow {
@@ -34,8 +34,7 @@ impl widget::TkWidget for TkPanedWindow {
         &self.id
     }
 }
-impl grid::TkGridLayout for TkPanedWindow {
-}
+impl grid::TkGridLayout for TkPanedWindow {}
 
 impl TkPanedWindow {
     /// Adds given widget to the pane.
@@ -69,7 +68,13 @@ impl TkPanedWindow {
 
     /// Inserts given widget to the pane at given index position with given weight.
     pub fn insert_weighted(&self, index: u32, pane: &impl widget::TkWidget, weight: u32) {
-        let msg = format!("{} insert {} {} -weight {}", self.id, index, pane.id(), weight);
+        let msg = format!(
+            "{} insert {} {} -weight {}",
+            self.id,
+            index,
+            pane.id(),
+            weight
+        );
         wish::tell_wish(&msg);
     }
 

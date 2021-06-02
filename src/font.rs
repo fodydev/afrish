@@ -1,13 +1,13 @@
 //! Fonts
 //!
-//! Tk provides a lot of control over font objects. 
+//! Tk provides a lot of control over font objects.
 //!
 //! Defining a new customised font can be done using the struct and its defaults.
 //! For example, creating a bold Helvetica font with size 12:
 //!
 //! ```
-//! let font = rstk::TkFont { family: "Helvetica", 
-//!                             size: 12, 
+//! let font = rstk::TkFont { family: "Helvetica",
+//!                             size: 12,
 //!                             weight: rstk::Weight::Bold,
 //!                             ..Default::default() // completes the remaining values
 //! };
@@ -22,9 +22,9 @@ use super::wish;
 
 /// Defines possible weights for font: normal and bold.
 /// See Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M27)
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Weight {
-    Normal, 
+    Normal,
     Bold,
 }
 
@@ -39,14 +39,16 @@ impl fmt::Display for Weight {
 }
 
 impl Default for Weight {
-    fn default() -> Self { Weight::Normal }
+    fn default() -> Self {
+        Weight::Normal
+    }
 }
 
 /// Defines possible slants for font: roman and italic.
 /// See Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M28)
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Slant {
-    Italic, 
+    Italic,
     Roman,
 }
 
@@ -61,11 +63,13 @@ impl fmt::Display for Slant {
 }
 
 impl Default for Slant {
-    fn default() -> Self { Slant::Roman }
+    fn default() -> Self {
+        Slant::Roman
+    }
 }
 
 /// Information on a font's metrics.
-#[derive(Clone,Debug,Default,PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct TkFontMetrics {
     pub ascent: u32,
     pub descent: u32,
@@ -75,7 +79,7 @@ pub struct TkFontMetrics {
 
 impl fmt::Display for TkFontMetrics {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut font = String::from("");
+        let mut font = String::new();
 
         font.push_str(&format!("-ascent {} ", self.ascent));
         font.push_str(&format!("-descent {} ", self.descent));
@@ -95,7 +99,9 @@ impl str::FromStr for TkFontMetrics {
     /// Parse from the {-option value} representation for font metrics,
     /// as described in 5th point of Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M19)
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut font = TkFontMetrics { ..Default::default() };
+        let mut font = TkFontMetrics {
+            ..Default::default()
+        };
 
         for part in s.split('-') {
             if part.starts_with("ascent") {
@@ -120,7 +126,7 @@ impl str::FromStr for TkFontMetrics {
 }
 
 /// A font definition.
-#[derive(Clone,Debug,Default,PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct TkFont {
     pub family: String,
     pub size: u32,
@@ -132,14 +138,20 @@ pub struct TkFont {
 
 impl fmt::Display for TkFont {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut font = String::from("");
+        let mut font = String::new();
 
         font.push_str(&format!("-family {{{}}} ", self.family));
         font.push_str(&format!("-size {} ", self.size));
         font.push_str(&format!("-weight {} ", self.weight));
         font.push_str(&format!("-slant {} ", self.slant));
-        font.push_str(&format!("-underline {} ", if self.underline { "1" } else { "0" }));
-        font.push_str(&format!("-overstrike {} ", if self.overstrike { "1" } else { "0" }));
+        font.push_str(&format!(
+            "-underline {} ",
+            if self.underline { "1" } else { "0" }
+        ));
+        font.push_str(&format!(
+            "-overstrike {} ",
+            if self.overstrike { "1" } else { "0" }
+        ));
 
         write!(f, "{}", &font)
     }
@@ -154,7 +166,9 @@ impl str::FromStr for TkFont {
     /// Parse from the {-option value} representation for fonts,
     /// as described in 5th point of Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M13)
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut font = TkFont { ..Default::default() };
+        let mut font = TkFont {
+            ..Default::default()
+        };
 
         for part in s.split('-') {
             if part.starts_with("family") {
@@ -187,15 +201,17 @@ impl str::FromStr for TkFont {
 }
 
 impl TkFont {
-
     /// Returns width in pixels of text if displayed with this font.
     pub fn measure(&self, text: &str) -> u32 {
-        let msg = format!("puts [font measure {{{}}} {{{}}}] ; flush stdout", 
-                          self, text);
+        let msg = format!(
+            "puts [font measure {{{}}} {{{}}}] ; flush stdout",
+            self, text
+        );
         let result = wish::eval_wish(&msg);
         if let Ok(value) = result.parse::<u32>() {
             value
-        } else { // TODO can this fail?
+        } else {
+            // TODO can this fail?
             0
         }
     }
@@ -206,20 +222,25 @@ impl TkFont {
         let result = wish::eval_wish(&msg);
         if let Ok(value) = result.parse::<TkFontMetrics>() {
             value
-        } else { // TODO can this fail?
-            TkFontMetrics { ..Default::default() }
+        } else {
+            // TODO can this fail?
+            TkFontMetrics {
+                ..Default::default()
+            }
         }
     }
 }
 
-// Returns a font definition obtained by reading font 
+// Returns a font definition obtained by reading font
 // description for named font from wish.
 fn font_from_name(name: &str) -> TkFont {
- let msg = format!("puts [font actual {}] ; flush stdout", name);
- let result = wish::eval_wish(&msg);
+    let msg = format!("puts [font actual {}] ; flush stdout", name);
+    let result = wish::eval_wish(&msg);
 
- // assume this cannot error
- result.parse::<TkFont>().unwrap_or(TkFont{ ..Default::default() })
+    // assume this cannot error
+    result.parse::<TkFont>().unwrap_or(TkFont {
+        ..Default::default()
+    })
 }
 
 /// Retrieves copy of standard default font: see tk
@@ -294,10 +315,12 @@ mod tests {
             ..Default::default()
         };
         let font_str = font.to_string();
-        assert_eq!("-family {Helvetica} -size 14 -weight normal -slant roman -underline 0 -overstrike 0 ",
-                   font_str);
+        assert_eq!(
+            "-family {Helvetica} -size 14 -weight normal -slant roman -underline 0 -overstrike 0 ",
+            font_str
+        );
     }
-    
+
     #[test]
     fn font_to_str_2() {
         let font = TkFont {
@@ -312,27 +335,34 @@ mod tests {
 
     #[test]
     fn str_to_font() {
-        let font_str = "-family {Helvetica} -size 14 -weight normal -slant italic -underline 0 -overstrike 1";
+        let font_str =
+            "-family {Helvetica} -size 14 -weight normal -slant italic -underline 0 -overstrike 1";
         let font = font_str.parse::<TkFont>().unwrap();
-        assert_eq!(TkFont {
-            family: String::from("Helvetica"),
-            size: 14,
-            slant: Slant::Italic,
-            overstrike: true,
-            ..Default::default()
-        }, font);
+        assert_eq!(
+            TkFont {
+                family: String::from("Helvetica"),
+                size: 14,
+                slant: Slant::Italic,
+                overstrike: true,
+                ..Default::default()
+            },
+            font
+        );
     }
 
     #[test]
     fn str_to_font_2() {
         let font_str = "-family {Helvetica Special} -size 14 -weight normal -slant italic -underline 0 -overstrike 1";
         let font = font_str.parse::<TkFont>().unwrap();
-        assert_eq!(TkFont {
-            family: String::from("Helvetica Special"),
-            size: 14,
-            slant: Slant::Italic,
-            overstrike: true,
-            ..Default::default()
-        }, font);
+        assert_eq!(
+            TkFont {
+                family: String::from("Helvetica Special"),
+                size: 14,
+                slant: Slant::Italic,
+                overstrike: true,
+                ..Default::default()
+            },
+            font
+        );
     }
 }

@@ -16,7 +16,7 @@ use super::widget;
 use super::wish;
 
 /// Refers to a notebook widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkNotebook {
     pub id: String,
 }
@@ -27,9 +27,7 @@ pub fn make_notebook(parent: &impl widget::TkWidget) -> TkNotebook {
     let msg = format!("ttk::notebook {}", id);
     wish::tell_wish(&msg);
 
-    TkNotebook {
-        id,
-    }
+    TkNotebook { id }
 }
 
 impl widget::TkWidget for TkNotebook {
@@ -39,14 +37,12 @@ impl widget::TkWidget for TkNotebook {
     }
 }
 
-impl grid::TkGridLayout for TkNotebook {
-}
+impl grid::TkGridLayout for TkNotebook {}
 
 impl TkNotebook {
     /// TODO: use builder pattern to support images+text
     pub fn add(&self, widget: &impl widget::TkWidget, title: &str) {
-        let msg = format!("{} add {} -text {{{}}}", 
-                          self.id, widget.id(), title);
+        let msg = format!("{} add {} -text {{{}}}", self.id, widget.id(), title);
         wish::tell_wish(&msg);
     }
 
@@ -55,8 +51,8 @@ impl TkNotebook {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
-    /// Sets space around the widget. Takes 
-    /// an array of up to four values, specifying: 
+    /// Sets space around the widget. Takes
+    /// an array of up to four values, specifying:
     ///
     /// * \[all]
     /// * [left-right top-bottom]
@@ -71,4 +67,3 @@ impl TkNotebook {
         widget::configure(&self.id, "width", &width.to_string());
     }
 }
-

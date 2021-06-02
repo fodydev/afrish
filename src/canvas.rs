@@ -10,62 +10,62 @@ use super::widget;
 use super::wish;
 
 /// Refers to a canvas widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvas {
     pub id: String,
 }
 
 /// Refers to a canvas arc
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasArc {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas image
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasImage {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas line
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasLine {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas oval
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasOval {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas polygon
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasPolygon {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas rectangle
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasRectangle {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas text
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasText {
     pub canvas: String,
     pub id: String,
 }
 
 /// Refers to a canvas widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkCanvasWidget {
     pub canvas: String,
     pub id: String,
@@ -77,9 +77,7 @@ pub fn make_canvas(parent: &impl widget::TkWidget) -> TkCanvas {
     let msg = format!("canvas {}", id);
     wish::tell_wish(&msg);
 
-    TkCanvas {
-        id,
-    }
+    TkCanvas { id }
 }
 
 impl widget::TkWidget for TkCanvas {
@@ -88,8 +86,7 @@ impl widget::TkWidget for TkCanvas {
         &self.id
     }
 }
-impl grid::TkGridLayout for TkCanvas {
-}
+impl grid::TkGridLayout for TkCanvas {}
 
 impl TkCanvas {
     /// Colour of canvas background.
@@ -109,16 +106,20 @@ impl TkCanvas {
 
     /// Configures the item(s) with given tag.
     pub fn configure_tag(&self, tag: &str, option: &str, value: &str) {
-        let msg = format!("{} itemconfigure {} -{} {{{}}}", 
-                          &self.id, tag, option, value);
+        let msg = format!(
+            "{} itemconfigure {} -{} {{{}}}",
+            &self.id, tag, option, value
+        );
         wish::tell_wish(&msg);
     }
 
     /// Creates an arc where (x1, y1) (x2, y2) define a rectangle
     /// enclosing the oval which defines the arc.
     pub fn create_arc(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasArc {
-        let msg = format!("puts [{} create arc {} {} {} {}] ; flush stdout", 
-                          &self.id, x1, y1, x2, y2);
+        let msg = format!(
+            "puts [{} create arc {} {} {} {}] ; flush stdout",
+            &self.id, x1, y1, x2, y2
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasArc {
@@ -129,8 +130,10 @@ impl TkCanvas {
 
     /// Creates an image at (x, y) according to given image reference.
     pub fn create_image(&self, x: u32, y: u32, image: &image::TkImage) -> TkCanvasImage {
-        let msg = format!("puts [{} create image {} {} {}] ; flush stdout", 
-                          &self.id, x, y, &image.id);
+        let msg = format!(
+            "puts [{} create image {} {} {}] ; flush stdout",
+            &self.id, x, y, &image.id
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasImage {
@@ -141,13 +144,15 @@ impl TkCanvas {
 
     /// Creates a line using slice of (x, y) coordinates.
     pub fn create_line(&self, points: &[(u32, u32)]) -> TkCanvasLine {
-        let mut line_defn = String::from("");
+        let mut line_defn = String::new();
         for (x, y) in points {
             line_defn.push_str(&format!("{} {} ", x, y));
         }
 
-        let msg = format!("puts [{} create line {}] ; flush stdout", 
-                          &self.id, &line_defn);
+        let msg = format!(
+            "puts [{} create line {}] ; flush stdout",
+            &self.id, &line_defn
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasLine {
@@ -159,8 +164,10 @@ impl TkCanvas {
     /// Creates an oval where (x1, y1) (x2, y2) define a rectangle
     /// enclosing the oval.
     pub fn create_oval(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasOval {
-        let msg = format!("puts [{} create oval {} {} {} {}] ; flush stdout", 
-                          &self.id, x1, y1, x2, y2);
+        let msg = format!(
+            "puts [{} create oval {} {} {} {}] ; flush stdout",
+            &self.id, x1, y1, x2, y2
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasOval {
@@ -171,13 +178,15 @@ impl TkCanvas {
 
     /// Creates a polygon using slice of (x, y) coordinates.
     pub fn create_polygon(&self, points: &[(u32, u32)]) -> TkCanvasPolygon {
-        let mut line_defn = String::from("");
+        let mut line_defn = String::new();
         for (x, y) in points {
             line_defn.push_str(&format!("{} {} ", x, y));
         }
 
-        let msg = format!("puts [{} create polygon {}] ; flush stdout", 
-                          &self.id, &line_defn);
+        let msg = format!(
+            "puts [{} create polygon {}] ; flush stdout",
+            &self.id, &line_defn
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasPolygon {
@@ -188,8 +197,10 @@ impl TkCanvas {
 
     /// Creates a rectangle with opposite corners (x1, y1) (x2, y2).
     pub fn create_rectangle(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasRectangle {
-        let msg = format!("puts [{} create rectangle {} {} {} {}] ; flush stdout", 
-                          &self.id, x1, y1, x2, y2);
+        let msg = format!(
+            "puts [{} create rectangle {} {} {} {}] ; flush stdout",
+            &self.id, x1, y1, x2, y2
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasRectangle {
@@ -200,8 +211,10 @@ impl TkCanvas {
 
     /// Creates a text item at (x, y) with given contents.
     pub fn create_text(&self, x: u32, y: u32, text: &str) -> TkCanvasText {
-        let msg = format!("puts [{} create text {} {} {{{}}}] ; flush stdout", 
-                          &self.id, x, y, text);
+        let msg = format!(
+            "puts [{} create text {} {} {{{}}}] ; flush stdout",
+            &self.id, x, y, text
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasText {
@@ -211,10 +224,14 @@ impl TkCanvas {
     }
 
     /// Creates a widget at (x, y) according to given widget reference.
-    pub fn create_widget(&self, x: u32, y: u32, 
-                         widget: &impl widget::TkWidget) -> TkCanvasWidget {
-        let msg = format!("puts [{} create window {} {} {}] ; flush stdout", 
-                          &self.id, x, y, widget.id());
+    pub fn create_widget(&self, x: u32, y: u32, widget: &impl widget::TkWidget) -> TkCanvasWidget {
+        let msg = format!(
+            "puts [{} create window {} {} {}] ; flush stdout",
+            &self.id,
+            x,
+            y,
+            widget.id()
+        );
         let id = wish::eval_wish(&msg);
 
         TkCanvasWidget {
@@ -258,19 +275,29 @@ pub trait TkCanvasItem {
     fn id(&self) -> &str;
 
     /// Binds event to item.
-    fn bind(&self, pattern: &str, command: impl Fn(widget::TkEvent)->() + Send + 'static) {
+    fn bind(&self, pattern: &str, command: impl Fn(widget::TkEvent) + Send + 'static) {
         // tag+pattern used as identifier, as multiple commands can be bound to each entity
-        let tag_pattern = format!("{}{}{}", self.canvas(), self.id(), pattern);  
+        let tag_pattern = format!("{}{}{}", self.canvas(), self.id(), pattern);
         wish::add_callback1_event(&tag_pattern, wish::mk_callback1_event(command));
-        let msg = format!("{} bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
-                          self.canvas(), self.id(), pattern, tag_pattern);
-        wish::tell_wish(&msg); 
+        let msg = format!(
+            "{} bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
+            self.canvas(),
+            self.id(),
+            pattern,
+            tag_pattern
+        );
+        wish::tell_wish(&msg);
     }
 
     /// Configures the individual item.
     fn configure(&self, option: &str, value: &str) {
-        let msg = format!("{} itemconfigure {} -{} {{{}}}", 
-                          self.canvas(), self.id(), option, value);
+        let msg = format!(
+            "{} itemconfigure {} -{} {{{}}}",
+            self.canvas(),
+            self.id(),
+            option,
+            value
+        );
         wish::tell_wish(&msg);
     }
 }
@@ -280,15 +307,13 @@ pub trait TkCanvasItem {
 pub trait TkCanvasTags: TkCanvasItem {
     /// Adds given tag to this canvas item.
     fn add_tag(&self, tag: &str) {
-        let msg = format!("{} addtag {} withtag {}", 
-                          &self.canvas(), tag, &self.id());
+        let msg = format!("{} addtag {} withtag {}", &self.canvas(), tag, &self.id());
         wish::tell_wish(&msg);
     }
 
     /// Deletes tag from this canvas item.
     fn delete_tag(&self, tag: &str) {
-        let msg = format!("{} dtag {} {}", 
-                          &self.canvas(), &self.id(), tag);
+        let msg = format!("{} dtag {} {}", &self.canvas(), &self.id(), tag);
         wish::tell_wish(&msg);
     }
 
@@ -353,8 +378,7 @@ impl TkCanvasItem for TkCanvasArc {
     }
 }
 
-impl TkCanvasTags for TkCanvasArc {
-}
+impl TkCanvasTags for TkCanvasArc {}
 
 impl TkCanvasArc {
     /// Pattern for drawing line.
@@ -416,8 +440,7 @@ impl TkCanvasItem for TkCanvasImage {
     }
 }
 
-impl TkCanvasTags for TkCanvasImage {
-}
+impl TkCanvasTags for TkCanvasImage {}
 
 impl TkCanvasImage {
     /// Positioning of image with respect to internal margins.
@@ -436,8 +459,7 @@ impl TkCanvasItem for TkCanvasLine {
     }
 }
 
-impl TkCanvasTags for TkCanvasLine {
-}
+impl TkCanvasTags for TkCanvasLine {}
 
 impl TkCanvasLine {
     /// Colour for line (same as Tk's "fill" option).
@@ -510,8 +532,7 @@ impl TkCanvasItem for TkCanvasOval {
     }
 }
 
-impl TkCanvasTags for TkCanvasOval {
-}
+impl TkCanvasTags for TkCanvasOval {}
 
 impl TkCanvasOval {
     /// Pattern for drawing line.
@@ -551,8 +572,7 @@ impl TkCanvasItem for TkCanvasPolygon {
     }
 }
 
-impl TkCanvasTags for TkCanvasPolygon {
-}
+impl TkCanvasTags for TkCanvasPolygon {}
 
 impl TkCanvasPolygon {
     /// Pattern for drawing line.
@@ -602,8 +622,7 @@ impl TkCanvasItem for TkCanvasRectangle {
     }
 }
 
-impl TkCanvasTags for TkCanvasRectangle {
-}
+impl TkCanvasTags for TkCanvasRectangle {}
 
 impl TkCanvasRectangle {
     /// Pattern for drawing line.
@@ -643,8 +662,7 @@ impl TkCanvasItem for TkCanvasText {
     }
 }
 
-impl TkCanvasTags for TkCanvasText {
-}
+impl TkCanvasTags for TkCanvasText {}
 
 impl TkCanvasText {
     /// Positioning of image with respect to internal margins.
@@ -701,8 +719,7 @@ impl TkCanvasItem for TkCanvasWidget {
     }
 }
 
-impl TkCanvasTags for TkCanvasWidget {
-}
+impl TkCanvasTags for TkCanvasWidget {}
 
 impl TkCanvasWidget {
     /// Positioning of widget with respect to internal margins.
@@ -710,5 +727,3 @@ impl TkCanvasWidget {
         self.configure("anchor", &value.to_string());
     }
 }
-
-

@@ -1,7 +1,7 @@
 //! Progressbar widget
 //!
 //! A widget providing feedback on progress through a task.
-//! 
+//!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_progressbar.htm)
 //!
 
@@ -10,25 +10,26 @@ use super::widget;
 use super::wish;
 
 /// Refers to a progressbar widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkProgressbar {
     pub id: String,
     mode: widget::ProgressMode,
 }
 
 /// Creates an instance of a progressbar in given parent.
-pub fn make_progressbar(parent: &impl widget::TkWidget,
-                        orientation: widget::Orientation,
-                        mode: widget::ProgressMode) -> TkProgressbar {
+pub fn make_progressbar(
+    parent: &impl widget::TkWidget,
+    orientation: widget::Orientation,
+    mode: widget::ProgressMode,
+) -> TkProgressbar {
     let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::progressbar {} -orient {} -mode {}", 
-                      id, orientation, mode);
+    let msg = format!(
+        "ttk::progressbar {} -orient {} -mode {}",
+        id, orientation, mode
+    );
     wish::tell_wish(&msg);
 
-    TkProgressbar {
-        id,
-        mode,
-    }
+    TkProgressbar { id, mode }
 }
 
 impl widget::TkWidget for TkProgressbar {
@@ -38,8 +39,7 @@ impl widget::TkWidget for TkProgressbar {
     }
 }
 
-impl grid::TkGridLayout for TkProgressbar {
-}
+impl grid::TkGridLayout for TkProgressbar {}
 
 impl TkProgressbar {
     /// Displayed length of progress bar in pixels.
@@ -52,7 +52,7 @@ impl TkProgressbar {
         widget::configure(&self.id, "maximum", &value.to_string());
     }
 
-    /// Starts auto-increment for the progress bar, updating 
+    /// Starts auto-increment for the progress bar, updating
     /// after every 'interval' milliseconds (50 is recommended).
     pub fn start(&self, interval: u32) {
         let msg = format!("{} start {}", &self.id, interval);
@@ -77,7 +77,7 @@ impl TkProgressbar {
     }
 
     /// Returns the current value of the progress bar.
-    pub fn value(&self) -> f32 {
+    pub fn value_get(&self) -> f32 {
         let result = widget::TkWidget::cget(self, "value");
         if let Ok(value) = result.parse::<f32>() {
             value
@@ -87,7 +87,7 @@ impl TkProgressbar {
     }
 
     /// Sets the value of the progress bar.
-    pub fn value_set(&self, value: f32) {
+    pub fn value(&self, value: f32) {
         widget::configure(&self.id, "value", &value.to_string());
     }
 }

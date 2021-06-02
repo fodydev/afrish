@@ -10,23 +10,20 @@ use super::grid;
 use super::widget;
 use super::wish;
 
-/// Refers to a scale widget 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to a scale widget
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkScale {
     pub id: String,
 }
 
 /// Creates an instance of a scale widget in given parent,
 /// with given orientation.
-pub fn make_scale(parent: &impl widget::TkWidget,
-                  orientation: widget::Orientation) -> TkScale {
+pub fn make_scale(parent: &impl widget::TkWidget, orientation: widget::Orientation) -> TkScale {
     let id = wish::next_wid(parent.id());
     let msg = format!("ttk::scale {} -orient {}", id, orientation);
     wish::tell_wish(&msg);
 
-    TkScale {
-        id,
-    }
+    TkScale { id }
 }
 
 impl widget::TkWidget for TkScale {
@@ -36,15 +33,16 @@ impl widget::TkWidget for TkScale {
     }
 }
 
-impl grid::TkGridLayout for TkScale {
-}
+impl grid::TkGridLayout for TkScale {}
 
 impl TkScale {
     /// Sets the function to be called whenever the scale value is changed.
-    pub fn command (&self, command: impl Fn(f32)->() + Send + 'static) {
+    pub fn command(&self, command: impl Fn(f32) + Send + 'static) {
         wish::add_callback1_float(&self.id, wish::mk_callback1_float(command));
-        let msg = format!("{} configure -command [list scale_value {}]", 
-                          self.id, self.id);
+        let msg = format!(
+            "{} configure -command [list scale_value {}]",
+            self.id, self.id
+        );
         wish::tell_wish(&msg);
     }
 
@@ -59,7 +57,7 @@ impl TkScale {
     }
 
     /// Retrieves the scale's value.
-    pub fn value(&self) -> f32 {
+    pub fn value_get(&self) -> f32 {
         let msg = format!("puts [{} get] ; flush stdout", self.id);
         let result = wish::eval_wish(&msg);
         if let Ok(value) = result.parse::<f32>() {
@@ -70,7 +68,7 @@ impl TkScale {
     }
 
     /// Set the scale's value.
-    pub fn value_set(&self, value: f32) {
+    pub fn value(&self, value: f32) {
         widget::configure(&self.id, "value", &value.to_string());
     }
 
@@ -84,4 +82,3 @@ impl TkScale {
         widget::configure(&self.id, "state", &value.to_string());
     }
 }
-

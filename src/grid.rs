@@ -25,7 +25,7 @@ use super::wish;
 /// Apart from `layout`, the methods on this struct set the values of different
 /// options in a builder style: call `layout` to finish the layout.
 ///
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct GridLayout {
     id: String,
     column: Option<u32>,
@@ -56,64 +56,64 @@ impl GridLayout {
     }
 
     /// Specifies the (0-indexed) column in which to place this widget.
-    pub fn column (&mut self, column: u32) -> &mut Self {
+    pub fn column(&mut self, column: u32) -> &mut Self {
         self.column = Some(column);
         self
     }
 
     /// The number of columns this widget should span.
-    pub fn column_span (&mut self, span: u32) -> &mut Self {
+    pub fn column_span(&mut self, span: u32) -> &mut Self {
         self.column_span = Some(span);
         self
     }
 
     /// Horizontal padding (inside content border).
-    pub fn ipadx (&mut self, pad: u32) -> &mut Self {
+    pub fn ipadx(&mut self, pad: u32) -> &mut Self {
         self.ipadx = Some(pad);
         self
     }
 
     /// Vertical padding (inside content border).
-    pub fn ipady (&mut self, pad: u32) -> &mut Self {
+    pub fn ipady(&mut self, pad: u32) -> &mut Self {
         self.ipady = Some(pad);
         self
     }
 
     /// Horizontal padding (outside content border).
-    pub fn padx (&mut self, pad: u32) -> &mut Self {
+    pub fn padx(&mut self, pad: u32) -> &mut Self {
         self.padx = Some(pad);
         self
     }
 
     /// Vertical padding (outside content border).
-    pub fn pady (&mut self, pad: u32) -> &mut Self {
+    pub fn pady(&mut self, pad: u32) -> &mut Self {
         self.pady = Some(pad);
         self
     }
 
     /// Specifies the (0-indexed) row in which to place this widget.
-    pub fn row (&mut self, row: u32) -> &mut Self {
+    pub fn row(&mut self, row: u32) -> &mut Self {
         self.row = Some(row);
         self
     }
 
     /// Number of rows this widget should span.
-    pub fn row_span (&mut self, span: u32) -> &mut Self {
+    pub fn row_span(&mut self, span: u32) -> &mut Self {
         self.row_span = Some(span);
         self
     }
 
-    /// When a widget is smaller than its containing space, this 
+    /// When a widget is smaller than its containing space, this
     /// setting controls how the widget is expanded or positioned
     /// within that space.
-    pub fn sticky (&mut self, sticky: widget::Sticky) -> &mut Self {
+    pub fn sticky(&mut self, sticky: widget::Sticky) -> &mut Self {
         self.sticky = sticky;
         self
     }
 
-    /// Called last to finally create the layout with the parameter values 
+    /// Called last to finally create the layout with the parameter values
     /// set up by the builder.
-    pub fn layout (&self) {
+    pub fn layout(&self) {
         let mut msg = format!("grid {} ", self.id);
         if let Some(column) = self.column {
             msg.push_str(&format!("-column {} ", column));
@@ -167,4 +167,3 @@ pub trait TkGridLayout: widget::TkWidget {
         wish::tell_wish(&msg);
     }
 }
-

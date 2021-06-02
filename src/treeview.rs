@@ -1,6 +1,6 @@
 //! Treeview widget
 //!
-//! A combined tree/list-view widget, for displaying hierarchical data with 
+//! A combined tree/list-view widget, for displaying hierarchical data with
 //! multiple values.
 //!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm)
@@ -27,14 +27,14 @@ use super::image;
 use super::widget;
 use super::wish;
 
-/// Refers to a treeview widget 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to a treeview widget
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkTreeview {
     pub id: String,
 }
 
-/// Refers to a treeview item 
-#[derive(Clone,Debug,PartialEq)]
+/// Refers to a treeview item
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkTreeviewItem {
     pub treeview: String,
     pub id: String,
@@ -46,9 +46,7 @@ pub fn make_treeview(parent: &impl widget::TkWidget) -> TkTreeview {
     let msg = format!("ttk::treeview {}", id);
     wish::tell_wish(&msg);
 
-    TkTreeview {
-        id,
-    }
+    TkTreeview { id }
 }
 
 impl widget::TkWidget for TkTreeview {
@@ -58,14 +56,13 @@ impl widget::TkWidget for TkTreeview {
     }
 }
 
-impl grid::TkGridLayout for TkTreeview {
-}
+impl grid::TkGridLayout for TkTreeview {}
 
 impl TkTreeview {
-    /// Defines the names for the columns, used when referring to 
+    /// Defines the names for the columns, used when referring to
     /// headings, columns or values.
     pub fn columns(&self, columns: &[&str]) {
-        let mut columns_str = String::from("");
+        let mut columns_str = String::new();
         for column in columns {
             columns_str.push('{');
             columns_str.push_str(column);
@@ -73,37 +70,36 @@ impl TkTreeview {
             columns_str.push(' ');
         }
 
-        let msg = format!("{} configure -columns {{{}}}", 
-                          &self.id, columns_str);
+        let msg = format!("{} configure -columns {{{}}}", &self.id, columns_str);
         wish::tell_wish(&msg);
     }
 
     /// Set the alignment for the given column.
     pub fn column_anchor(&self, column: &str, value: widget::Anchor) {
-        let msg = format!("{} column {} -anchor {}", 
-                          &self.id, column, value);
+        let msg = format!("{} column {} -anchor {}", &self.id, column, value);
         wish::tell_wish(&msg);
     }
 
     /// Set whether the given column should 'stretch' when treeview is resized.
     pub fn column_stretch(&self, column: &str, value: bool) {
-        let msg = format!("{} column {} -stretch {}", 
-                          &self.id, column, 
-                          if value { "1" } else { "0" });
+        let msg = format!(
+            "{} column {} -stretch {}",
+            &self.id,
+            column,
+            if value { "1" } else { "0" }
+        );
         wish::tell_wish(&msg);
     }
 
     /// Set the minimum-width in pixels for the given column.
     pub fn column_min_width(&self, column: &str, value: u32) {
-        let msg = format!("{} column {} -minwidth {}", 
-                          &self.id, column, value);
+        let msg = format!("{} column {} -minwidth {}", &self.id, column, value);
         wish::tell_wish(&msg);
     }
 
     /// Set the width in pixels for the given column.
     pub fn column_width(&self, column: &str, value: u32) {
-        let msg = format!("{} column {} -width {}", 
-                          &self.id, column, value);
+        let msg = format!("{} column {} -width {}", &self.id, column, value);
         wish::tell_wish(&msg);
     }
 
@@ -120,22 +116,19 @@ impl TkTreeview {
 
     /// Set the heading text for the given column.
     pub fn heading_text(&self, column: &str, title: &str) {
-        let msg = format!("{} heading {} -text {{{}}}", 
-                          &self.id, column, title);
+        let msg = format!("{} heading {} -text {{{}}}", &self.id, column, title);
         wish::tell_wish(&msg);
     }
 
     /// Set the heading image for the given column.
     pub fn heading_image(&self, column: &str, image: &image::TkImage) {
-        let msg = format!("{} heading {} -image {}", 
-                          &self.id, column, &image.id);
+        let msg = format!("{} heading {} -image {}", &self.id, column, &image.id);
         wish::tell_wish(&msg);
     }
 
     /// Set the heading alignment for the given column.
     pub fn heading_anchor(&self, column: &str, value: widget::Anchor) {
-        let msg = format!("{} heading {} -anchor {}", 
-                          &self.id, column, value);
+        let msg = format!("{} heading {} -anchor {}", &self.id, column, value);
         wish::tell_wish(&msg);
     }
 
@@ -167,12 +160,8 @@ impl TkTreeview {
     }
 
     /// Moves a given item to become a child of given parent.
-    pub fn move_item(&self, 
-                     child: &TkTreeviewItem, 
-                     parent: &TkTreeviewItem, 
-                     index: u32) {
-        let msg = format!("{} move {} {} {}",
-                          &self.id, &child.id, &parent.id, index);
+    pub fn move_item(&self, child: &TkTreeviewItem, parent: &TkTreeviewItem, index: u32) {
+        let msg = format!("{} move {} {} {}", &self.id, &child.id, &parent.id, index);
         wish::tell_wish(&msg);
     }
 
@@ -196,7 +185,7 @@ impl TkTreeview {
 
         result
     }
-    
+
     /// Shows both the tree and headers (default setting).
     pub fn show_all(&self) {
         widget::configure(&self.id, "show", "tree headings");
@@ -213,31 +202,34 @@ impl TkTreeview {
     }
 
     /// Binds event to given tag.
-    pub fn tag_bind(&self, 
-                    tag: &str, 
-                    pattern: &str, command: impl Fn(widget::TkEvent)->() + Send + 'static) {
+    pub fn tag_bind(
+        &self,
+        tag: &str,
+        pattern: &str,
+        command: impl Fn(widget::TkEvent) + Send + 'static,
+    ) {
         // id+tag+pattern used as identifier
-        let tag_pattern = format!("{}{}{}", &self.id, tag, pattern);  
+        let tag_pattern = format!("{}{}{}", &self.id, tag, pattern);
         wish::add_callback1_event(&tag_pattern, wish::mk_callback1_event(command));
-        let msg = format!("{} tag bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
-                          &self.id, tag, pattern, tag_pattern);
-        wish::tell_wish(&msg); 
+        let msg = format!(
+            "{} tag bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
+            &self.id, tag, pattern, tag_pattern
+        );
+        wish::tell_wish(&msg);
     }
 
     /// Formatting is applied to tags using configuration options.
     ///
-    /// For the available options, see the Tk 
+    /// For the available options, see the Tk
     /// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm#M72)
     pub fn tag_configure(&self, tag: &str, option: &str, value: &str) {
-        let msg = format!("{} tag configure {} -{} {}",
-                          &self.id, tag, option, value);
+        let msg = format!("{} tag configure {} -{} {}", &self.id, tag, option, value);
         wish::tell_wish(&msg);
     }
 
     /// Returns a list of all the tag names defined in this text widget.
     pub fn tag_names(&self) -> Vec<String> {
-        let msg = format!("puts [{} tag names] ; flush stdout",
-                          &self.id);
+        let msg = format!("puts [{} tag names] ; flush stdout", &self.id);
         let result = wish::eval_wish(&msg);
         wish::split_items(&result)
     }
@@ -246,28 +238,25 @@ impl TkTreeview {
 impl TkTreeviewItem {
     /// Deletes this widget from tree.
     pub fn delete(&self) {
-        let msg = format!("{} delete {}",
-                          &self.treeview, &self.id);
+        let msg = format!("{} delete {}", &self.treeview, &self.id);
         wish::tell_wish(&msg);
     }
 
     /// Sets the text label for the item.
     pub fn text(&self, value: &str) {
-        let msg = format!("{} item {} -text {{{}}}",
-                          &self.treeview, &self.id, value);
+        let msg = format!("{} item {} -text {{{}}}", &self.treeview, &self.id, value);
         wish::tell_wish(&msg);
     }
 
     /// Sets an image to display on the item.
     pub fn image(&self, image: &image::TkImage) {
-        let msg = format!("{} item {} -image {}",
-                          &self.treeview, &self.id, &image.id);
+        let msg = format!("{} item {} -image {}", &self.treeview, &self.id, &image.id);
         wish::tell_wish(&msg);
     }
 
     /// The list of values to display for this item.
     pub fn values(&self, values: &[&str]) {
-        let mut values_str = String::from("");
+        let mut values_str = String::new();
         for value in values {
             values_str.push('{');
             values_str.push_str(value);
@@ -275,23 +264,30 @@ impl TkTreeviewItem {
             values_str.push(' ');
         }
 
-        let msg = format!("{} item {} -values {{{}}}",
-                          &self.treeview, &self.id, values_str);
+        let msg = format!(
+            "{} item {} -values {{{}}}",
+            &self.treeview, &self.id, values_str
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets item state to be open or closed.
     pub fn open(&self, value: bool) {
-        let msg = format!("{} item {} -open {}",
-                          &self.treeview, &self.id,
-                          if value { "1" } else { "0" });
+        let msg = format!(
+            "{} item {} -open {}",
+            &self.treeview,
+            &self.id,
+            if value { "1" } else { "0" }
+        );
         wish::tell_wish(&msg);
     }
 
     /// Returns true/false if item is open or closed.
     pub fn is_open(&self) -> bool {
-        let msg = format!("puts [{} item {} -open] ; flush stdout",
-                          &self.treeview, &self.id);
+        let msg = format!(
+            "puts [{} item {} -open] ; flush stdout",
+            &self.treeview, &self.id
+        );
         let result = wish::eval_wish(&msg);
 
         result == "1"
@@ -299,7 +295,10 @@ impl TkTreeviewItem {
 
     /// Create a new item at end of this treeview item.
     pub fn insert_item(&self) -> TkTreeviewItem {
-        let msg = format!("puts [{} insert {} end] ; flush stdout ", &self.treeview, &self.id);
+        let msg = format!(
+            "puts [{} insert {} end] ; flush stdout ",
+            &self.treeview, &self.id
+        );
         let result = wish::eval_wish(&msg);
 
         TkTreeviewItem {
@@ -308,10 +307,13 @@ impl TkTreeviewItem {
         }
     }
 
-    /// Create a new top-level item at given index position of this 
+    /// Create a new top-level item at given index position of this
     /// treeview item.
     pub fn insert_item_at(&self, index: u32) -> TkTreeviewItem {
-        let msg = format!("puts [{} insert {} {}] ; flush stdout", &self.treeview, &self.id, index);
+        let msg = format!(
+            "puts [{} insert {} {}] ; flush stdout",
+            &self.treeview, &self.id, index
+        );
         let result = wish::eval_wish(&msg);
 
         TkTreeviewItem {
@@ -320,14 +322,16 @@ impl TkTreeviewItem {
         }
     }
 
-    /// Returns an Option type containing the parent item if found, or 
+    /// Returns an Option type containing the parent item if found, or
     /// None if this is a top-level item.
     pub fn parent(&self) -> Option<TkTreeviewItem> {
-        let msg = format!("puts [{} parent {}] ; flush stdout",
-                          &self.treeview, &self.id);
+        let msg = format!(
+            "puts [{} parent {}] ; flush stdout",
+            &self.treeview, &self.id
+        );
         let result = wish::eval_wish(&msg);
 
-        if result == "" || result == "{}" {
+        if result.is_empty() || result == "{}" {
             None
         } else {
             Some(TkTreeviewItem {
@@ -337,15 +341,14 @@ impl TkTreeviewItem {
         }
     }
 
-    /// Returns an Option type containing the previous item to 
-    /// this one in its list, if found, or None if this is the 
+    /// Returns an Option type containing the previous item to
+    /// this one in its list, if found, or None if this is the
     /// first child of its parent.
     pub fn previous(&self) -> Option<TkTreeviewItem> {
-        let msg = format!("puts [{} prev {}] ; flush stdout",
-                          &self.treeview, &self.id);
+        let msg = format!("puts [{} prev {}] ; flush stdout", &self.treeview, &self.id);
         let result = wish::eval_wish(&msg);
 
-        if result == "" || result == "{}" {
+        if result.is_empty() || result == "{}" {
             None
         } else {
             Some(TkTreeviewItem {
@@ -355,15 +358,14 @@ impl TkTreeviewItem {
         }
     }
 
-    /// Returns an Option type containing the next item to 
-    /// this one in its list, if found, or None if this is the 
+    /// Returns an Option type containing the next item to
+    /// this one in its list, if found, or None if this is the
     /// last child of its parent.
     pub fn next(&self) -> Option<TkTreeviewItem> {
-        let msg = format!("puts [{} next {}] ; flush stdout",
-                          &self.treeview, &self.id);
+        let msg = format!("puts [{} next {}] ; flush stdout", &self.treeview, &self.id);
         let result = wish::eval_wish(&msg);
 
-        if result == "" || result == "{}" {
+        if result.is_empty() || result == "{}" {
             None
         } else {
             Some(TkTreeviewItem {
@@ -375,8 +377,10 @@ impl TkTreeviewItem {
 
     /// Returns a list of child items of given node.
     pub fn children(&self) -> Vec<TkTreeviewItem> {
-        let msg = format!("puts [{} children {}] ; flush stdout",
-                          &self.treeview, &self.id);
+        let msg = format!(
+            "puts [{} children {}] ; flush stdout",
+            &self.treeview, &self.id
+        );
         let result = wish::eval_wish(&msg);
 
         let mut children: Vec<TkTreeviewItem> = vec![];
@@ -399,13 +403,15 @@ impl TkTreeviewItem {
 
     /// Checks if this item has current tag.
     pub fn tag_has(&self, tag: &str) -> bool {
-        let msg = format!("puts [{} tag has {{{}}} {}] ; flush stdout", 
-                          &self.treeview, tag, &self.id);
+        let msg = format!(
+            "puts [{} tag has {{{}}} {}] ; flush stdout",
+            &self.treeview, tag, &self.id
+        );
         let result = wish::eval_wish(&msg);
-        
+
         result == "1"
     }
-    
+
     /// Removes a tag from this item.
     pub fn tag_remove(&self, tag: &str) {
         let msg = format!("{} tag remove {{{}}} {}", &self.treeview, tag, &self.id);

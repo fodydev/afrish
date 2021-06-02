@@ -10,45 +10,49 @@ use super::widget;
 use super::wish;
 
 /// Refers to a scrollbar widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkScrollbar {
     pub id: String,
 }
 
-/// Creates an instance of an horizontal scrollbar in given parent item, 
+/// Creates an instance of an horizontal scrollbar in given parent item,
 /// connected to associated widget.
 ///
-pub fn make_horizontal_scrollbar(parent: &impl widget::TkWidget,
-                                 widget: &impl widget::TkWidget) -> TkScrollbar {
+pub fn make_horizontal_scrollbar(
+    parent: &impl widget::TkWidget,
+    widget: &impl widget::TkWidget,
+) -> TkScrollbar {
     let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::scrollbar {} -orient horizontal -command {{{} xview}}", 
-                      id, widget.id());
+    let msg = format!(
+        "ttk::scrollbar {} -orient horizontal -command {{{} xview}}",
+        id,
+        widget.id()
+    );
     wish::tell_wish(&msg);
-    let msg = format!("{} configure -xscrollcommand {{{} set}}",
-                      widget.id(), id);
+    let msg = format!("{} configure -xscrollcommand {{{} set}}", widget.id(), id);
     wish::tell_wish(&msg);
 
-    TkScrollbar {
-        id,
-    }
+    TkScrollbar { id }
 }
 
-/// Creates an instance of a vertical scrollbar in given parent item, 
+/// Creates an instance of a vertical scrollbar in given parent item,
 /// connected to associated widget.
 ///
-pub fn make_vertical_scrollbar(parent: &impl widget::TkWidget,
-                               widget: &impl widget::TkWidget) -> TkScrollbar {
+pub fn make_vertical_scrollbar(
+    parent: &impl widget::TkWidget,
+    widget: &impl widget::TkWidget,
+) -> TkScrollbar {
     let id = wish::next_wid(parent.id());
-    let msg = format!("ttk::scrollbar {} -orient vertical -command {{{} yview}}", 
-                      id, widget.id());
+    let msg = format!(
+        "ttk::scrollbar {} -orient vertical -command {{{} yview}}",
+        id,
+        widget.id()
+    );
     wish::tell_wish(&msg);
-    let msg = format!("{} configure -yscrollcommand {{{} set}}",
-                      widget.id(), id);
+    let msg = format!("{} configure -yscrollcommand {{{} set}}", widget.id(), id);
     wish::tell_wish(&msg);
 
-    TkScrollbar {
-        id,
-    }
+    TkScrollbar { id }
 }
 
 impl widget::TkWidget for TkScrollbar {
@@ -58,8 +62,6 @@ impl widget::TkWidget for TkScrollbar {
     }
 }
 
-impl grid::TkGridLayout for TkScrollbar {
-}
+impl grid::TkGridLayout for TkScrollbar {}
 
-impl TkScrollbar {
-}
+impl TkScrollbar {}

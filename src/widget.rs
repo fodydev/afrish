@@ -1,4 +1,4 @@
-//! Functions and definitions applying to all widgets or specific sub-classes 
+//! Functions and definitions applying to all widgets or specific sub-classes
 //! of widgets.
 //!
 
@@ -8,9 +8,9 @@ use super::font;
 use super::image;
 use super::wish;
 
-/// Struct holding information from a bound event, 
+/// Struct holding information from a bound event,
 /// returned as a parameter to the bound closure.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkEvent {
     /// x-coordinate relative to current widget
     pub x: i32,
@@ -33,19 +33,19 @@ pub struct TkEvent {
 }
 
 /// Common trait for container widgets. Child widgets should implement the `id`
-/// method. The remaining methods are standard Tk methods and convenient, 
+/// method. The remaining methods are standard Tk methods and convenient,
 /// type-save versions of them.
 pub trait TkWidget {
     /// Returns the widget's id reference - used within tk
     fn id(&self) -> &str;
 
     /// Binds a command to this widget to call on given event pattern
-    fn bind(&self, pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
+    fn bind(&self, pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
         bind_to(&self.id(), pattern, command);
     }
 
     /// Retrieve the value of a configuration option
-    /// as a string. 
+    /// as a string.
     ///
     /// * `option` - the option to read
     ///
@@ -54,9 +54,9 @@ pub trait TkWidget {
         wish::eval_wish(&msg)
     }
 
-    /// Used to change properties of a widget. 
+    /// Used to change properties of a widget.
     /// This function can be used to directly configure
-    /// the widget using an option-value string pair: 
+    /// the widget using an option-value string pair:
     ///
     /// * `option` - the option to change
     /// * `value` - the value to change it to
@@ -219,21 +219,32 @@ pub trait TkWidget {
 
     // -- for widgets that can contain other widgets
 
-    /// Sets property for a given column of the grid layout 
+    /// Sets property for a given column of the grid layout
     /// contained within this widget.
     fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
-        let msg = format!("grid columnconfigure {} {} -{} {{{}}}", self.id(), index, option, value);
+        let msg = format!(
+            "grid columnconfigure {} {} -{} {{{}}}",
+            self.id(),
+            index,
+            option,
+            value
+        );
         wish::tell_wish(&msg);
     }
 
-    /// Sets property for a given row of the grid layout 
+    /// Sets property for a given row of the grid layout
     /// contained within this widget.
     fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
-        let msg = format!("grid rowconfigure {} {} -{} {{{}}}", self.id(), index, option, value);
+        let msg = format!(
+            "grid rowconfigure {} {} -{} {{{}}}",
+            self.id(),
+            index,
+            option,
+            value
+        );
         wish::tell_wish(&msg);
     }
 }
-
 
 /// A set of common functions used in all label, button and similar widgets.
 ///
@@ -265,8 +276,8 @@ pub trait TkLabelOptions: TkWidget {
         configure(&self.id(), "image", &image.id);
     }
 
-    /// Sets space around the widget. Takes 
-    /// an array of up to four values, specifying: 
+    /// Sets space around the widget. Takes
+    /// an array of up to four values, specifying:
     ///
     /// * \[all]
     /// * [left-right top-bottom]
@@ -293,21 +304,20 @@ pub trait TkLabelOptions: TkWidget {
     }
 }
 
-
 // --------------------------------------------------------------------------
 // Enums to type-check values
 
 /// Defines position of a displayed item within some bounds.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Anchor {
-    N, 
-    NE, 
-    E, 
-    SE, 
-    S, 
-    SW, 
-    W, 
-    NW, 
+    N,
+    NE,
+    E,
+    SE,
+    S,
+    SW,
+    W,
+    NW,
     Center,
     Centre,
 }
@@ -329,12 +339,12 @@ impl fmt::Display for Anchor {
     }
 }
 
-/// Arrangement of image relative to text in a 
+/// Arrangement of image relative to text in a
 /// label-like widget.
 ///
 /// So `Bottom` places the image below its text, etc.
 ///
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Compound {
     Bottom,
     Center,
@@ -367,7 +377,7 @@ impl fmt::Display for Compound {
 }
 
 /// Type of message-box dialog.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum DialogType {
     AbortRetryIgnore,
     Ok,
@@ -392,7 +402,7 @@ impl fmt::Display for DialogType {
 }
 
 /// Type of icon to use in message-box dialog.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum IconImage {
     Error,
     Information,
@@ -413,7 +423,7 @@ impl fmt::Display for IconImage {
 }
 
 /// Arrangement of text
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Justify {
     Center,
     Centre,
@@ -433,7 +443,7 @@ impl fmt::Display for Justify {
 }
 
 /// Defines orientation of widget.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Orientation {
     Horizontal,
     Vertical,
@@ -450,7 +460,7 @@ impl fmt::Display for Orientation {
 }
 
 /// Defines mode of progressbar.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ProgressMode {
     Determinate,
     Indeterminate,
@@ -467,7 +477,7 @@ impl fmt::Display for ProgressMode {
 }
 
 /// Defines shape of border around widget.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Relief {
     Flat,
     Groove,
@@ -501,7 +511,7 @@ impl fmt::Display for Relief {
 /// (Tk's "single" and "multiple" options are now rarely used (see
 /// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/listbox.htm#M56)).)
 ///
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Selection {
     Multiple,
     Single,
@@ -521,7 +531,7 @@ impl fmt::Display for Selection {
 
 /// Specifies which sides of its container a widget 'sticks' to,
 /// especially when it is resized.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Sticky {
     N,
     NE,
@@ -567,7 +577,7 @@ impl fmt::Display for Sticky {
 
 /// The kinds of activity state for a widget, e.g. if it is currently
 /// available to use or disabled.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum State {
     /// Used, e.g., for buttons, to highlight when a mouse pointer is over them.
     Active,
@@ -592,7 +602,7 @@ impl fmt::Display for State {
 }
 
 /// Types of word wrapping.
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Wrapping {
     Char,
     None,
@@ -613,12 +623,14 @@ impl fmt::Display for Wrapping {
 // --------------------------------------------------------------------------
 // Internal functions for within crate use
 
-pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
+pub(super) fn bind_to(tag: &str, pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
     // tag+pattern used as identifier, as multiple commands can be bound to each entity
-    let tag_pattern = format!("{}{}", tag, pattern);  // TODO ? remove ':' ?
+    let tag_pattern = format!("{}{}", tag, pattern); // TODO ? remove ':' ?
     wish::add_callback1_event(&tag_pattern, wish::mk_callback1_event(command));
-    let msg = format!("bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
-                      tag, pattern, tag_pattern);
+    let msg = format!(
+        "bind {} {} {{ puts cb1e:{}:%x:%y:%X:%Y:%h:%w:%k:%K:%b ; flush stdout }}",
+        tag, pattern, tag_pattern
+    );
     wish::tell_wish(&msg);
 }
 
@@ -628,7 +640,7 @@ pub(super) fn configure(wid: &str, option: &str, value: &str) {
 }
 
 pub(super) fn padding(wid: &str, values: &[u32]) {
-    let mut value_str = String::from("");
+    let mut value_str = String::new();
     for i in values.iter() {
         value_str.push_str(&i.to_string());
         value_str.push(' ');
@@ -638,12 +650,22 @@ pub(super) fn padding(wid: &str, values: &[u32]) {
 
 // --------------------------------------------------------------------------
 
-/// Binds command for event pattern to _all_ widgets. 
-pub fn bind(pattern: &str, command: impl Fn(TkEvent)->() + Send + 'static) {
+/// Triggers given command after 'time' milliseconds.
+pub fn after(time: u32, command: impl Fn() + Send + 'static) {
+    wish::next_wid(".");
+    let name = format!("after{}", wish::current_id()); 
+    wish::add_callback0(&name, wish::mk_callback0(command));
+    let msg = format!("after {} {{ puts clicked-{} ; flush stdout }}",
+                      time, name);
+    wish::tell_wish(&msg);
+}
+
+/// Binds command for event pattern to _all_ widgets.
+pub fn bind(pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
     bind_to("all", pattern, command);
 }
 
-/// Checks what the current OS system is: see 
+/// Checks what the current OS system is: see
 /// Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/tk.htm#M12).
 ///
 /// Returns one of x11, win32, aqua

@@ -1,19 +1,19 @@
 //! Menu widget
 //!
-//! The menu widget is a versatile widget. It can take on any of these 
+//! The menu widget is a versatile widget. It can take on any of these
 //! roles:
 //!
-//! * a window's menubar, containing several menus, such as "File", "Edit", 
-//!   "Help" etc. 
-//! * a menu containing menu items, such as "Open File", or submenus, such 
+//! * a window's menubar, containing several menus, such as "File", "Edit",
+//!   "Help" etc.
+//! * a menu containing menu items, such as "Open File", or submenus, such
 //!   as "Recent files...".
-//! * a menu button, which can be clicked to invoke an action. This button 
+//! * a menu button, which can be clicked to invoke an action. This button
 //!   can act as a button, a check button, or a radio button.
 //!
-//! This library uses separate structs for the different types of menu which can 
-//! be added to an existing menu. These are built up in standard "builder" 
+//! This library uses separate structs for the different types of menu which can
+//! be added to an existing menu. These are built up in standard "builder"
 //! style, before being added or inserted.
-//! 
+//!
 //! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/menu.htm)
 //!
 
@@ -22,26 +22,24 @@ use super::widget;
 use super::wish;
 
 /// Refers to a menu widget
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TkMenu {
     pub id: String,
 }
 
-/// Creates an instance of a menu widget in given parent. 
+/// Creates an instance of a menu widget in given parent.
 pub fn make_menu(parent: &impl widget::TkWidget) -> TkMenu {
     let id = wish::next_wid(parent.id());
     let msg = format!("menu {}", id);
     wish::tell_wish(&msg);
 
-    TkMenu {
-        id,
-    }
+    TkMenu { id }
 }
 
 // -- subtypes of menu
 
 /// Refers to a submenu
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkMenuCascade {
     parent: String,
     compound: widget::Compound,
@@ -54,7 +52,7 @@ pub struct TkMenuCascade {
 }
 
 /// Refers to a check-button menu-item
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkMenuCheck {
     parent: String,
     accelerator: Option<String>,
@@ -69,7 +67,7 @@ pub struct TkMenuCheck {
 }
 
 /// Refers to a command (menu-item)
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkMenuCommand {
     parent: String,
     accelerator: Option<String>,
@@ -83,7 +81,7 @@ pub struct TkMenuCommand {
 }
 
 /// Refers to a radio-button menu-item
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkMenuRadio {
     parent: String,
     group: String,
@@ -100,7 +98,7 @@ pub struct TkMenuRadio {
 }
 
 /// Refers to a menu separator
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct TkMenuSeparator {
     parent: String,
 }
@@ -163,7 +161,7 @@ impl TkMenu {
     /// Start to create a radio-button menu-item.
     ///
     /// Radio buttons are arranged in groups, with each button in the group
-    /// having its own value. For this reason, the group and value are 
+    /// having its own value. For this reason, the group and value are
     /// required when making a radio-button menu-item.
     pub fn radio_button(&self, group: &str, value: &str) -> TkMenuRadio {
         TkMenuRadio {
@@ -183,13 +181,13 @@ impl TkMenu {
     }
 
     /// Returns the value for a given radio-button group.
-    pub fn radio_button_value(&self, group: &str) -> String {
+    pub fn radio_button_value_get(&self, group: &str) -> String {
         let msg = format!("puts $::mrb_group_{} ; flush stdout", group);
         wish::eval_wish(&msg)
     }
 
     /// Sets the value for a given radio-button group.
-    pub fn radio_button_value_set(&self, group: &str, value: &str) {
+    pub fn radio_button_value(&self, group: &str, value: &str) {
         let msg = format!("set ::mrb_group_{} {}", group, value);
         wish::tell_wish(&msg);
     }
@@ -207,22 +205,24 @@ impl TkMenu {
         wish::tell_wish(&msg);
     }
 
-    /// Returns the value (as a String) for given option for 
+    /// Returns the value (as a String) for given option for
     /// menu-item at given index position.
     pub fn entry_cget(&self, index: u32, option: &str) -> String {
         let msg = format!("{} entrycfig {} {{{}}}", &self.id, index, option);
         wish::eval_wish(&msg)
     }
 
-    /// Sets the value (as a String) for given option for 
+    /// Sets the value (as a String) for given option for
     /// menu-item at given index position.
     pub fn entry_configure(&self, index: u32, option: &str, value: &str) {
-        let msg = format!("{} entryconfigure {} {{{}}} {{{}}}", 
-                          &self.id, index, option, value);
+        let msg = format!(
+            "{} entryconfigure {} {{{}}} {{{}}}",
+            &self.id, index, option, value
+        );
         wish::tell_wish(&msg);
     }
 
-    /// Invokes any associated command for the menu-item at given index 
+    /// Invokes any associated command for the menu-item at given index
     /// position.
     pub fn invoke(&self, index: u32) {
         let msg = format!("{} invoke {}", &self.id, index);
@@ -237,13 +237,15 @@ impl TkMenu {
 }
 
 // Convert core options into a string representation
-fn common_option_string(compound: &widget::Compound, 
-                        font: &Option<String>, 
-                        image: &Option<String>, 
-                        label: &Option<String>,
-                        state: &widget::State,
-                        underline: &Option<u32>) -> String {
-    let mut msg = String::from("");
+fn common_option_string(
+    compound: &widget::Compound,
+    font: &Option<String>,
+    image: &Option<String>,
+    label: &Option<String>,
+    state: &widget::State,
+    underline: &Option<u32>,
+) -> String {
+    let mut msg = String::new();
 
     msg.push_str(&format!("-compound {} ", compound));
     if let Some(font) = &font {
@@ -308,12 +310,14 @@ impl TkMenuCascade {
 
     // Convert options into a string representation
     fn option_string(&self) -> String {
-        let mut msg = common_option_string(&self.compound, 
-                                           &self.font, 
-                                           &self.image, 
-                                           &self.label, 
-                                           &self.state, 
-                                           &self.underline);
+        let mut msg = common_option_string(
+            &self.compound,
+            &self.font,
+            &self.image,
+            &self.label,
+            &self.state,
+            &self.underline,
+        );
 
         if let Some(menu) = &self.menu {
             msg.push_str(&format!("-menu {} ", menu));
@@ -330,8 +334,12 @@ impl TkMenuCascade {
 
     /// Inserts cascade menu-item to parent at given index with current set of options.
     pub fn insert(&self, index: u32) {
-        let msg = format!("{} insert cascade {} {}", 
-                          &self.parent, index, &self.option_string());
+        let msg = format!(
+            "{} insert cascade {} {}",
+            &self.parent,
+            index,
+            &self.option_string()
+        );
         wish::tell_wish(&msg);
     }
 }
@@ -344,7 +352,7 @@ impl TkMenuCheck {
     }
 
     /// Sets the function to be called when the menu item is clicked.
-    pub fn command (&mut self, command: impl Fn(bool)->() + Send + 'static) -> &mut Self {
+    pub fn command(&mut self, command: impl Fn(bool) + Send + 'static) -> &mut Self {
         let id = wish::next_wid(".");
         let var = format!("::mcb{}", wish::current_id());
         wish::add_callback1_bool(&id, wish::mk_callback1_bool(command));
@@ -391,20 +399,24 @@ impl TkMenuCheck {
 
     // Convert options into a string representation
     fn option_string(&self) -> String {
-        let mut msg = common_option_string(&self.compound, 
-                                           &self.font, 
-                                           &self.image, 
-                                           &self.label, 
-                                           &self.state, 
-                                           &self.underline);
+        let mut msg = common_option_string(
+            &self.compound,
+            &self.font,
+            &self.image,
+            &self.label,
+            &self.state,
+            &self.underline,
+        );
 
         if let Some(accelerator) = &self.accelerator {
             msg.push_str(&format!("-accelerator {{{}}} ", &accelerator));
         }
         if let Some(command) = &self.command {
             if let Some(command_variable) = &self.command_variable {
-                msg.push_str(&format!("-command {{ puts cb1b-{}-${} ; flush stdout }} ", 
-                                      &command, &command_variable));
+                msg.push_str(&format!(
+                    "-command {{ puts cb1b-{}-${} ; flush stdout }} ",
+                    &command, &command_variable
+                ));
                 msg.push_str(&format!("-variable {} ", &command_variable));
             }
         }
@@ -420,8 +432,12 @@ impl TkMenuCheck {
 
     /// Inserts check-button menu-item to parent at given index with current set of options.
     pub fn insert(&self, index: u32) {
-        let msg = format!("{} insert checkbutton {} {}", 
-                          &self.parent, index, &self.option_string());
+        let msg = format!(
+            "{} insert checkbutton {} {}",
+            &self.parent,
+            index,
+            &self.option_string()
+        );
         wish::tell_wish(&msg);
     }
 }
@@ -434,7 +450,7 @@ impl TkMenuCommand {
     }
 
     /// Sets command to invoke when menu-item clicked.
-    pub fn command(&mut self, command: impl Fn()->() + Send + 'static) -> &mut Self {
+    pub fn command(&mut self, command: impl Fn() + Send + 'static) -> &mut Self {
         let id = wish::next_wid(".");
         wish::add_callback0(&id, wish::mk_callback0(command));
         self.command = Some(id);
@@ -479,19 +495,23 @@ impl TkMenuCommand {
 
     // Convert options into a string representation
     fn option_string(&self) -> String {
-        let mut msg = common_option_string(&self.compound, 
-                                           &self.font, 
-                                           &self.image, 
-                                           &self.label, 
-                                           &self.state, 
-                                           &self.underline);
+        let mut msg = common_option_string(
+            &self.compound,
+            &self.font,
+            &self.image,
+            &self.label,
+            &self.state,
+            &self.underline,
+        );
 
         if let Some(accelerator) = &self.accelerator {
             msg.push_str(&format!("-accelerator {{{}}} ", &accelerator));
         }
         if let Some(command) = &self.command {
-            msg.push_str(&format!("-command {{ puts clicked-{} ; flush stdout }} ", 
-                                  &command));
+            msg.push_str(&format!(
+                "-command {{ puts clicked-{} ; flush stdout }} ",
+                &command
+            ));
         }
 
         msg
@@ -505,8 +525,12 @@ impl TkMenuCommand {
 
     /// Inserts command menu-item to parent at given index with current set of options.
     pub fn insert(&self, index: u32) {
-        let msg = format!("{} insert command {} {}", 
-                          &self.parent, index, &self.option_string());
+        let msg = format!(
+            "{} insert command {} {}",
+            &self.parent,
+            index,
+            &self.option_string()
+        );
         wish::tell_wish(&msg);
     }
 }
@@ -519,7 +543,7 @@ impl TkMenuRadio {
     }
 
     /// Sets the function to be called when the menu item is clicked.
-    pub fn command (&mut self, command: impl Fn(bool)->() + Send + 'static) -> &mut Self {
+    pub fn command(&mut self, command: impl Fn(bool) + Send + 'static) -> &mut Self {
         let id = wish::next_wid(".");
         let var = format!("::mcb{}", wish::current_id());
         wish::add_callback1_bool(&id, wish::mk_callback1_bool(command));
@@ -566,22 +590,28 @@ impl TkMenuRadio {
 
     // Convert options into a string representation
     fn option_string(&self) -> String {
-        let mut msg = common_option_string(&self.compound, 
-                                           &self.font, 
-                                           &self.image, 
-                                           &self.label, 
-                                           &self.state, 
-                                           &self.underline);
+        let mut msg = common_option_string(
+            &self.compound,
+            &self.font,
+            &self.image,
+            &self.label,
+            &self.state,
+            &self.underline,
+        );
 
-        msg.push_str(&format!("-variable ::mrb_group_{} -value {{{}}} ",
-                              &self.group, &self.value));
+        msg.push_str(&format!(
+            "-variable ::mrb_group_{} -value {{{}}} ",
+            &self.group, &self.value
+        ));
         if let Some(accelerator) = &self.accelerator {
             msg.push_str(&format!("-accelerator {{{}}} ", &accelerator));
         }
         if let Some(command) = &self.command {
             if let Some(command_variable) = &self.command_variable {
-                msg.push_str(&format!("-command {{ puts cb1b-{}-{} ; flush stdout }} ", 
-                                      &command, &command_variable));
+                msg.push_str(&format!(
+                    "-command {{ puts cb1b-{}-{} ; flush stdout }} ",
+                    &command, &command_variable
+                ));
                 msg.push_str(&format!("-variable {{{}}} ", &command_variable));
             }
         }
@@ -597,8 +627,12 @@ impl TkMenuRadio {
 
     /// Inserts radio-button menu-item to parent at given index with current set of options.
     pub fn insert(&self, index: u32) {
-        let msg = format!("{} insert radiobutton {} {}", 
-                          &self.parent, index, &self.option_string());
+        let msg = format!(
+            "{} insert radiobutton {} {}",
+            &self.parent,
+            index,
+            &self.option_string()
+        );
         wish::tell_wish(&msg);
     }
 }
