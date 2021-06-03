@@ -1,8 +1,6 @@
-//! Grid Layout
+//! Grid layout - a geometry manager for arranging widgets.
 //!
-//! A geometry manager for arranging widgets.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/grid.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/grid.htm)
 //!
 //! The grid-layout is used in a "builder" style to layout a single widget:
 //!
@@ -152,7 +150,7 @@ impl GridLayout {
 pub trait TkGridLayout: widget::TkWidget {
     /// Creates a GridLayout instance for placing this widget within its parent
     fn grid(&self) -> GridLayout {
-        GridLayout::new(&self.id())
+        GridLayout::new(self.id())
     }
 
     /// Sets properties for widget layout

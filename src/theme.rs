@@ -1,9 +1,7 @@
-//! Themes
+//! Themes - functions to list and set the overall theme (look and feel) of 
+//! the Tk program.
 //!
-//! Functions to list and set the overall theme
-//! (look and feel) of the Tk program.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_style.htm#M17)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_style.htm#M17)
 
 use super::wish;
 

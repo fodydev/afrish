@@ -1,14 +1,14 @@
-//! Treeview widget
+//! Treeview widget - displays hierarchical data with multiple values.
 //!
 //! A combined tree/list-view widget, for displaying hierarchical data with
 //! multiple values.
 //!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm)
 //!
 //! # Columns
 //!
 //! The columns can be identified as follows (see Tk
-//! [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm#M77)):
+//! [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm#M77)):
 //!
 //! * using a string name, set using the `columns` method
 //! * by index, counting from 1 (this must be given as a string)
@@ -221,7 +221,7 @@ impl TkTreeview {
     /// Formatting is applied to tags using configuration options.
     ///
     /// For the available options, see the Tk
-    /// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm#M72)
+    /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_treeview.htm#M72)
     pub fn tag_configure(&self, tag: &str, option: &str, value: &str) {
         let msg = format!("{} tag configure {} -{} {}", &self.id, tag, option, value);
         wish::tell_wish(&msg);

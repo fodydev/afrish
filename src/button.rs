@@ -1,8 +1,6 @@
-//! Button widget
+//! Button widget - displays text/image. Executes a command when clicked.
 //!
-//! A label-like widget, which executes a command when clicked.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_button.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_button.htm)
 
 use super::grid;
 use super::widget;
@@ -51,7 +49,7 @@ impl TkButton {
         wish::tell_wish(&msg);
     }
 
-    /// Sets the state of the button (normal or disabled).
+    /// Sets the state of the button.
     pub fn state(&self, value: widget::State) {
         widget::configure(&self.id, "state", &value.to_string());
     }

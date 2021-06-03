@@ -1,4 +1,4 @@
-//! Menu widget
+//! Menu widget - for building menubars and menus.
 //!
 //! The menu widget is a versatile widget. It can take on any of these
 //! roles:
@@ -14,7 +14,7 @@
 //! be added to an existing menu. These are built up in standard "builder"
 //! style, before being added or inserted.
 //!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/menu.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/menu.htm)
 //!
 
 use super::image;

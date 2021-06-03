@@ -1,4 +1,4 @@
-//! Images
+//! Images - method to read in an image from file.
 //!
 
 use super::wish;

@@ -1,8 +1,6 @@
-//! Entry widgets
+//! Entry widget - text field for user input or editing.
 //!
-//! A text field for user input or editing.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_entry.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_entry.htm)
 
 use super::grid;
 use super::widget;

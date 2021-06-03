@@ -1,9 +1,7 @@
-//! Label-frame widget
+//! Label-frame widget - a container widget for other widgets; like frames 
+//! but with an optional text label.
 //!
-//! A container widget for other widgets, like frames but with an optional
-//! text label.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_labelframe.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_labelframe.htm)
 
 use super::grid;
 use super::widget;

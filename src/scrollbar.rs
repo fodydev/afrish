@@ -1,8 +1,6 @@
-//! Scrollbar widget
+//! Scrollbar widget - displays a scrollbar to control position within a range.
 //!
-//! A widget representing a scrollbar.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_scrollbar.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_scrollbar.htm)
 //!
 
 use super::grid;

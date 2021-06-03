@@ -1,8 +1,6 @@
-//! Frame widget
+//! Frame widget - a container widget for other widgets.
 //!
-//! A container widget for other widgets.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_frame.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_frame.htm)
 
 use super::grid;
 use super::widget;

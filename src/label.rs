@@ -1,8 +1,6 @@
-//! Label widgets
+//! Label widgets - displays text/image.
 //!
-//! For displaying some text and/or an image.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_label.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_label.htm)
 
 use super::grid;
 use super::widget;

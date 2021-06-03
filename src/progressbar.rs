@@ -1,8 +1,6 @@
-//! Progressbar widget
+//! Progressbar widget - displays feedback on progress through a task.
 //!
-//! A widget providing feedback on progress through a task.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_progressbar.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_progressbar.htm)
 //!
 
 use super::grid;

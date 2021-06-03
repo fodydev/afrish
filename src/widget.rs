@@ -509,7 +509,7 @@ impl fmt::Display for Relief {
 /// * 'Multiple' is equivalent to Tk's "extended"
 ///
 /// (Tk's "single" and "multiple" options are now rarely used (see
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/listbox.htm#M56)).)
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/listbox.htm#M56)).)
 ///
 #[derive(Clone, Debug, PartialEq)]
 pub enum Selection {
@@ -666,7 +666,7 @@ pub fn bind(pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
 }
 
 /// Checks what the current OS system is: see
-/// Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/tk.htm#M12).
+/// Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/tk.htm#M12).
 ///
 /// Returns one of x11, win32, aqua
 pub fn windowing_system() -> String {

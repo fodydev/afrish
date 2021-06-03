@@ -1,7 +1,9 @@
-//! Separator widget.
+//! Separator widget - displays a separating line in its parent.
 //!
-//! A simple widget, that displays a separating line in its parent.
 //! The separator is either oriented vertically or horizontally.
+//!
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_separator.htm)
+//!
 
 use super::grid;
 use super::widget;

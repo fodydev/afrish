@@ -1,8 +1,8 @@
-//! Spinbox widget
+//! Spinbox widget - displays a range with up/down buttons. 
 //!
-//! A widget for selecting between either a range of numbers or a list of values.
+//! User can select between either a range of numbers or a list of values.
 //!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_spinbox.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_spinbox.htm)
 
 use super::grid;
 use super::widget;

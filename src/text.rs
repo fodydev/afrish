@@ -1,8 +1,6 @@
-//! Text widget
+//! Text widget - displays text.
 //!
-//! A widget for displaying text.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/text.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/text.htm)
 
 use super::grid;
 use super::image;
@@ -333,7 +331,7 @@ impl TkText {
     /// Formatting is applied to tags using configuration options.
     ///
     /// For the available options, see the Tk
-    /// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/text.htm#M43)
+    /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/text.htm#M43)
     pub fn tag_configure(&self, tag: &str, option: &str, value: &str) {
         let msg = format!("{} tag configure {} -{} {}", &self.id, tag, option, value);
         wish::tell_wish(&msg);

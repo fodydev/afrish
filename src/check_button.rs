@@ -1,6 +1,5 @@
-//! Check buttons
-//!
-//! A label-like on/off widget, which executes a command when clicked.
+//! Check button widget - displays text/image with an on/off widget. 
+//! Executes a command when clicked.
 //!
 //! * also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_checkbutton.htm)
 //!

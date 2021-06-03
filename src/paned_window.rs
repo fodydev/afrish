@@ -1,9 +1,7 @@
-//! Paned-window widget.
-//!
-//! A container widget which contains multiple panes.
+//! Paned-window widget - a container widget which contains multiple panes.
 //! Resizable sizers separate each pane.
 //!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_panedwindow.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_panedwindow.htm)
 
 use super::grid;
 use super::widget;

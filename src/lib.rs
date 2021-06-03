@@ -84,7 +84,7 @@
 //!    returns, as a [String], the response.
 //!
 //! For example, label's
-//! [takefocus](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
+//! [takefocus](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
 //! flag is not wrapped. You can nevertheless set it using:
 //!
 //! ```

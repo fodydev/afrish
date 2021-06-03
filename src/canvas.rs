@@ -1,8 +1,6 @@
-//! Canvas widget
+//! Canvas widget - displays (interactive) graphics.
 //!
-//! For drawing interactive graphics.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm)
 
 use super::grid;
 use super::image;
@@ -269,7 +267,7 @@ impl TkCanvas {
 
 // -- functionality for each of the canvas items
 
-/// Common functionality for all items
+/// Common functionality for all canvas items
 pub trait TkCanvasItem {
     fn canvas(&self) -> &str;
     fn id(&self) -> &str;
@@ -302,7 +300,7 @@ pub trait TkCanvasItem {
     }
 }
 
-/// Each item can have one or more named tags attached to them.
+/// Each item can have one or more named tags attached to it.
 /// These tags can be used to configure groups of items.
 pub trait TkCanvasTags: TkCanvasItem {
     /// Adds given tag to this canvas item.
@@ -495,7 +493,7 @@ impl TkCanvasLine {
     }
 
     /// Shape of arrow(s) to draw: see Tk
-    /// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm#M145).
+    /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm#M145).
     pub fn arrow_shape(&self, v1: u32, v2: u32, v3: u32) {
         let msg = format!("{{{} {} {} }}", v1, v2, v3);
         self.configure("arrowshape", &msg);

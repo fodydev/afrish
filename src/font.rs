@@ -1,4 +1,4 @@
-//! Fonts
+//! Font - support for defining and customising fonts.
 //!
 //! Tk provides a lot of control over font objects.
 //!
@@ -13,7 +13,7 @@
 //! };
 //! ```
 //!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm)
 
 use std::fmt;
 use std::str;
@@ -21,7 +21,7 @@ use std::str;
 use super::wish;
 
 /// Defines possible weights for font: normal and bold.
-/// See Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M27)
+/// See Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M27)
 #[derive(Clone, Debug, PartialEq)]
 pub enum Weight {
     Normal,
@@ -45,7 +45,7 @@ impl Default for Weight {
 }
 
 /// Defines possible slants for font: roman and italic.
-/// See Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M28)
+/// See Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M28)
 #[derive(Clone, Debug, PartialEq)]
 pub enum Slant {
     Italic,
@@ -97,7 +97,7 @@ impl str::FromStr for TkFontMetrics {
     type Err = ParseFontMetricsErr;
 
     /// Parse from the {-option value} representation for font metrics,
-    /// as described in 5th point of Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M19)
+    /// as described in 5th point of Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M19)
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut font = TkFontMetrics {
             ..Default::default()
@@ -164,7 +164,7 @@ impl str::FromStr for TkFont {
     type Err = ParseFontErr;
 
     /// Parse from the {-option value} representation for fonts,
-    /// as described in 5th point of Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M13)
+    /// as described in 5th point of Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M13)
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut font = TkFont {
             ..Default::default()
@@ -244,55 +244,55 @@ fn font_from_name(name: &str) -> TkFont {
 }
 
 /// Retrieves copy of standard default font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M32).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M32).
 pub fn tk_default_font() -> TkFont {
     font_from_name("TkDefaultFont")
 }
 
 /// Retrieves copy of standard text font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M33).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M33).
 pub fn tk_text_font() -> TkFont {
     font_from_name("TkTextFont")
 }
 
 /// Retrieves copy of standard fixed font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M34).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M34).
 pub fn tk_fixed_font() -> TkFont {
     font_from_name("TkFixedFont")
 }
 
 /// Retrieves copy of standard menu font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M35).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M35).
 pub fn tk_menu_font() -> TkFont {
     font_from_name("TkMenuFont")
 }
 
 /// Retrieves copy of standard heading font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M36).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M36).
 pub fn tk_heading_font() -> TkFont {
     font_from_name("TkHeadingFont")
 }
 
 /// Retrieves copy of standard caption font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M37).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M37).
 pub fn tk_caption_font() -> TkFont {
     font_from_name("TkCaptionFont")
 }
 
 /// Retrieves copy of standard small-caption font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M38).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M38).
 pub fn tk_small_caption_font() -> TkFont {
     font_from_name("TkSmallCaptionFont")
 }
 
 /// Retrieves copy of standard icon font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M39).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M39).
 pub fn tk_icon_font() -> TkFont {
     font_from_name("TkIconFont")
 }
 
 /// Retrieves copy of standard tooltip font: see tk
-/// [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M40).
+/// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M40).
 pub fn tk_tooltip_font() -> TkFont {
     font_from_name("TkTooltipFont")
 }

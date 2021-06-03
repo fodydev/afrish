@@ -1,8 +1,6 @@
-//! Combobox widgets
+//! Combobox widgets - text field with a drop-down list of options.
 //!
-//! A text field with a drop-down list of options
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_combobox.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_combobox.htm)
 //! # Events
 //!
 //! Use [bind](widget::TkWidget::bind) to call a function on following event:

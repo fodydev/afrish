@@ -1,7 +1,5 @@
-//! Radio buttons
-//!
-//! A label-like on/off widget which can be arranged in a group of mutually
-//! exclusive buttons. Button also executes a command when clicked.
+//! Radio button widget - displays text/image with an on/off widget, arranged
+//! in a group of mutually exclusive buttons. Executes a command when clicked.
 //!
 //! * also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_radiobutton.htm)
 //!

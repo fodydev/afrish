@@ -1,8 +1,7 @@
-//! Listbox widget
+//! Listbox widget - displays a list of items from which the user can select 
+//! one or more.
 //!
-//! Displays a list of items from which the user can select one or more.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/listbox.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/listbox.htm)
 //!
 //! # Events
 //!

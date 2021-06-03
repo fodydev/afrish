@@ -1,4 +1,4 @@
-//! Dialogs
+//! Dialogs - various built-in dialogs.
 //!
 //! All of the dialogs (apart from the font chooser) are built using a
 //! "builder" style. The named function creates a relevant struct value,
@@ -11,7 +11,7 @@
 //!
 //! # Message boxes
 //!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/messageBox.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/messageBox.htm)
 //!
 //! The message-box is used to set up a simple alert, confirmation or
 //! information dialog:
@@ -34,10 +34,10 @@
 //!
 //! Tk manual pages:
 //!
-//! * [chooseColor](http://www.tcl-lang.org/man/tcl8.6/TkCmd/chooseColor.htm)
-//! * [chooseDirectory](http://www.tcl-lang.org/man/tcl8.6/TkCmd/chooseDirectory.htm)
-//! * [getOpenFile](http://www.tcl-lang.org/man/tcl8.6/TkCmd/getOpenFile.htm) (and getSaveFile)
-//! * [fontchooser](http://www.tcl-lang.org/man/tcl8.6/TkCmd/fontchooser.htm)
+//! * [chooseColor](https://www.tcl-lang.org/man/tcl8.6/TkCmd/chooseColor.htm)
+//! * [chooseDirectory](https://www.tcl-lang.org/man/tcl8.6/TkCmd/chooseDirectory.htm)
+//! * [getOpenFile](https://www.tcl-lang.org/man/tcl8.6/TkCmd/getOpenFile.htm) (and getSaveFile)
+//! * [fontchooser](https://www.tcl-lang.org/man/tcl8.6/TkCmd/fontchooser.htm)
 //!
 
 use super::font;

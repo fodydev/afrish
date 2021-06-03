@@ -1,9 +1,6 @@
-//! Scale widget
+//! Scale widget - displays a slider over a range.
 //!
-//! A scale widget is shown as a slider over a range, used to select a number
-//! from a range of values.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_scale.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_scale.htm)
 //!
 
 use super::grid;

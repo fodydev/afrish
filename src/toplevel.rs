@@ -1,8 +1,6 @@
-//! Toplevel widgets
+//! Toplevel widget - defines top-level and popup windows.
 //!
-//! For top-level and popup windows.
-//!
-//! * also see the Tk [manual](http://www.tcl-lang.org/man/tcl8.6/TkCmd/toplevel.htm)
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/toplevel.htm)
 
 use super::menu;
 use super::widget;
