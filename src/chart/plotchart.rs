@@ -1,15 +1,48 @@
-//! Plotchart - common functions for all charts.
+//! Plotchart - common enums and methods for all charts.
 //!
 
 use std::fmt;
 
-use crate::chart::balloon;
-use crate::chart::plaintext;
 use crate::canvas;
 use crate::font;
 use crate::image;
 use crate::widget;
 use crate::wish;
+
+/// Used to give either the number of series in a bar chart, or 
+/// indicate they should be drawn in a stacked manner.
+pub enum BarSeries {
+    Count(u32),
+    Stacked,
+}
+
+impl fmt::Display for BarSeries {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            BarSeries::Count(n) => n.to_string(),
+            BarSeries::Stacked => "stacked".to_string(),
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Used to define type of whiskers to draw in a box plot.
+pub enum BoxWhiskers {
+    Extremes,
+    Iqr,
+    None,
+}
+
+impl fmt::Display for BoxWhiskers {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            BoxWhiskers::Extremes => "extremes",
+            BoxWhiskers::Iqr => "iqr",
+            BoxWhiskers::None => "none",
+        };
+        write!(f, "{}", &value)
+    }
+}
 
 /// Indicates whether a colour should become brighter or darker.
 #[derive(Clone, Debug, PartialEq)]
@@ -166,14 +199,14 @@ pub trait TkPlotchart {
     fn id(&self) -> &str;
 
     /// Sets the background colour for the axes.
-    fn background_colour_axes(&self, colour: &str) {
+    fn background_axes_colour(&self, colour: &str) {
         let msg = format!("global {}; ${} background axes {}",
                           self.id(), self.id(), colour);
         wish::tell_wish(&msg);
     }
 
     /// Sets a background gradient.
-    fn background_colour_gradient(&self, colour: &str, 
+    fn background_gradient_colour(&self, colour: &str, 
                                   direction: GradientDirection, 
                                   brightness: Brightness) {
         let msg = format!("global {}; ${} background gradient {} {} {}",
@@ -182,25 +215,81 @@ pub trait TkPlotchart {
     }
 
     /// Sets a background image.
-    fn background_colour_image(&self, image: &image::TkImage) {
+    fn background_image(&self, image: &image::TkImage) {
         let msg = format!("global {}; ${} background image {}",
                           self.id(), self.id(), &image.id);
         wish::tell_wish(&msg);
     }
 
     /// Sets the background colour for the plot area.
-    fn background_colour_plot(&self, colour: &str) {
+    fn background_plot_colour(&self, colour: &str) {
         let msg = format!("global {}; ${} background plot {}",
                           self.id(), self.id(), colour);
         wish::tell_wish(&msg);
     }
 
-    /// Starts definition of balloon text (does not work for 3D plots). 
-    ///
-    /// Add optional configuration options and finish with `add`.
-    ///
-    fn balloon(&self, x: f32, y: f32, text: &str) -> balloon::TkChartBalloon {
-        balloon::TkChartBalloon::new(self.id(), x, y, text)
+    /// Creates balloon text (does not work for 3D plots). 
+    fn balloon(&self, x: f32, y: f32, text: &str, direction: Direction) {
+        let msg = format!("global {}; ${} balloon {} {} {{{}}} {}",
+                          self.id(), self.id(), 
+                          x, y, text, direction);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets arrow-length, in pixels, for balloon text.
+    fn balloon_arrow_size(&self, value: u32) {
+        let msg = format!("global {}; ${} balloonconfig -arrowsize {}",
+                          self.id(), self.id(), value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets background colour of balloon text.
+    fn balloon_background_colour(&self, colour: &str) {
+        let msg = format!("global {}; ${} balloonconfig -background {{{}}}",
+                          self.id(), self.id(), colour);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets font for balloon text.
+    fn balloon_font(&self, font: &font::TkFont) {
+        let msg = format!("global {}; ${} balloonconfig -font {{{}}}",
+                          self.id(), self.id(), font);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets justification for balloon text.
+    fn balloon_justify(&self, value: widget::Justify) {
+        let msg = format!("global {}; ${} balloonconfig -justify {}",
+                          self.id(), self.id(), value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets outline colour of balloon text.
+    fn balloon_outline_colour(&self, colour: &str) {
+        let msg = format!("global {}; ${} balloonconfig -outline {{{}}}",
+                          self.id(), self.id(), colour);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets width of margin, in pixels, around balloon text.
+    fn balloon_margin(&self, value: u32) {
+        let msg = format!("global {}; ${} balloonconfig -margin {}",
+                          self.id(), self.id(), value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets margin size, in pixels, around balloon text.
+    fn balloon_rim_width(&self, value: u32) {
+        let msg = format!("global {}; ${} balloonconfig -rimwidth {}",
+                          self.id(), self.id(), value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets colour of balloon text.
+    fn balloon_text_colour(&self, colour: &str) {
+        let msg = format!("global {}; ${} balloonconfig -textcolour {{{}}}",
+                          self.id(), self.id(), colour);
+        wish::tell_wish(&msg);
     }
 
     /// Draws a horizontal light-grey band.
@@ -224,10 +313,10 @@ pub trait TkPlotchart {
     }
 
     /// Adds a line to legend for given data series.
-    fn legend(&self, series: &str, text: &str, spacing: u32) {
-        let msg = format!("global {}; ${} legend {} {{{}}} {}",
+    fn legend(&self, series: &str, text: &str) {
+        let msg = format!("global {}; ${} legend {} {{{}}}",
                           self.id(), self.id(), 
-                          series, text, spacing);
+                          series, text);
         wish::tell_wish(&msg);
     }
 
@@ -273,6 +362,13 @@ pub trait TkPlotchart {
         wish::tell_wish(&msg);
     }
 
+    /// Sets spacing between rows in legend.
+    fn legend_spacing(&self, value: u32) {
+        let msg = format!("global {}; ${} legendconfig -spacing {}",
+                          self.id(), self.id(), value);
+        wish::tell_wish(&msg);
+    }
+
     /// Type of legend to display - series identified by line or colour rectangle.
     fn legend_type(&mut self, value: LegendType) {
         let msg = format!("global {}; ${} legendconfig -legendtype {}",
@@ -284,8 +380,32 @@ pub trait TkPlotchart {
     ///
     /// Add optional configuration options and finish with `add`.
     ///
-    fn plaintext(&self, x: f32, y: f32, text: &str) -> plaintext::TkChartPlaintext {
-        plaintext::TkChartPlaintext::new(self.id(), x, y, text)
+    fn plaintext(&self, x: f32, y: f32, text: &str, direction: Direction) {
+        let msg = format!("global {}; ${} plaintext {} {} {{{}}} {}",
+                          self.id(), self.id(), 
+                          x, y, text, direction);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets colour of plain text.
+    fn plaintext_colour(&self, colour: &str) {
+        let msg = format!("global {}; ${} plaintextconfig -textcolour {{{}}}",
+                          self.id(), self.id(), colour);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets font for plain text.
+    fn plaintext_font(&self, font: &font::TkFont) {
+        let msg = format!("global {}; ${} plaintextconfig -font {{{}}}",
+                          self.id(), self.id(), font);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets justification for plain text.
+    fn plaintext_justify(&self, value: widget::Justify) {
+        let msg = format!("global {}; ${} plaintextconfig -justify {}",
+                          self.id(), self.id(), value);
+        wish::tell_wish(&msg);
     }
 
     /// Saves chart to a file in postscript format.
