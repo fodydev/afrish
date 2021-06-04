@@ -20,9 +20,9 @@ pub struct TkSpinboxRange {
 /// The increment specifies how much the number changes as the up/down arrow is clicked.
 pub fn make_spinbox_range(
     parent: &impl widget::TkWidget,
-    from: f32,
-    to: f32,
-    increment: f32,
+    from: f64,
+    to: f64,
+    increment: f64,
 ) -> TkSpinboxRange {
     let id = wish::next_wid(parent.id());
     let msg = format!(
@@ -51,10 +51,10 @@ impl TkSpinboxRange {
     }
 
     /// Retrieves the spinbox's value.
-    pub fn value_get(&self) -> f32 {
+    pub fn value_get(&self) -> f64 {
         let msg = format!("puts [{} get] ; flush stdout", self.id);
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<f32>() {
+        if let Ok(value) = result.parse::<f64>() {
             value
         } else {
             0.0

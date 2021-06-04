@@ -71,9 +71,9 @@ impl Default for Slant {
 /// Information on a font's metrics.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TkFontMetrics {
-    pub ascent: u32,
-    pub descent: u32,
-    pub line_space: u32,
+    pub ascent: u64,
+    pub descent: u64,
+    pub line_space: u64,
     pub fixed: bool,
 }
 
@@ -105,15 +105,15 @@ impl str::FromStr for TkFontMetrics {
 
         for part in s.split('-') {
             if part.starts_with("ascent") {
-                if let Ok(size) = &part[7..].trim().parse::<u32>() {
+                if let Ok(size) = &part[7..].trim().parse::<u64>() {
                     font.ascent = *size;
                 }
             } else if part.starts_with("descent") {
-                if let Ok(size) = &part[8..].trim().parse::<u32>() {
+                if let Ok(size) = &part[8..].trim().parse::<u64>() {
                     font.descent = *size;
                 }
             } else if part.starts_with("linespace") {
-                if let Ok(size) = &part[10..].trim().parse::<u32>() {
+                if let Ok(size) = &part[10..].trim().parse::<u64>() {
                     font.line_space = *size;
                 }
             } else if part.starts_with("fixed 1") {
@@ -129,7 +129,7 @@ impl str::FromStr for TkFontMetrics {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TkFont {
     pub family: String,
-    pub size: u32,
+    pub size: u64,
     pub weight: Weight,
     pub slant: Slant,
     pub underline: bool,
@@ -182,7 +182,7 @@ impl str::FromStr for TkFont {
                 family = String::from(family.trim());
                 font.family = family;
             } else if part.starts_with("size") {
-                if let Ok(size) = &part[5..].trim().parse::<u32>() {
+                if let Ok(size) = &part[5..].trim().parse::<u64>() {
                     font.size = *size;
                 }
             } else if part.starts_with("weight bold") {
@@ -202,13 +202,13 @@ impl str::FromStr for TkFont {
 
 impl TkFont {
     /// Returns width in pixels of text if displayed with this font.
-    pub fn measure(&self, text: &str) -> u32 {
+    pub fn measure(&self, text: &str) -> u64 {
         let msg = format!(
             "puts [font measure {{{}}} {{{}}}] ; flush stdout",
             self, text
         );
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             // TODO can this fail?

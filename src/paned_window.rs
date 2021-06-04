@@ -42,7 +42,7 @@ impl TkPanedWindow {
     }
 
     /// Adds given widget to the pane with given weight.
-    pub fn add_weighted(&self, pane: &impl widget::TkWidget, weight: u32) {
+    pub fn add_weighted(&self, pane: &impl widget::TkWidget, weight: u64) {
         let msg = format!("{} add {} -weight {}", self.id, pane.id(), weight);
         wish::tell_wish(&msg);
     }
@@ -54,18 +54,18 @@ impl TkPanedWindow {
     }
 
     /// Height of paned window, in rows
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
     /// Inserts given widget to the pane at given index position.
-    pub fn insert(&self, index: u32, pane: &impl widget::TkWidget) {
+    pub fn insert(&self, index: u64, pane: &impl widget::TkWidget) {
         let msg = format!("{} insert {} {}", self.id, index, pane.id());
         wish::tell_wish(&msg);
     }
 
     /// Inserts given widget to the pane at given index position with given weight.
-    pub fn insert_weighted(&self, index: u32, pane: &impl widget::TkWidget, weight: u32) {
+    pub fn insert_weighted(&self, index: u64, pane: &impl widget::TkWidget, weight: u64) {
         let msg = format!(
             "{} insert {} {} -weight {}",
             self.id,
@@ -77,7 +77,7 @@ impl TkPanedWindow {
     }
 
     /// Width of paned window, in columns
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 }

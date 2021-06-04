@@ -45,7 +45,7 @@ impl grid::TkGridLayout for TkCombobox {}
 
 impl TkCombobox {
     /// Sets the height of the widget, in rows
-    pub fn height(&self, value: u32) {
+    pub fn height(&self, value: u64) {
         let msg = format!("{} configure -height {{{}}}", self.id, value);
         wish::tell_wish(&msg);
     }
@@ -73,7 +73,7 @@ impl TkCombobox {
     }
 
     /// Sets the width of the widget, in characters
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         let msg = format!("{} configure -width {{{}}}", self.id, value);
         wish::tell_wish(&msg);
     }

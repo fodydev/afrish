@@ -12,7 +12,7 @@ use crate::wish;
 /// Used to give either the number of series in a bar chart, or 
 /// indicate they should be drawn in a stacked manner.
 pub enum BarSeries {
-    Count(u32),
+    Count(u64),
     Stacked,
 }
 
@@ -115,6 +115,44 @@ impl fmt::Display for Direction {
     }
 }
 
+/// Choice of displaying line/symbol or both when plotting a data series.
+#[derive(Clone, Debug, PartialEq)]
+pub enum DrawingMode {
+    Both,
+    Line,
+    Symbol,
+}
+
+impl fmt::Display for DrawingMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            DrawingMode::Both => "both",
+            DrawingMode::Line => "line",
+            DrawingMode::Symbol => "symbol",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Specifies part of graph to fill.
+#[derive(Clone, Debug, PartialEq)]
+pub enum FillArea {
+    AboveLine,
+    BelowLine,
+    None,
+}
+
+impl fmt::Display for FillArea {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            FillArea::AboveLine => "up",
+            FillArea::BelowLine => "down",
+            FillArea::None => "no",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Direction of colour gradient.
 #[derive(Clone, Debug, PartialEq)]
 pub enum GradientDirection {
@@ -193,7 +231,73 @@ impl fmt::Display for Position {
     }
 }
 
-/// Functions common to (_almost_) all chart types.
+/// Style of plot on a radial chart
+pub enum RadialStyle {
+    Cumulative,
+    Filled,
+    Lines,
+}
+
+impl fmt::Display for RadialStyle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            RadialStyle::Cumulative => "cumulative",
+            RadialStyle::Filled => "filled",
+            RadialStyle::Lines => "lines",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Used to give either the step size on the axes of an isometric plot, or
+/// indicate there should be no axes drawn.
+pub enum StepSize {
+    NoAxes,
+    Value(u64),
+}
+
+impl fmt::Display for StepSize {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            StepSize::NoAxes => "noaxes".to_string(),
+            StepSize::Value(n) => n.to_string(),
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Type of symbol used when plotting data series.
+pub enum Symbol {
+    Circle,
+    Cross,
+    /// Filled circle
+    Dot,
+    /// Triangle pointing down
+    Down,
+    DownFilled,
+    Plus,
+    /// Triangle pointing up
+    Up,
+    UpFilled,
+}
+
+impl fmt::Display for Symbol {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            Symbol::Circle => "circle",
+            Symbol::Cross => "cross",
+            Symbol::Dot => "dot",
+            Symbol::Down => "down",
+            Symbol::DownFilled => "downfilled",
+            Symbol::Plus => "plus",
+            Symbol::Up => "up",
+            Symbol::UpFilled => "upfilled",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Methods common to (_almost_) all chart types.
 pub trait TkPlotchart {
     /// Returns the widget's id reference - used within tk
     fn id(&self) -> &str;
@@ -229,7 +333,7 @@ pub trait TkPlotchart {
     }
 
     /// Creates balloon text (does not work for 3D plots). 
-    fn balloon(&self, x: f32, y: f32, text: &str, direction: Direction) {
+    fn balloon(&self, x: f64, y: f64, text: &str, direction: Direction) {
         let msg = format!("global {}; ${} balloon {} {} {{{}}} {}",
                           self.id(), self.id(), 
                           x, y, text, direction);
@@ -237,7 +341,7 @@ pub trait TkPlotchart {
     }
 
     /// Sets arrow-length, in pixels, for balloon text.
-    fn balloon_arrow_size(&self, value: u32) {
+    fn balloon_arrow_size(&self, value: u64) {
         let msg = format!("global {}; ${} balloonconfig -arrowsize {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
@@ -272,14 +376,14 @@ pub trait TkPlotchart {
     }
 
     /// Sets width of margin, in pixels, around balloon text.
-    fn balloon_margin(&self, value: u32) {
+    fn balloon_margin(&self, value: u64) {
         let msg = format!("global {}; ${} balloonconfig -margin {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }
 
     /// Sets margin size, in pixels, around balloon text.
-    fn balloon_rim_width(&self, value: u32) {
+    fn balloon_rim_width(&self, value: u64) {
         let msg = format!("global {}; ${} balloonconfig -rimwidth {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
@@ -293,14 +397,14 @@ pub trait TkPlotchart {
     }
 
     /// Draws a horizontal light-grey band.
-    fn draw_x_band(&self, y_min: f32, y_max: f32) {
+    fn draw_x_band(&self, y_min: f64, y_max: f64) {
         let msg = format!("global {}; ${} xband {} {}",
                           self.id(), self.id(), y_min, y_max);
         wish::tell_wish(&msg);
     }
 
     /// Draws a vertical light-grey band.
-    fn draw_y_band(&self, y_min: f32, y_max: f32) {
+    fn draw_y_band(&self, y_min: f64, y_max: f64) {
         let msg = format!("global {}; ${} yband {} {}",
                           self.id(), self.id(), y_min, y_max);
         wish::tell_wish(&msg);
@@ -363,7 +467,7 @@ pub trait TkPlotchart {
     }
 
     /// Sets spacing between rows in legend.
-    fn legend_spacing(&self, value: u32) {
+    fn legend_spacing(&self, value: u64) {
         let msg = format!("global {}; ${} legendconfig -spacing {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
@@ -380,7 +484,7 @@ pub trait TkPlotchart {
     ///
     /// Add optional configuration options and finish with `add`.
     ///
-    fn plaintext(&self, x: f32, y: f32, text: &str, direction: Direction) {
+    fn plaintext(&self, x: f64, y: f64, text: &str, direction: Direction) {
         let msg = format!("global {}; ${} plaintext {} {} {{{}}} {}",
                           self.id(), self.id(), 
                           x, y, text, direction);
@@ -471,21 +575,21 @@ pub trait TkPlotchart {
     }
 
     /// Sets space in pixels between label and tickmark.
-    fn x_label_offset(&self, value: f32) {
+    fn x_label_offset(&self, value: f64) {
         let msg = format!("global {}; ${} xconfig -labeloffset {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }
 
     /// Sets number of minor tick marks.
-    fn x_minor_ticks(&self, value: u32) {
+    fn x_minor_ticks(&self, value: u64) {
         let msg = format!("global {}; ${} xconfig -minorticks {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }
 
     /// Changes x-axis definition to (min, max, step).
-    fn x_scale(&self, (min, max, step): (f32, f32, f32)) {
+    fn x_scale(&self, (min, max, step): (f64, f64, f64)) {
         let msg = format!("global {}; ${} xconfig -scale {{{} {} {} }}",
                           self.id(), self.id(), min, max, step);
         wish::tell_wish(&msg);
@@ -510,7 +614,7 @@ pub trait TkPlotchart {
     }
 
     /// Sets length in pixels of tick lines.
-    fn x_tick_length(&self, value: u32) {
+    fn x_tick_length(&self, value: u64) {
         let msg = format!("global {}; ${} xconfig -ticklines {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
@@ -536,21 +640,21 @@ pub trait TkPlotchart {
     }
 
     /// Sets space in pixels between label and tickmark.
-    fn y_label_offset(&self, value: f32) {
+    fn y_label_offset(&self, value: f64) {
         let msg = format!("global {}; ${} yconfig -labeloffset {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }
 
     /// Sets number of minor tick marks.
-    fn y_minor_ticks(&self, value: u32) {
+    fn y_minor_ticks(&self, value: u64) {
         let msg = format!("global {}; ${} yconfig -minorticks {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }
 
     /// Changes y-axis definition to (min, max, step).
-    fn y_scale(&self, (min, max, step): (f32, f32, f32)) {
+    fn y_scale(&self, (min, max, step): (f64, f64, f64)) {
         let msg = format!("global {}; ${} yconfig -scale {{{} {} {} }}",
                           self.id(), self.id(), min, max, step);
         wish::tell_wish(&msg);
@@ -575,7 +679,7 @@ pub trait TkPlotchart {
     }
 
     /// Sets length in pixels of tick lines.
-    fn y_tick_length(&self, value: u32) {
+    fn y_tick_length(&self, value: u64) {
         let msg = format!("global {}; ${} yconfig -ticklines {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
@@ -593,3 +697,53 @@ pub trait TkPlotchart {
     }
 
 }
+
+/// Methods for configuring the way that data series are displayed 
+/// on some kinds of charts.
+pub trait TkChartSeries: TkPlotchart {
+    /// Sets colour for displaying data series
+    fn series_colour(&self, series: &str, colour: &str) {
+        let msg = format!("global {}; ${} dataconfig {} -colour {}",
+                          self.id(), self.id(), series, colour);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets drawing mode for displaying data series 
+    /// (called "type" in tklib's plotchart documentation).
+    fn series_drawing_mode(&self, series: &str, mode: DrawingMode) {
+        let msg = format!("global {}; ${} dataconfig {} -type {}",
+                          self.id(), self.id(), series, mode);
+        wish::tell_wish(&msg);
+    }
+
+    /// Used to fill the area above or below the line of data series.
+    ///
+    /// (This combines the "filled" and "fillcolour" options of 
+    /// tklib's plotchart.)
+    fn series_fill_area(&self, series: &str, area: FillArea, colour: &str) {
+        let msg = format!("global {}; ${} dataconfig {} -filled {} -fillcolour {}",
+                          self.id(), self.id(), series, area, colour);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets width of line for displaying data series 
+    fn series_line_width(&self, series: &str, width: u64) {
+        let msg = format!("global {}; ${} dataconfig {} -width {}",
+                          self.id(), self.id(), series, width);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets symbol type and radius for displaying data series 
+    fn series_symbol(&self, series: &str, symbol: Symbol, radius: u64) {
+        let msg = format!("global {}; ${} dataconfig {} -symbol {} -radius {}",
+                          self.id(), self.id(), series, symbol, radius);
+        wish::tell_wish(&msg);
+    }
+
+}
+
+/// Configuration options for dots, used in xy_plots and polar plots.
+pub trait TkChartDots: TkPlotchart {
+    // TODO
+}
+

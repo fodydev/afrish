@@ -31,12 +31,12 @@ impl grid::TkGridLayout for TkFrame {}
 
 impl TkFrame {
     /// Size of border around frame
-    pub fn border_width(&self, width: u32) {
+    pub fn border_width(&self, width: u64) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
     /// Height of frame, in rows
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
@@ -47,7 +47,7 @@ impl TkFrame {
     /// * [left-right top-bottom]
     /// * [left top-bottom right]
     /// * [left top right bottom]
-    pub fn padding(&self, values: &[u32]) {
+    pub fn padding(&self, values: &[u64]) {
         widget::padding(&self.id, values);
     }
 
@@ -57,7 +57,7 @@ impl TkFrame {
     }
 
     /// Width of frame, in columns
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 }

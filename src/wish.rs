@@ -108,7 +108,7 @@ pub fn eval_wish(msg: &str) -> String {
 
 // -- Counter for making new ids
 
-static NEXT_ID: Lazy<Mutex<i32>> = Lazy::new(|| Mutex::new(0));
+static NEXT_ID: Lazy<Mutex<i64>> = Lazy::new(|| Mutex::new(0));
 
 /// Returns a new id string which can be used to name a new
 /// widget instance. The new id will be in reference to the
@@ -137,7 +137,7 @@ pub fn next_var() -> String {
     format!("::var{}", nid)
 }
 
-pub(super) fn current_id() -> i32 {
+pub(super) fn current_id() -> i64 {
     let nid = NEXT_ID.lock().unwrap();
     *nid
 }
@@ -253,10 +253,10 @@ fn eval_callback1_event(wid: &str, value: widget::TkEvent) {
     } // TODO - error?
 }
 
-type Callback1Float = Box<(dyn Fn(f32) + Send + 'static)>;
+type Callback1Float = Box<(dyn Fn(f64) + Send + 'static)>;
 pub(super) fn mk_callback1_float<F>(f: F) -> Callback1Float
 where
-    F: Fn(f32) + Send + 'static,
+    F: Fn(f64) + Send + 'static,
 {
     Box::new(f) as Callback1Float
 }
@@ -279,7 +279,7 @@ fn get_callback1_float(wid: &str) -> Option<Callback1Float> {
     }
 }
 
-fn eval_callback1_float(wid: &str, value: f32) {
+fn eval_callback1_float(wid: &str, value: f64) {
     if let Some(command) = get_callback1_float(wid) {
         command(value);
         if !CALLBACKS1FLOAT.lock().unwrap().contains_key(wid) {
@@ -353,15 +353,15 @@ pub fn mainloop() {
                         let parts: Vec<&str> = input.split(':').collect();
                         let widget_pattern = parts[1].trim();
                         println!("Callback on |{}| with event", widget_pattern);
-                        let x = parts[2].parse::<i32>().unwrap_or(0);
-                        let y = parts[3].parse::<i32>().unwrap_or(0);
-                        let root_x = parts[4].parse::<i32>().unwrap_or(0);
-                        let root_y = parts[5].parse::<i32>().unwrap_or(0);
-                        let height = parts[6].parse::<i32>().unwrap_or(0);
-                        let width = parts[7].parse::<i32>().unwrap_or(0);
-                        let key_code = parts[8].parse::<u32>().unwrap_or(0);
+                        let x = parts[2].parse::<i64>().unwrap_or(0);
+                        let y = parts[3].parse::<i64>().unwrap_or(0);
+                        let root_x = parts[4].parse::<i64>().unwrap_or(0);
+                        let root_y = parts[5].parse::<i64>().unwrap_or(0);
+                        let height = parts[6].parse::<i64>().unwrap_or(0);
+                        let width = parts[7].parse::<i64>().unwrap_or(0);
+                        let key_code = parts[8].parse::<u64>().unwrap_or(0);
                         let key_symbol = parts[9].parse::<String>().unwrap_or_default();
-                        let mouse_button = parts[10].parse::<u32>().unwrap_or(0);
+                        let mouse_button = parts[10].parse::<u64>().unwrap_or(0);
                         let event = widget::TkEvent {
                             x,
                             y,
@@ -378,7 +378,7 @@ pub fn mainloop() {
                         // -- callback 1 with float
                         let parts: Vec<&str> = input.split('-').collect();
                         let widget = parts[1].trim();
-                        let value = parts[2].trim().parse::<f32>().unwrap_or(0.0);
+                        let value = parts[2].trim().parse::<f64>().unwrap_or(0.0);
                         eval_callback1_float(widget, value);
                     } else if let Some(font) = input.strip_prefix("font") {
                         // -- callback 1 with font

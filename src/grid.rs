@@ -26,14 +26,14 @@ use super::wish;
 #[derive(Clone, Debug)]
 pub struct GridLayout {
     id: String,
-    column: Option<u32>,
-    column_span: Option<u32>,
-    ipadx: Option<u32>,
-    ipady: Option<u32>,
-    padx: Option<u32>,
-    pady: Option<u32>,
-    row: Option<u32>,
-    row_span: Option<u32>,
+    column: Option<u64>,
+    column_span: Option<u64>,
+    ipadx: Option<u64>,
+    ipady: Option<u64>,
+    padx: Option<u64>,
+    pady: Option<u64>,
+    row: Option<u64>,
+    row_span: Option<u64>,
     sticky: widget::Sticky,
 }
 
@@ -54,49 +54,49 @@ impl GridLayout {
     }
 
     /// Specifies the (0-indexed) column in which to place this widget.
-    pub fn column(&mut self, column: u32) -> &mut Self {
+    pub fn column(&mut self, column: u64) -> &mut Self {
         self.column = Some(column);
         self
     }
 
     /// The number of columns this widget should span.
-    pub fn column_span(&mut self, span: u32) -> &mut Self {
+    pub fn column_span(&mut self, span: u64) -> &mut Self {
         self.column_span = Some(span);
         self
     }
 
     /// Horizontal padding (inside content border).
-    pub fn ipadx(&mut self, pad: u32) -> &mut Self {
+    pub fn ipadx(&mut self, pad: u64) -> &mut Self {
         self.ipadx = Some(pad);
         self
     }
 
     /// Vertical padding (inside content border).
-    pub fn ipady(&mut self, pad: u32) -> &mut Self {
+    pub fn ipady(&mut self, pad: u64) -> &mut Self {
         self.ipady = Some(pad);
         self
     }
 
     /// Horizontal padding (outside content border).
-    pub fn padx(&mut self, pad: u32) -> &mut Self {
+    pub fn padx(&mut self, pad: u64) -> &mut Self {
         self.padx = Some(pad);
         self
     }
 
     /// Vertical padding (outside content border).
-    pub fn pady(&mut self, pad: u32) -> &mut Self {
+    pub fn pady(&mut self, pad: u64) -> &mut Self {
         self.pady = Some(pad);
         self
     }
 
     /// Specifies the (0-indexed) row in which to place this widget.
-    pub fn row(&mut self, row: u32) -> &mut Self {
+    pub fn row(&mut self, row: u64) -> &mut Self {
         self.row = Some(row);
         self
     }
 
     /// Number of rows this widget should span.
-    pub fn row_span(&mut self, span: u32) -> &mut Self {
+    pub fn row_span(&mut self, span: u64) -> &mut Self {
         self.row_span = Some(span);
         self
     }

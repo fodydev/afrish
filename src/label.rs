@@ -70,7 +70,7 @@ impl TkLabel {
     /// Sets the maximum line length, in pixels.
     /// When set, displayed text is separated into lines, not exceeding
     /// the given length.
-    pub fn wrap_length(&self, length: u32) {
+    pub fn wrap_length(&self, length: u64) {
         widget::configure(&self.id, "wraplength", &length.to_string());
     }
 }

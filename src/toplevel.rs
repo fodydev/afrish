@@ -40,7 +40,7 @@ impl TkTopLevel {
     }
 
     /// Size of border around widget.
-    pub fn border_width(&self, width: u32) {
+    pub fn border_width(&self, width: u64) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
@@ -72,7 +72,7 @@ impl TkTopLevel {
     ///         and a negative value gives position relative to _right_ edge.
     /// * `y` - a positive value gives position relative to _top_ edge of screen,
     ///         and a negative value gives position relative to _bottom_ edge.
-    pub fn geometry(&self, width: u32, height: u32, x: i32, y: i32) {
+    pub fn geometry(&self, width: u64, height: u64, x: i64, y: i64) {
         let msg = format!(
             "wm geometry {} {}x{}{}{}{}{}",
             self.id,
@@ -87,7 +87,7 @@ impl TkTopLevel {
     }
 
     /// Height of window, in rows.
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
@@ -98,7 +98,7 @@ impl TkTopLevel {
     }
 
     /// Sets the maximum width/height in pixels for the window.
-    pub fn maximum_size(&self, width: u32, height: u32) {
+    pub fn maximum_size(&self, width: u64, height: u64) {
         let msg = format!("wm maxsize {} {} {}", self.id, width, height);
         wish::tell_wish(&msg);
     }
@@ -109,7 +109,7 @@ impl TkTopLevel {
     }
 
     /// Sets the minimum width/height in pixels for the window.
-    pub fn minimum_size(&self, width: u32, height: u32) {
+    pub fn minimum_size(&self, width: u64, height: u64) {
         let msg = format!("wm minsize {} {} {}", self.id, width, height);
         wish::tell_wish(&msg);
     }
@@ -125,12 +125,12 @@ impl TkTopLevel {
     }
 
     /// Amount of horizontal padding for widget.
-    pub fn padx(&self, value: u32) {
+    pub fn padx(&self, value: u64) {
         widget::configure(&self.id, "padx", &value.to_string());
     }
 
     /// Amount of vertical padding for widget.
-    pub fn pady(&self, value: u32) {
+    pub fn pady(&self, value: u64) {
         widget::configure(&self.id, "pady", &value.to_string());
     }
 
@@ -162,7 +162,7 @@ impl TkTopLevel {
     }
 
     /// Width of window, in columns.
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 

@@ -13,23 +13,23 @@ use super::wish;
 #[derive(Clone, Debug)]
 pub struct TkEvent {
     /// x-coordinate relative to current widget
-    pub x: i32,
+    pub x: i64,
     /// y-coordinate relative to current widget
-    pub y: i32,
+    pub y: i64,
     /// x-coordinate relative to screen
-    pub root_x: i32,
+    pub root_x: i64,
     /// y-coordinate relative to screen
-    pub root_y: i32,
+    pub root_y: i64,
     /// vertical screen distance, e.g. for a drag event
-    pub height: i32,
+    pub height: i64,
     /// horizontal screen distance, e.g. for a drag event
-    pub width: i32,
+    pub width: i64,
     /// Numeric code representing key for current event
-    pub key_code: u32,
+    pub key_code: u64,
     /// Symbol representing key for current event, e.g. "space", "e".
     pub key_symbol: String,
     /// Number of mouse button in current event: 1 for left, 3 for right, etc.
-    pub mouse_button: u32,
+    pub mouse_button: u64,
 }
 
 /// Common trait for container widgets. Child widgets should implement the `id`
@@ -89,10 +89,10 @@ pub trait TkWidget {
     // -- winfo functions
 
     /// Returns the widget x position in pixels, within its parent.
-    fn position_x(&self) -> u32 {
+    fn position_x(&self) -> u64 {
         let msg = format!("winfo x {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -100,10 +100,10 @@ pub trait TkWidget {
     }
 
     /// Returns the widget y position in pixels, within its parent.
-    fn position_y(&self) -> u32 {
+    fn position_y(&self) -> u64 {
         let msg = format!("winfo y {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -111,10 +111,10 @@ pub trait TkWidget {
     }
 
     /// Returns the widget height in pixels.
-    fn widget_height(&self) -> u32 {
+    fn widget_height(&self) -> u64 {
         let msg = format!("winfo height {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -122,10 +122,10 @@ pub trait TkWidget {
     }
 
     /// Returns the widget width in pixels.
-    fn widget_width(&self) -> u32 {
+    fn widget_width(&self) -> u64 {
         let msg = format!("winfo width {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -133,15 +133,15 @@ pub trait TkWidget {
     }
 
     /// Returns the position of the mouse on screen of widget as (x,y).
-    fn mouse_position(&self) -> (i32, i32) {
+    fn mouse_position(&self) -> (i64, i64) {
         (self.mouse_x(), self.mouse_y())
     }
 
     /// Gives the x position of the mouse on screen of widget.
-    fn mouse_x(&self) -> i32 {
+    fn mouse_x(&self) -> i64 {
         let msg = format!("winfo pointerx {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<i32>() {
+        if let Ok(value) = result.parse::<i64>() {
             value
         } else {
             -1
@@ -149,10 +149,10 @@ pub trait TkWidget {
     }
 
     /// Gives the y position of the mouse on screen of widget.
-    fn mouse_y(&self) -> i32 {
+    fn mouse_y(&self) -> i64 {
         let msg = format!("winfo pointery {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<i32>() {
+        if let Ok(value) = result.parse::<i64>() {
             value
         } else {
             -1
@@ -160,10 +160,10 @@ pub trait TkWidget {
     }
 
     /// Height of screen of widget in pixels.
-    fn screen_height(&self) -> u32 {
+    fn screen_height(&self) -> u64 {
         let msg = format!("winfo screenheight {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -171,10 +171,10 @@ pub trait TkWidget {
     }
 
     /// Height of screen of widget in millimetres.
-    fn screen_height_mm(&self) -> u32 {
+    fn screen_height_mm(&self) -> u64 {
         let msg = format!("winfo screenmmheight {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -182,10 +182,10 @@ pub trait TkWidget {
     }
 
     /// Width of screen of widget in pixels.
-    fn screen_width(&self) -> u32 {
+    fn screen_width(&self) -> u64 {
         let msg = format!("winfo screenwidth {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -193,10 +193,10 @@ pub trait TkWidget {
     }
 
     /// Width of screen of widget in millimetres.
-    fn screen_width_mm(&self) -> u32 {
+    fn screen_width_mm(&self) -> u64 {
         let msg = format!("winfo screenmmwidth {}", self.id());
         let result = wish::eval_wish(&msg);
-        if let Ok(value) = result.parse::<u32>() {
+        if let Ok(value) = result.parse::<u64>() {
             value
         } else {
             0
@@ -221,7 +221,7 @@ pub trait TkWidget {
 
     /// Sets property for a given column of the grid layout
     /// contained within this widget.
-    fn grid_configure_column(&self, index: u32, option: &str, value: &str) {
+    fn grid_configure_column(&self, index: u64, option: &str, value: &str) {
         let msg = format!(
             "grid columnconfigure {} {} -{} {{{}}}",
             self.id(),
@@ -234,7 +234,7 @@ pub trait TkWidget {
 
     /// Sets property for a given row of the grid layout
     /// contained within this widget.
-    fn grid_configure_row(&self, index: u32, option: &str, value: &str) {
+    fn grid_configure_row(&self, index: u64, option: &str, value: &str) {
         let msg = format!(
             "grid rowconfigure {} {} -{} {{{}}}",
             self.id(),
@@ -283,7 +283,7 @@ pub trait TkLabelOptions: TkWidget {
     /// * [left-right top-bottom]
     /// * [left top-bottom right]
     /// * [left top right bottom]
-    fn padding(&self, values: &[u32]) {
+    fn padding(&self, values: &[u64]) {
         padding(&self.id(), values);
     }
 
@@ -293,12 +293,12 @@ pub trait TkLabelOptions: TkWidget {
     }
 
     /// Underlines the character at the given index position.
-    fn underline(&self, index: u32) {
+    fn underline(&self, index: u64) {
         configure(&self.id(), "underline", &index.to_string());
     }
 
     /// Sets the width of the widget, in characters
-    fn width(&self, value: i32) {
+    fn width(&self, value: i64) {
         let msg = format!("{} configure -width {{{}}}", self.id(), value);
         wish::tell_wish(&msg);
     }
@@ -639,7 +639,7 @@ pub(super) fn configure(wid: &str, option: &str, value: &str) {
     wish::tell_wish(&msg);
 }
 
-pub(super) fn padding(wid: &str, values: &[u32]) {
+pub(super) fn padding(wid: &str, values: &[u64]) {
     let mut value_str = String::new();
     for i in values.iter() {
         value_str.push_str(&i.to_string());
@@ -651,7 +651,7 @@ pub(super) fn padding(wid: &str, values: &[u32]) {
 // --------------------------------------------------------------------------
 
 /// Triggers given command after 'time' milliseconds.
-pub fn after(time: u32, command: impl Fn() + Send + 'static) {
+pub fn after(time: u64, command: impl Fn() + Send + 'static) {
     wish::next_wid(".");
     let name = format!("after{}", wish::current_id()); 
     wish::add_callback0(&name, wish::mk_callback0(command));

@@ -45,7 +45,7 @@ impl TkNotebook {
     }
 
     /// Height of notebook, in rows
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
@@ -56,12 +56,12 @@ impl TkNotebook {
     /// * [left-right top-bottom]
     /// * [left top-bottom right]
     /// * [left top right bottom]
-    pub fn padding(&self, values: &[u32]) {
+    pub fn padding(&self, values: &[u64]) {
         widget::padding(&self.id, values);
     }
 
     /// Width of notebook, in columns
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 }

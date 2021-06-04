@@ -92,13 +92,13 @@ impl TkTreeview {
     }
 
     /// Set the minimum-width in pixels for the given column.
-    pub fn column_min_width(&self, column: &str, value: u32) {
+    pub fn column_min_width(&self, column: &str, value: u64) {
         let msg = format!("{} column {} -minwidth {}", &self.id, column, value);
         wish::tell_wish(&msg);
     }
 
     /// Set the width in pixels for the given column.
-    pub fn column_width(&self, column: &str, value: u32) {
+    pub fn column_width(&self, column: &str, value: u64) {
         let msg = format!("{} column {} -width {}", &self.id, column, value);
         wish::tell_wish(&msg);
     }
@@ -133,7 +133,7 @@ impl TkTreeview {
     }
 
     /// Sets number of rows to display.
-    pub fn height(&self, value: u32) {
+    pub fn height(&self, value: u64) {
         widget::configure(&self.id, "height", &value.to_string());
     }
 
@@ -149,7 +149,7 @@ impl TkTreeview {
     }
 
     /// Create a new top-level item at given index position of treeview.
-    pub fn insert_item_at(&self, index: u32) -> TkTreeviewItem {
+    pub fn insert_item_at(&self, index: u64) -> TkTreeviewItem {
         let msg = format!("puts [{} insert {{}} {}] ; flush stdout", &self.id, index);
         let result = wish::eval_wish(&msg);
 
@@ -160,7 +160,7 @@ impl TkTreeview {
     }
 
     /// Moves a given item to become a child of given parent.
-    pub fn move_item(&self, child: &TkTreeviewItem, parent: &TkTreeviewItem, index: u32) {
+    pub fn move_item(&self, child: &TkTreeviewItem, parent: &TkTreeviewItem, index: u64) {
         let msg = format!("{} move {} {} {}", &self.id, &child.id, &parent.id, index);
         wish::tell_wish(&msg);
     }
@@ -309,7 +309,7 @@ impl TkTreeviewItem {
 
     /// Create a new top-level item at given index position of this
     /// treeview item.
-    pub fn insert_item_at(&self, index: u32) -> TkTreeviewItem {
+    pub fn insert_item_at(&self, index: u64) -> TkTreeviewItem {
         let msg = format!(
             "puts [{} insert {} {}] ; flush stdout",
             &self.treeview, &self.id, index

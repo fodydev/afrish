@@ -70,7 +70,7 @@ impl TkEntry {
     }
 
     /// Sets the width of the widget, in characters
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         let msg = format!("{} configure -width {{{}}}", self.id, value);
         wish::tell_wish(&msg);
     }

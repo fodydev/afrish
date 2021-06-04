@@ -22,9 +22,9 @@ pub struct TkHorizontalBarChart {
 pub fn make_bar_chart(
     canvas: &canvas::TkCanvas,
     x_labels: &[&str],
-    y_axis: (f32, f32, f32),
+    y_axis: (f64, f64, f64),
     num_series: plotchart::BarSeries,
-    x_label_angle: f32
+    x_label_angle: f64
 ) -> TkBarChart {
     let mut labels_str = String::new();
     for label in x_labels {
@@ -46,7 +46,7 @@ pub fn make_bar_chart(
 /// Creates an instance of a horizontal bar chart in given canvas.
 pub fn make_horizontal_bar_chart(
     canvas: &canvas::TkCanvas,
-    x_axis: (f32, f32, f32),
+    x_axis: (f64, f64, f64),
     y_labels: &[&str],
     num_series: plotchart::BarSeries,
 ) -> TkHorizontalBarChart {
@@ -84,7 +84,7 @@ impl plotchart::TkPlotchart for TkHorizontalBarChart {
 
 pub trait BarChartMethods : plotchart::TkPlotchart {
     /// Plot given data.
-    fn plot(&self, series: &str, data: &[f32], colour: &str) {
+    fn plot(&self, series: &str, data: &[f64], colour: &str) {
         let mut data_str = String::new();
         for datum in data {
             data_str.push_str(&format!("{} ", datum));

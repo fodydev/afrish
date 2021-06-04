@@ -56,12 +56,12 @@ impl TkListbox {
     }
 
     /// Size of border around listbox.
-    pub fn border_width(&self, width: u32) {
+    pub fn border_width(&self, width: u64) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
     /// Delete item at given index.
-    pub fn delete(&self, index: u32) {
+    pub fn delete(&self, index: u64) {
         let msg = format!("{} delete {}", &self.id, index);
         wish::tell_wish(&msg);
     }
@@ -72,18 +72,18 @@ impl TkListbox {
     }
 
     /// Height of listbox, in rows.
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
     /// Insert item at given index.
-    pub fn insert_at(&self, index: u32, item: &str) {
+    pub fn insert_at(&self, index: u64, item: &str) {
         let msg = format!("{} insert {} {{{}}}", &self.id, index, item);
         wish::tell_wish(&msg);
     }
 
     /// Set configuration option for given item index.
-    pub fn item_configure(&self, index: u32, option: &str, value: &str) {
+    pub fn item_configure(&self, index: u64, option: &str, value: &str) {
         let msg = format!(
             "{} itemconfigure {} -{} {{{}}}",
             &self.id, index, option, value
@@ -112,13 +112,13 @@ impl TkListbox {
     }
 
     /// Returns list of indices for selected items.
-    pub fn selected_items(&self) -> Vec<u32> {
+    pub fn selected_items(&self) -> Vec<u64> {
         let query = format!("puts [{} curselection] ; flush stdout", &self.id);
         let values = wish::eval_wish(&query);
 
-        let mut result: Vec<u32> = vec![];
+        let mut result: Vec<u64> = vec![];
         for value in values.split_whitespace() {
-            if let Ok(value) = value.parse::<u32>() {
+            if let Ok(value) = value.parse::<u64>() {
                 result.push(value);
             }
         }
@@ -132,7 +132,7 @@ impl TkListbox {
     }
 
     /// Width of listbox, in characters.
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 }

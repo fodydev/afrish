@@ -21,7 +21,7 @@ pub struct TkHorizontalBoxPlot {
 pub fn make_box_plot(
     canvas: &canvas::TkCanvas,
     x_labels: &[&str],
-    y_axis: (f32, f32, f32)
+    y_axis: (f64, f64, f64)
 ) -> TkBoxPlot {
     let mut labels_str = String::new();
     for label in x_labels {
@@ -43,7 +43,7 @@ pub fn make_box_plot(
 /// Creates an instance of a horizontal box plot in given canvas.
 pub fn make_horizontal_box_plot(
     canvas: &canvas::TkCanvas,
-    x_axis: (f32, f32, f32),
+    x_axis: (f64, f64, f64),
     y_labels: &[&str],
 ) -> TkHorizontalBoxPlot {
     let mut labels_str = String::new();
@@ -80,7 +80,7 @@ impl plotchart::TkPlotchart for TkHorizontalBoxPlot {
 
 pub trait BoxPlotMethods : plotchart::TkPlotchart {
     /// Sets width (or height) in pixels of box.
-    fn box_width(&self, series: &str, value: u32) {
+    fn box_width(&self, series: &str, value: u64) {
         let msg = format!("global {}; ${} dataconfig {} -boxwidth {}",
                           self.id(), self.id(), series, value);
         wish::tell_wish(&msg);
@@ -94,14 +94,14 @@ pub trait BoxPlotMethods : plotchart::TkPlotchart {
     }
 
     /// Sets thickness in pixels of median line.
-    fn median_width(&self, series: &str, value: u32) {
+    fn median_width(&self, series: &str, value: u64) {
         let msg = format!("global {}; ${} dataconfig {} -medianwidth {}",
                           self.id(), self.id(), series, value);
         wish::tell_wish(&msg);
     }
 
     /// Plot given data.
-    fn plot(&self, series: &str, label: &str, data: &[f32]) {
+    fn plot(&self, series: &str, label: &str, data: &[f64]) {
         let mut data_str = String::new();
         for datum in data {
             data_str.push_str(&format!("{} ", datum));
@@ -120,7 +120,7 @@ pub trait BoxPlotMethods : plotchart::TkPlotchart {
     }
 
     /// Sets width (or height) of box whiskers.
-    fn whisker_width(&self, series: &str, value: u32) {
+    fn whisker_width(&self, series: &str, value: u64) {
         let msg = format!("global {}; ${} dataconfig {} -whiskerwidth {}",
                           self.id(), self.id(), series, value);
         wish::tell_wish(&msg);

@@ -43,15 +43,15 @@ impl TkText {
     }
 
     /// Size of border around widget.
-    pub fn border_width(&self, width: u32) {
+    pub fn border_width(&self, width: u64) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
     /// Delete a range of text.
     pub fn delete(
         &self,
-        (from_line, from_character): (u32, u32),
-        (to_line, to_character): (u32, u32),
+        (from_line, from_character): (u64, u64),
+        (to_line, to_character): (u64, u64),
     ) {
         let msg = format!(
             "{} delete {}.{} {}.{}",
@@ -61,7 +61,7 @@ impl TkText {
     }
 
     /// Delete a single character in text.
-    pub fn delete_char(&self, (line, character): (u32, u32)) {
+    pub fn delete_char(&self, (line, character): (u64, u64)) {
         let msg = format!("{} delete {}.{}", &self.id, line, character);
         wish::tell_wish(&msg);
     }
@@ -84,8 +84,8 @@ impl TkText {
     /// Get a range of text.
     pub fn get(
         &self,
-        (from_line, from_character): (u32, u32),
-        (to_line, to_character): (u32, u32),
+        (from_line, from_character): (u64, u64),
+        (to_line, to_character): (u64, u64),
     ) -> String {
         let msg = format!(
             "puts [{} get {}.{} {}.{}] ; flush stdout",
@@ -95,7 +95,7 @@ impl TkText {
     }
 
     /// Get a range of text from a position to end.
-    pub fn get_to_end(&self, (from_line, from_character): (u32, u32)) -> String {
+    pub fn get_to_end(&self, (from_line, from_character): (u64, u64)) -> String {
         let msg = format!(
             "puts [{} get {}.{} end] ; flush stdout",
             &self.id, from_line, from_character
@@ -104,12 +104,12 @@ impl TkText {
     }
 
     /// Height of text, in rows
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
     /// Insert at given (line, character) position of text.
-    pub fn insert(&self, (line, character): (u32, u32), text: &str) {
+    pub fn insert(&self, (line, character): (u64, u64), text: &str) {
         let msg = format!("{} insert {}.{} {{{}}}", &self.id, line, character, text);
         wish::tell_wish(&msg);
     }
@@ -134,7 +134,7 @@ impl TkText {
     }
 
     /// Inserts an image at given (line, character) position of text.
-    pub fn insert_image(&self, (line, character): (u32, u32), image: &image::TkImage) {
+    pub fn insert_image(&self, (line, character): (u64, u64), image: &image::TkImage) {
         let msg = format!(
             "{} image create {}.{} -image {{{}}}",
             &self.id, line, character, &image.id
@@ -143,7 +143,7 @@ impl TkText {
     }
 
     /// Inserts a Tk widget at given (line, character) position of text.
-    pub fn insert_widget(&self, (line, character): (u32, u32), widget: &impl widget::TkWidget) {
+    pub fn insert_widget(&self, (line, character): (u64, u64), widget: &impl widget::TkWidget) {
         let msg = format!(
             "{} window create {}.{} -window {{{}}}",
             &self.id,
@@ -156,7 +156,7 @@ impl TkText {
 
     /// Insert at given (line, character) position of text,
     /// with given tags.
-    pub fn insert_with_tags(&self, (line, character): (u32, u32), text: &str, tags: &[&str]) {
+    pub fn insert_with_tags(&self, (line, character): (u64, u64), text: &str, tags: &[&str]) {
         let mut tags_str = String::new();
         for tag in tags {
             tags_str.push('{');
@@ -184,13 +184,13 @@ impl TkText {
     }
 
     /// Returns a (line, character) tuple for the given mark's position.
-    pub fn mark_index(&self, mark: &str) -> (u32, u32) {
+    pub fn mark_index(&self, mark: &str) -> (u64, u64) {
         let msg = format!("puts [{} index {}] ; flush stdout", &self.id, mark);
         let result = wish::eval_wish(&msg);
         let parts: Vec<&str> = result.split('.').collect();
         if parts.len() == 2 {
-            let line = parts[0].parse::<u32>().unwrap_or(1);
-            let character = parts[1].parse::<u32>().unwrap_or(0);
+            let line = parts[0].parse::<u64>().unwrap_or(1);
+            let character = parts[1].parse::<u64>().unwrap_or(0);
 
             (line, character)
         } else {
@@ -207,19 +207,19 @@ impl TkText {
     }
 
     /// Returns name of next mark from given position.
-    pub fn mark_next(&self, (line, character): (u32, u32)) -> String {
+    pub fn mark_next(&self, (line, character): (u64, u64)) -> String {
         let msg = format!("{} mark next {}.{}", &self.id, line, character);
         wish::eval_wish(&msg)
     }
 
     /// Returns name of previous mark to given position.
-    pub fn mark_previous(&self, (line, character): (u32, u32)) -> String {
+    pub fn mark_previous(&self, (line, character): (u64, u64)) -> String {
         let msg = format!("{} mark prev {}.{}", &self.id, line, character);
         wish::eval_wish(&msg)
     }
 
     /// Sets named mark to given position.
-    pub fn mark_set(&self, mark: &str, (line, character): (u32, u32)) {
+    pub fn mark_set(&self, mark: &str, (line, character): (u64, u64)) {
         let msg = format!("{} mark set {} {}.{}", &self.id, mark, line, character);
         wish::tell_wish(&msg);
     }
@@ -231,12 +231,12 @@ impl TkText {
     }
 
     /// Amount of horizontal padding for widget.
-    pub fn padx(&self, value: u32) {
+    pub fn padx(&self, value: u64) {
         widget::configure(&self.id, "padx", &value.to_string());
     }
 
     /// Amount of vertical padding for widget.
-    pub fn pady(&self, value: u32) {
+    pub fn pady(&self, value: u64) {
         widget::configure(&self.id, "pady", &value.to_string());
     }
 
@@ -248,8 +248,8 @@ impl TkText {
     /// Replaces a range of text with new text.
     pub fn replace(
         &self,
-        (from_line, from_character): (u32, u32),
-        (to_line, to_character): (u32, u32),
+        (from_line, from_character): (u64, u64),
+        (to_line, to_character): (u64, u64),
         text: &str,
     ) {
         let msg = format!(
@@ -262,7 +262,7 @@ impl TkText {
     /// Searches the text widget from given position for the
     /// text, returning an Option type containing either the
     /// position of the found text or none.
-    pub fn search(&self, text: &str, (line, character): (u32, u32)) -> Option<(u32, u32)> {
+    pub fn search(&self, text: &str, (line, character): (u64, u64)) -> Option<(u64, u64)> {
         let msg = format!(
             "puts [{} search {{{}}} {}.{}] ; flush stdout",
             &self.id, text, line, character
@@ -270,8 +270,8 @@ impl TkText {
         let result = wish::eval_wish(&msg);
         let parts: Vec<&str> = result.split('.').collect();
         if parts.len() == 2 {
-            let line = parts[0].parse::<u32>().unwrap_or(1);
-            let character = parts[1].parse::<u32>().unwrap_or(0);
+            let line = parts[0].parse::<u64>().unwrap_or(1);
+            let character = parts[1].parse::<u64>().unwrap_or(0);
 
             Some((line, character))
         } else {
@@ -281,7 +281,7 @@ impl TkText {
 
     /// Arranges text widget display to ensure the given line, character
     /// is visible.
-    pub fn see(&self, (line, character): (u32, u32)) {
+    pub fn see(&self, (line, character): (u64, u64)) {
         let msg = format!("{} see {}.{}", self.id, line, character);
         wish::tell_wish(&msg);
     }
@@ -295,8 +295,8 @@ impl TkText {
     pub fn tag_add(
         &self,
         tag: &str,
-        (from_line, from_character): (u32, u32),
-        (to_line, to_character): (u32, u32),
+        (from_line, from_character): (u64, u64),
+        (to_line, to_character): (u64, u64),
     ) {
         let msg = format!(
             "{} tag add {{{}}} {}.{} {}.{}",
@@ -346,7 +346,7 @@ impl TkText {
 
     /// Returns a list of all the tag names defined in this text widget
     /// at the given location.
-    pub fn tag_names_at(&self, (line, character): (u32, u32)) -> Vec<String> {
+    pub fn tag_names_at(&self, (line, character): (u64, u64)) -> Vec<String> {
         let msg = format!(
             "puts [{} tag names {}.{}] ; flush stdout",
             &self.id, line, character
@@ -359,8 +359,8 @@ impl TkText {
     pub fn tag_remove(
         &self,
         tag: &str,
-        (from_line, from_character): (u32, u32),
-        (to_line, to_character): (u32, u32),
+        (from_line, from_character): (u64, u64),
+        (to_line, to_character): (u64, u64),
     ) {
         let msg = format!(
             "{} tag remove {{{}}} {}.{} {}.{}",
@@ -370,7 +370,7 @@ impl TkText {
     }
 
     /// Width of text, in columns
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 

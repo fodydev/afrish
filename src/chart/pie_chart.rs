@@ -65,7 +65,7 @@ pub trait PieChartMethods: plotchart::TkPlotchart {
     }
 
     /// Plots data, where data is a list of (label, angle) pairs.
-    fn plot(&self, data: &[(&str, f32)]) {
+    fn plot(&self, data: &[(&str, f64)]) {
         let mut data_str = String::new();
         for (label, angle) in data {
             data_str.push_str(&format!("{} {} ", label, angle));
@@ -81,7 +81,7 @@ impl PieChartMethods for TkPieChart {}
 
 impl TkPieChart {
         /// Given slice number is displayed offset from circle.
-    pub fn explode(&self, slice_number: u32) {
+    pub fn explode(&self, slice_number: u64) {
         let msg = format!("global {}; ${} explode {}",
                           &self.id, &self.id, slice_number);
         wish::tell_wish(&msg);

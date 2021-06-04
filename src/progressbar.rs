@@ -41,18 +41,18 @@ impl grid::TkGridLayout for TkProgressbar {}
 
 impl TkProgressbar {
     /// Displayed length of progress bar in pixels.
-    pub fn length(&self, value: u32) {
+    pub fn length(&self, value: u64) {
         widget::configure(&self.id, "length", &value.to_string());
     }
 
     /// Sets the maximum value for the progress bar - defaults to 100.0.
-    pub fn maximum(&self, value: f32) {
+    pub fn maximum(&self, value: f64) {
         widget::configure(&self.id, "maximum", &value.to_string());
     }
 
     /// Starts auto-increment for the progress bar, updating
     /// after every 'interval' milliseconds (50 is recommended).
-    pub fn start(&self, interval: u32) {
+    pub fn start(&self, interval: u64) {
         let msg = format!("{} start {}", &self.id, interval);
         wish::tell_wish(&msg);
     }
@@ -63,7 +63,7 @@ impl TkProgressbar {
     }
 
     /// Steps the progress bar manually by given amount.
-    pub fn step(&self, value: f32) {
+    pub fn step(&self, value: f64) {
         let msg = format!("{} step {}", &self.id, value);
         wish::tell_wish(&msg);
     }
@@ -75,9 +75,9 @@ impl TkProgressbar {
     }
 
     /// Returns the current value of the progress bar.
-    pub fn value_get(&self) -> f32 {
+    pub fn value_get(&self) -> f64 {
         let result = widget::TkWidget::cget(self, "value");
-        if let Ok(value) = result.parse::<f32>() {
+        if let Ok(value) = result.parse::<f64>() {
             value
         } else {
             0.0
@@ -85,7 +85,7 @@ impl TkProgressbar {
     }
 
     /// Sets the value of the progress bar.
-    pub fn value(&self, value: f32) {
+    pub fn value(&self, value: f64) {
         widget::configure(&self.id, "value", &value.to_string());
     }
 }

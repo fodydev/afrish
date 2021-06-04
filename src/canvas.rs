@@ -98,7 +98,7 @@ impl TkCanvas {
     }
 
     /// Size of border around widget.
-    pub fn border_width(&self, width: u32) {
+    pub fn border_width(&self, width: u64) {
         widget::configure(&self.id, "borderwidth", &width.to_string());
     }
 
@@ -113,7 +113,7 @@ impl TkCanvas {
 
     /// Creates an arc where (x1, y1) (x2, y2) define a rectangle
     /// enclosing the oval which defines the arc.
-    pub fn create_arc(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasArc {
+    pub fn create_arc(&self, (x1, y1): (u64, u64), (x2, y2): (u64, u64)) -> TkCanvasArc {
         let msg = format!(
             "puts [{} create arc {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
@@ -127,7 +127,7 @@ impl TkCanvas {
     }
 
     /// Creates an image at (x, y) according to given image reference.
-    pub fn create_image(&self, x: u32, y: u32, image: &image::TkImage) -> TkCanvasImage {
+    pub fn create_image(&self, (x, y): (u64, u64), image: &image::TkImage) -> TkCanvasImage {
         let msg = format!(
             "puts [{} create image {} {} {}] ; flush stdout",
             &self.id, x, y, &image.id
@@ -141,7 +141,7 @@ impl TkCanvas {
     }
 
     /// Creates a line using slice of (x, y) coordinates.
-    pub fn create_line(&self, points: &[(u32, u32)]) -> TkCanvasLine {
+    pub fn create_line(&self, points: &[(u64, u64)]) -> TkCanvasLine {
         let mut line_defn = String::new();
         for (x, y) in points {
             line_defn.push_str(&format!("{} {} ", x, y));
@@ -161,7 +161,7 @@ impl TkCanvas {
 
     /// Creates an oval where (x1, y1) (x2, y2) define a rectangle
     /// enclosing the oval.
-    pub fn create_oval(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasOval {
+    pub fn create_oval(&self, (x1, y1): (u64, u64), (x2, y2): (u64, u64)) -> TkCanvasOval {
         let msg = format!(
             "puts [{} create oval {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
@@ -175,7 +175,7 @@ impl TkCanvas {
     }
 
     /// Creates a polygon using slice of (x, y) coordinates.
-    pub fn create_polygon(&self, points: &[(u32, u32)]) -> TkCanvasPolygon {
+    pub fn create_polygon(&self, points: &[(u64, u64)]) -> TkCanvasPolygon {
         let mut line_defn = String::new();
         for (x, y) in points {
             line_defn.push_str(&format!("{} {} ", x, y));
@@ -194,7 +194,7 @@ impl TkCanvas {
     }
 
     /// Creates a rectangle with opposite corners (x1, y1) (x2, y2).
-    pub fn create_rectangle(&self, x1: u32, y1: u32, x2: u32, y2: u32) -> TkCanvasRectangle {
+    pub fn create_rectangle(&self, (x1, y1): (u64, u64), (x2, y2): (u64, u64)) -> TkCanvasRectangle {
         let msg = format!(
             "puts [{} create rectangle {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
@@ -208,7 +208,7 @@ impl TkCanvas {
     }
 
     /// Creates a text item at (x, y) with given contents.
-    pub fn create_text(&self, x: u32, y: u32, text: &str) -> TkCanvasText {
+    pub fn create_text(&self, (x, y): (u64, u64), text: &str) -> TkCanvasText {
         let msg = format!(
             "puts [{} create text {} {} {{{}}}] ; flush stdout",
             &self.id, x, y, text
@@ -222,7 +222,7 @@ impl TkCanvas {
     }
 
     /// Creates a widget at (x, y) according to given widget reference.
-    pub fn create_widget(&self, x: u32, y: u32, widget: &impl widget::TkWidget) -> TkCanvasWidget {
+    pub fn create_widget(&self, (x, y): (u64, u64), widget: &impl widget::TkWidget) -> TkCanvasWidget {
         let msg = format!(
             "puts [{} create window {} {} {}] ; flush stdout",
             &self.id,
@@ -245,7 +245,7 @@ impl TkCanvas {
     }
 
     /// Height of canvas, in pixels.
-    pub fn height(&self, height: u32) {
+    pub fn height(&self, height: u64) {
         widget::configure(&self.id, "height", &height.to_string());
     }
 
@@ -260,7 +260,7 @@ impl TkCanvas {
     }
 
     /// Width of canvas, in pixels.
-    pub fn width(&self, width: u32) {
+    pub fn width(&self, width: u64) {
         widget::configure(&self.id, "width", &width.to_string());
     }
 }
@@ -401,19 +401,19 @@ impl TkCanvasArc {
     }
 
     /// Width of outline, in pixels.
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         self.configure("width", &value.to_string());
     }
 
     /// Extent is amount in degrees that arc extends counter-clockwise
     /// from its start angle.
-    pub fn extent(&self, degrees: u32) {
+    pub fn extent(&self, degrees: u64) {
         self.configure("extent", &degrees.to_string());
     }
 
     /// Start is starting angle in degrees, measured counter-clockwise
     /// from the 3 o'clock/x-axis position.
-    pub fn start(&self, degrees: u32) {
+    pub fn start(&self, degrees: u64) {
         self.configure("start", &degrees.to_string());
     }
 
@@ -477,7 +477,7 @@ impl TkCanvasLine {
     }
 
     /// Width of line, in pixels.
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         self.configure("width", &value.to_string());
     }
 
@@ -494,7 +494,7 @@ impl TkCanvasLine {
 
     /// Shape of arrow(s) to draw: see Tk
     /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/canvas.htm#M145).
-    pub fn arrow_shape(&self, v1: u32, v2: u32, v3: u32) {
+    pub fn arrow_shape(&self, v1: u64, v2: u64, v3: u64) {
         let msg = format!("{{{} {} {} }}", v1, v2, v3);
         self.configure("arrowshape", &msg);
     }
@@ -555,7 +555,7 @@ impl TkCanvasOval {
     }
 
     /// Width of outline, in pixels.
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         self.configure("width", &value.to_string());
     }
 }
@@ -595,7 +595,7 @@ impl TkCanvasPolygon {
     }
 
     /// Width of outline, in pixels.
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         self.configure("width", &value.to_string());
     }
 
@@ -645,7 +645,7 @@ impl TkCanvasRectangle {
     }
 
     /// Width of outline, in pixels.
-    pub fn width(&self, value: u32) {
+    pub fn width(&self, value: u64) {
         self.configure("width", &value.to_string());
     }
 }
@@ -674,7 +674,7 @@ impl TkCanvasText {
     }
 
     /// Angle of text - float in range 0 to 360 degrees.
-    pub fn angle(&self, degrees: f32) {
+    pub fn angle(&self, degrees: f64) {
         // - silently ensure value is in valid range
         let degrees = degrees.max(0.0);
         let degrees = degrees.min(360.0);
@@ -697,12 +697,12 @@ impl TkCanvasText {
     }
 
     /// Underlines the character at the given index position.
-    pub fn underline(&self, index: u32) {
+    pub fn underline(&self, index: u64) {
         self.configure("underline", &index.to_string());
     }
 
     /// Sets the width of the text item, in pixels
-    pub fn width(&self, value: i32) {
+    pub fn width(&self, value: i64) {
         self.configure("width", &value.to_string());
     }
 }

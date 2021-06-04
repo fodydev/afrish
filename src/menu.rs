@@ -48,7 +48,7 @@ pub struct TkMenuCascade {
     label: Option<String>,
     menu: Option<String>,
     state: widget::State,
-    underline: Option<u32>,
+    underline: Option<u64>,
 }
 
 /// Refers to a check-button menu-item
@@ -63,7 +63,7 @@ pub struct TkMenuCheck {
     image: Option<String>,
     label: Option<String>,
     state: widget::State,
-    underline: Option<u32>,
+    underline: Option<u64>,
 }
 
 /// Refers to a command (menu-item)
@@ -77,7 +77,7 @@ pub struct TkMenuCommand {
     image: Option<String>,
     label: Option<String>,
     state: widget::State,
-    underline: Option<u32>,
+    underline: Option<u64>,
 }
 
 /// Refers to a radio-button menu-item
@@ -94,7 +94,7 @@ pub struct TkMenuRadio {
     image: Option<String>,
     label: Option<String>,
     state: widget::State,
-    underline: Option<u32>,
+    underline: Option<u64>,
 }
 
 /// Refers to a menu separator
@@ -200,21 +200,21 @@ impl TkMenu {
     }
 
     /// Deletes the menu-item at given index position.
-    pub fn delete(&self, index: u32) {
+    pub fn delete(&self, index: u64) {
         let msg = format!("{} delete {}", &self.id, index);
         wish::tell_wish(&msg);
     }
 
     /// Returns the value (as a String) for given option for
     /// menu-item at given index position.
-    pub fn entry_cget(&self, index: u32, option: &str) -> String {
+    pub fn entry_cget(&self, index: u64, option: &str) -> String {
         let msg = format!("{} entrycfig {} {{{}}}", &self.id, index, option);
         wish::eval_wish(&msg)
     }
 
     /// Sets the value (as a String) for given option for
     /// menu-item at given index position.
-    pub fn entry_configure(&self, index: u32, option: &str, value: &str) {
+    pub fn entry_configure(&self, index: u64, option: &str, value: &str) {
         let msg = format!(
             "{} entryconfigure {} {{{}}} {{{}}}",
             &self.id, index, option, value
@@ -224,13 +224,13 @@ impl TkMenu {
 
     /// Invokes any associated command for the menu-item at given index
     /// position.
-    pub fn invoke(&self, index: u32) {
+    pub fn invoke(&self, index: u64) {
         let msg = format!("{} invoke {}", &self.id, index);
         wish::tell_wish(&msg);
     }
 
     /// Shows this menu at screen coordinates x, y.
-    pub fn popup(&self, x: i32, y: i32) {
+    pub fn popup(&self, x: i64, y: i64) {
         let msg = format!("tk_popup {} {} {}", &self.id, x, y);
         wish::tell_wish(&msg);
     }
@@ -243,7 +243,7 @@ fn common_option_string(
     image: &Option<String>,
     label: &Option<String>,
     state: &widget::State,
-    underline: &Option<u32>,
+    underline: &Option<u64>,
 ) -> String {
     let mut msg = String::new();
 
@@ -303,7 +303,7 @@ impl TkMenuCascade {
     }
 
     /// Sets index of text label to underline.
-    pub fn underline(&mut self, value: u32) -> &mut Self {
+    pub fn underline(&mut self, value: u64) -> &mut Self {
         self.underline = Some(value);
         self
     }
@@ -333,7 +333,7 @@ impl TkMenuCascade {
     }
 
     /// Inserts cascade menu-item to parent at given index with current set of options.
-    pub fn insert(&self, index: u32) {
+    pub fn insert(&self, index: u64) {
         let msg = format!(
             "{} insert cascade {} {}",
             &self.parent,
@@ -392,7 +392,7 @@ impl TkMenuCheck {
     }
 
     /// Sets index of text label to underline.
-    pub fn underline(&mut self, value: u32) -> &mut Self {
+    pub fn underline(&mut self, value: u64) -> &mut Self {
         self.underline = Some(value);
         self
     }
@@ -431,7 +431,7 @@ impl TkMenuCheck {
     }
 
     /// Inserts check-button menu-item to parent at given index with current set of options.
-    pub fn insert(&self, index: u32) {
+    pub fn insert(&self, index: u64) {
         let msg = format!(
             "{} insert checkbutton {} {}",
             &self.parent,
@@ -488,7 +488,7 @@ impl TkMenuCommand {
     }
 
     /// Sets index of text label to underline.
-    pub fn underline(&mut self, value: u32) -> &mut Self {
+    pub fn underline(&mut self, value: u64) -> &mut Self {
         self.underline = Some(value);
         self
     }
@@ -524,7 +524,7 @@ impl TkMenuCommand {
     }
 
     /// Inserts command menu-item to parent at given index with current set of options.
-    pub fn insert(&self, index: u32) {
+    pub fn insert(&self, index: u64) {
         let msg = format!(
             "{} insert command {} {}",
             &self.parent,
@@ -583,7 +583,7 @@ impl TkMenuRadio {
     }
 
     /// Sets index of text label to underline.
-    pub fn underline(&mut self, value: u32) -> &mut Self {
+    pub fn underline(&mut self, value: u64) -> &mut Self {
         self.underline = Some(value);
         self
     }
@@ -626,7 +626,7 @@ impl TkMenuRadio {
     }
 
     /// Inserts radio-button menu-item to parent at given index with current set of options.
-    pub fn insert(&self, index: u32) {
+    pub fn insert(&self, index: u64) {
         let msg = format!(
             "{} insert radiobutton {} {}",
             &self.parent,
@@ -645,7 +645,7 @@ impl TkMenuSeparator {
     }
 
     /// Inserts separator into parent at given index.
-    pub fn insert(&self, index: u32) {
+    pub fn insert(&self, index: u64) {
         let msg = format!("{} insert sepator {}", &self.parent, index);
         wish::tell_wish(&msg);
     }
