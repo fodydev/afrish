@@ -20,7 +20,7 @@ pub fn make_right_axis(
 ) -> TkRightAxis {
     let id = wish::next_var();
     let msg = format!(
-        "global {}; set {} [::Plotchart::createRightaxis {} {{ {} {} {} }}]",
+        "global {}; set {} [::Plotchart::createRightAxis {} {{ {} {} {} }}]",
         id, id, &canvas.id, y_axis.0, y_axis.1, y_axis.2 
     );
     wish::tell_wish(&msg);

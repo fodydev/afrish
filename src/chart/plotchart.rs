@@ -86,6 +86,28 @@ impl fmt::Display for ChartDash {
     }
 }
 
+/// Specifies interpretation of coordinates.
+#[derive(Clone, Debug, PartialEq)]
+pub enum CoordinatesType {
+    /// (x, y) coordinate
+    Cartesian,
+    /// Angles, with 0 to North, 90 to East
+    Nautical,
+    /// Angles, with 0 on x-axis, 90 on y-axis
+    Polar,
+}
+
+impl fmt::Display for CoordinatesType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            CoordinatesType::Cartesian => "cartesian",
+            CoordinatesType::Nautical => "nautical",
+            CoordinatesType::Polar => "polar",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Defines direction of text against given point.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Direction {
@@ -191,20 +213,22 @@ impl fmt::Display for LegendType {
     }
 }
 
-/// Region of plot to save.
+/// Defines location of text against given point for label-dot.
 #[derive(Clone, Debug, PartialEq)]
-pub enum PlotRegion {
-    /// Saves whole plot
-    BBox,
-    /// Saves visible part only
-    Window,
+pub enum Location {
+    North,
+    East,
+    South,
+    West,
 }
 
-impl fmt::Display for PlotRegion {
+impl fmt::Display for Location {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let value = match self {
-            PlotRegion::BBox => "bbox",
-            PlotRegion::Window => "window",
+            Location::North => "north",
+            Location::East => "east",
+            Location::South => "south",
+            Location::West => "west",
         };
         write!(f, "{}", &value)
     }
@@ -333,7 +357,7 @@ pub trait TkPlotchart {
     }
 
     /// Creates balloon text (does not work for 3D plots). 
-    fn balloon(&self, x: f64, y: f64, text: &str, direction: Direction) {
+    fn balloon(&self, (x, y): (f64, f64), text: &str, direction: Direction) {
         let msg = format!("global {}; ${} balloon {} {} {{{}}} {}",
                           self.id(), self.id(), 
                           x, y, text, direction);
@@ -481,10 +505,7 @@ pub trait TkPlotchart {
     }
 
     /// Starts definition of plain text (does not work for 3D plots). 
-    ///
-    /// Add optional configuration options and finish with `add`.
-    ///
-    fn plaintext(&self, x: f64, y: f64, text: &str, direction: Direction) {
+    fn plaintext(&self, (x, y): (f64, f64), text: &str, direction: Direction) {
         let msg = format!("global {}; ${} plaintext {} {} {{{}}} {}",
                           self.id(), self.id(), 
                           x, y, text, direction);
@@ -513,9 +534,9 @@ pub trait TkPlotchart {
     }
 
     /// Saves chart to a file in postscript format.
-    fn save(&self, filename: &str, plotregion: PlotRegion) {
-        let msg = format!("global {}; ${} saveplot {{{}}} -plotregion {}",
-                          self.id(), self.id(), filename, plotregion);
+    fn save(&self, filename: &str) {
+        let msg = format!("global {}; ${} saveplot {{{}}} -plotregion window",
+                          self.id(), self.id(), filename);
         wish::tell_wish(&msg);
     }
 
@@ -744,6 +765,64 @@ pub trait TkChartSeries: TkPlotchart {
 
 /// Configuration options for dots, used in xy_plots and polar plots.
 pub trait TkChartDots: TkPlotchart {
-    // TODO
+    /// Sets colour of dots in given data series.
+    fn dot_colour(&self, series: &str, colour: &str) {
+        let msg = format!("global {}; ${} dotconfig {} -colour {}",
+                          self.id(), self.id(), series, colour);
+        wish::tell_wish(&msg);
+    }
+
+    /// Defines class limits and colours, e.g. [(0.0, "green"), (2.0, "red"), ...]
+    fn dot_classes(&self, series: &str, values: &[(f64, &str)]) {
+        let mut class_str = String::new();
+        for (value, colour) in values {
+            class_str.push_str(&format!("{} {} ", value, colour));
+        }
+
+        let msg = format!("global {}; ${} dotconfig {} -classes {{{}}}",
+                          self.id(), self.id(), series, class_str);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets a 3D effect for dots in given data series.
+    fn dot_effect_3d(&self, series: &str, value: bool) {
+        let msg = format!("global {}; ${} dotconfig {} -3deffect {}",
+                          self.id(), self.id(), series, 
+                          if value { "1" } else { "0" });
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets whether an outline should be displayed for dots in given 
+    /// data series.
+    fn dot_outline(&self, series: &str, value: bool) {
+        let msg = format!("global {}; ${} dotconfig {} -outline {}",
+                          self.id(), self.id(), series, 
+                          if value { "1" } else { "0" });
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets radius for dots in given data series.
+    fn dot_radius(&self, series: &str, value: f64) {
+        let msg = format!("global {}; ${} dotconfig {} -radius {}",
+                          self.id(), self.id(), series, value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets scale factor of radius to pixels for dots in given data series.
+    fn dot_scale(&self, series: &str, value: f64) {
+        let msg = format!("global {}; ${} dotconfig {} -scale {}",
+                          self.id(), self.id(), series, value);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets whether dots in given data series should all have the 
+    /// same size (false) or be scaled by value (true).
+    fn dot_scale_by_value(&self, series: &str, value: bool) {
+        let msg = format!("global {}; ${} dotconfig {} -scalebyvalue {}",
+                          self.id(), self.id(), series, 
+                          if value { "1" } else { "0" });
+        wish::tell_wish(&msg);
+    }
+
 }
 

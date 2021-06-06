@@ -648,6 +648,38 @@ pub(super) fn padding(wid: &str, values: &[u64]) {
     configure(wid, "padding", &value_str);
 }
 
+pub(super) fn strings_list(values: &[&str]) -> String {
+    let mut values_str = String::new();
+
+    for value in values {
+        values_str.push_str(&format!("{} ", value));
+    }
+
+    values_str
+}
+
+pub(super) fn str_list(values: &[f64]) -> String {
+    let mut values_str = String::new();
+
+    for value in values {
+        values_str.push_str(&format!("{} ", value));
+    }
+
+    values_str
+}
+
+pub(super) fn str_list_lists<M: AsRef<[R]>, R: AsRef<[f64]>>(values: M) -> String {
+    let mut values_str = String::new();
+
+    for vs in values.as_ref() {
+        values_str.push_str("{");
+        values_str.push_str(&str_list(vs.as_ref()));
+        values_str.push_str("} ");
+    }
+
+    values_str
+}
+
 // --------------------------------------------------------------------------
 
 /// Triggers given command after 'time' milliseconds.
