@@ -196,6 +196,26 @@ impl fmt::Display for GradientDirection {
     }
 }
 
+/// Defines display style of a histogram.
+pub enum HistogramStyle {
+    Filled,
+    Plateau,
+    Spike,
+    Stair,
+}
+
+impl fmt::Display for HistogramStyle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            HistogramStyle::Filled => "filled",
+            HistogramStyle::Plateau => "plateau",
+            HistogramStyle::Spike => "spike",
+            HistogramStyle::Stair => "stair",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Defines type of legend.
 #[derive(Clone, Debug, PartialEq)]
 pub enum LegendType {
@@ -737,13 +757,18 @@ pub trait TkChartSeries: TkPlotchart {
         wish::tell_wish(&msg);
     }
 
-    /// Used to fill the area above or below the line of data series.
-    ///
-    /// (This combines the "filled" and "fillcolour" options of 
-    /// tklib's plotchart.)
-    fn series_fill_area(&self, series: &str, area: FillArea, colour: &str) {
-        let msg = format!("global {}; ${} dataconfig {} -filled {} -fillcolour {}",
-                          self.id(), self.id(), series, area, colour);
+    /// Used to select whether to fill the area above or below the line of 
+    /// data series.
+    fn series_fill_area(&self, series: &str, area: FillArea) {
+        let msg = format!("global {}; ${} dataconfig {} -filled {}",
+                          self.id(), self.id(), series, area);
+        wish::tell_wish(&msg);
+    }
+
+    /// Sets colour to use when drawing filled area.
+    fn series_fill_colour(&self, series: &str, colour: &str) {
+        let msg = format!("global {}; ${} dataconfig {} -fillcolour {}",
+                          self.id(), self.id(), series, colour);
         wish::tell_wish(&msg);
     }
 

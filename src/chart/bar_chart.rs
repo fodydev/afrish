@@ -113,7 +113,7 @@ pub trait BarChartMethods : plotchart::TkPlotchart {
 
     /// Font to use when showing values.
     fn value_font(&self, font: &font::TkFont) {
-        let msg = format!("global {}; ${} config -valuefont {}",
+        let msg = format!("global {}; ${} config -valuefont {{{}}}",
                           self.id(), self.id(), font);
         wish::tell_wish(&msg);
     }
@@ -122,7 +122,7 @@ pub trait BarChartMethods : plotchart::TkPlotchart {
     ///
     /// * see Tk [manual](https://www.tcl.tk/man/tcl8.5/TclCmd/format.htm)
     fn value_format(&self, format: &str) {
-        let msg = format!("global {}; ${} config -valueformat {}",
+        let msg = format!("global {}; ${} config -valueformat {{{}}}",
                           self.id(), self.id(), format);
         wish::tell_wish(&msg);
     } 

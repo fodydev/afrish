@@ -9,6 +9,9 @@ pub use bar_chart::*;
 pub mod box_plot;
 pub use box_plot::*;
 
+pub mod histogram;
+pub use histogram::*;
+
 pub mod isometric_plot;
 pub use isometric_plot::*;
 
@@ -26,6 +29,12 @@ pub use radial_chart::*;
 
 pub mod right_axis;
 pub use right_axis::*;
+
+pub mod ternary_diagram;
+pub use ternary_diagram::*;
+
+pub mod threed_bar_chart;
+pub use threed_bar_chart::*;
 
 pub mod tx_plot;
 pub use tx_plot::*;
