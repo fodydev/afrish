@@ -106,7 +106,7 @@ impl TkTreeview {
     /// Returns the focussed item.
     pub fn focus(&self) -> TkTreeviewItem {
         let msg = format!("puts [{} focus] ; flush stdout ", &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         TkTreeviewItem {
             treeview: self.id.clone(),
@@ -140,7 +140,7 @@ impl TkTreeview {
     /// Create a new top-level item at end of treeview.
     pub fn insert_item(&self) -> TkTreeviewItem {
         let msg = format!("puts [{} insert {{}} end] ; flush stdout", &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         TkTreeviewItem {
             treeview: self.id.clone(),
@@ -151,7 +151,7 @@ impl TkTreeview {
     /// Create a new top-level item at given index position of treeview.
     pub fn insert_item_at(&self, index: u64) -> TkTreeviewItem {
         let msg = format!("puts [{} insert {{}} {}] ; flush stdout", &self.id, index);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         TkTreeviewItem {
             treeview: self.id.clone(),
@@ -173,7 +173,7 @@ impl TkTreeview {
     /// Returns list of selected items.
     pub fn selected_items(&self) -> Vec<TkTreeviewItem> {
         let query = format!("puts [{} selection] ; flush stdout", &self.id);
-        let values = wish::eval_wish(&query);
+        let values = wish::ask_wish(&query);
 
         let mut result: Vec<TkTreeviewItem> = vec![];
         for value in values.split_whitespace() {
@@ -230,7 +230,7 @@ impl TkTreeview {
     /// Returns a list of all the tag names defined in this text widget.
     pub fn tag_names(&self) -> Vec<String> {
         let msg = format!("puts [{} tag names] ; flush stdout", &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         wish::split_items(&result)
     }
 }
@@ -288,7 +288,7 @@ impl TkTreeviewItem {
             "puts [{} item {} -open] ; flush stdout",
             &self.treeview, &self.id
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         result == "1"
     }
@@ -299,7 +299,7 @@ impl TkTreeviewItem {
             "puts [{} insert {} end] ; flush stdout ",
             &self.treeview, &self.id
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         TkTreeviewItem {
             treeview: self.treeview.clone(),
@@ -314,7 +314,7 @@ impl TkTreeviewItem {
             "puts [{} insert {} {}] ; flush stdout",
             &self.treeview, &self.id, index
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         TkTreeviewItem {
             treeview: self.treeview.clone(),
@@ -329,7 +329,7 @@ impl TkTreeviewItem {
             "puts [{} parent {}] ; flush stdout",
             &self.treeview, &self.id
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         if result.is_empty() || result == "{}" {
             None
@@ -346,7 +346,7 @@ impl TkTreeviewItem {
     /// first child of its parent.
     pub fn previous(&self) -> Option<TkTreeviewItem> {
         let msg = format!("puts [{} prev {}] ; flush stdout", &self.treeview, &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         if result.is_empty() || result == "{}" {
             None
@@ -363,7 +363,7 @@ impl TkTreeviewItem {
     /// last child of its parent.
     pub fn next(&self) -> Option<TkTreeviewItem> {
         let msg = format!("puts [{} next {}] ; flush stdout", &self.treeview, &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         if result.is_empty() || result == "{}" {
             None
@@ -381,7 +381,7 @@ impl TkTreeviewItem {
             "puts [{} children {}] ; flush stdout",
             &self.treeview, &self.id
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         let mut children: Vec<TkTreeviewItem> = vec![];
 
@@ -407,7 +407,7 @@ impl TkTreeviewItem {
             "puts [{} tag has {{{}}} {}] ; flush stdout",
             &self.treeview, tag, &self.id
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
 
         result == "1"
     }

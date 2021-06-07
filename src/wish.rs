@@ -90,7 +90,7 @@ pub fn tell_wish(msg: &str) {
 ///
 /// Use with caution: the message must be valid tcl.
 ///
-pub fn eval_wish(msg: &str) -> String {
+pub fn ask_wish(msg: &str) -> String {
     tell_wish(msg);
 
     unsafe {

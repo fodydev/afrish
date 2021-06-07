@@ -56,7 +56,7 @@ impl TkScale {
     /// Retrieves the scale's value.
     pub fn value_get(&self) -> f64 {
         let msg = format!("puts [{} get] ; flush stdout", self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<f64>() {
             value
         } else {

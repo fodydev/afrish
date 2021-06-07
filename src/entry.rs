@@ -66,7 +66,7 @@ impl TkEntry {
     /// Returns the current entry value
     pub fn value_get(&self) -> String {
         let msg = format!("puts ${} ; flush stdout", self.var);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Sets the width of the widget, in characters

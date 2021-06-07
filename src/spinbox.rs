@@ -53,7 +53,7 @@ impl TkSpinboxRange {
     /// Retrieves the spinbox's value.
     pub fn value_get(&self) -> f64 {
         let msg = format!("puts [{} get] ; flush stdout", self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<f64>() {
             value
         } else {
@@ -111,7 +111,7 @@ impl TkSpinboxValues {
     /// Retrieves the spinbox's value.
     pub fn value_get(&self) -> String {
         let msg = format!("puts [{} get] ; flush stdout", self.id);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Set to true so spinbox 'wraps' around at top/bottom.

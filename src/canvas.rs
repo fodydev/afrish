@@ -118,7 +118,7 @@ impl TkCanvas {
             "puts [{} create arc {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasArc {
             canvas: self.id.clone(),
@@ -132,7 +132,7 @@ impl TkCanvas {
             "puts [{} create image {} {} {}] ; flush stdout",
             &self.id, x, y, &image.id
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasImage {
             canvas: self.id.clone(),
@@ -151,7 +151,7 @@ impl TkCanvas {
             "puts [{} create line {}] ; flush stdout",
             &self.id, &line_defn
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasLine {
             canvas: self.id.clone(),
@@ -166,7 +166,7 @@ impl TkCanvas {
             "puts [{} create oval {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasOval {
             canvas: self.id.clone(),
@@ -185,7 +185,7 @@ impl TkCanvas {
             "puts [{} create polygon {}] ; flush stdout",
             &self.id, &line_defn
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasPolygon {
             canvas: self.id.clone(),
@@ -199,7 +199,7 @@ impl TkCanvas {
             "puts [{} create rectangle {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasRectangle {
             canvas: self.id.clone(),
@@ -213,7 +213,7 @@ impl TkCanvas {
             "puts [{} create text {} {} {{{}}}] ; flush stdout",
             &self.id, x, y, text
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasText {
             canvas: self.id.clone(),
@@ -230,7 +230,7 @@ impl TkCanvas {
             y,
             widget.id()
         );
-        let id = wish::eval_wish(&msg);
+        let id = wish::ask_wish(&msg);
 
         TkCanvasWidget {
             canvas: self.id.clone(),
@@ -318,7 +318,7 @@ pub trait TkCanvasTags: TkCanvasItem {
     /// Returns all tags associated with this canvas item.
     fn get_tags(&self) -> Vec<String> {
         let msg = format!("{} gettags {}", &self.canvas(), &self.id());
-        let tags = wish::eval_wish(&msg);
+        let tags = wish::ask_wish(&msg);
 
         let mut result: Vec<String> = vec![];
         for tag in tags.split_whitespace() {

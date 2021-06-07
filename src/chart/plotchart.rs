@@ -137,6 +137,22 @@ impl fmt::Display for Direction {
     }
 }
 
+impl Direction {
+    pub(super) fn to_short_string(&self) -> String {
+        let value = match self {
+            Direction::North => "n",
+            Direction::NorthEast => "ne",
+            Direction::East => "e",
+            Direction::SouthEast => "se",
+            Direction::South => "s",
+            Direction::SouthWest => "sw",
+            Direction::West => "w",
+            Direction::NorthWest => "nw",
+        };
+        String::from(value)
+    }
+}
+
 /// Choice of displaying line/symbol or both when plotting a data series.
 #[derive(Clone, Debug, PartialEq)]
 pub enum DrawingMode {

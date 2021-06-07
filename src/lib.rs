@@ -80,7 +80,7 @@
 //!
 //! 1. every widget has an `id` field, which gives the Tk identifier.
 //! 2. [tell_wish](wish::tell_wish) sends a given string directly to wish
-//! 3. [eval_wish](wish::eval_wish) sends a given string directly to wish and
+//! 3. [ask_wish](wish::ask_wish) sends a given string directly to wish and
 //!    returns, as a [String], the response.
 //!
 //! For example, label's

@@ -51,7 +51,7 @@ pub trait TkWidget {
     ///
     fn cget(&self, option: &str) -> String {
         let msg = format!("puts [{} cget -{}] ; flush stdout", self.id(), option);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Used to change properties of a widget.
@@ -75,7 +75,7 @@ pub trait TkWidget {
     ///
     fn winfo(&self, option: &str) -> String {
         let msg = format!("winfo {} {}", option, self.id());
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     // -- TODO should be here, or more specific?
@@ -91,7 +91,7 @@ pub trait TkWidget {
     /// Returns the widget x position in pixels, within its parent.
     fn position_x(&self) -> u64 {
         let msg = format!("winfo x {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -102,7 +102,7 @@ pub trait TkWidget {
     /// Returns the widget y position in pixels, within its parent.
     fn position_y(&self) -> u64 {
         let msg = format!("winfo y {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -113,7 +113,7 @@ pub trait TkWidget {
     /// Returns the widget height in pixels.
     fn widget_height(&self) -> u64 {
         let msg = format!("winfo height {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -124,7 +124,7 @@ pub trait TkWidget {
     /// Returns the widget width in pixels.
     fn widget_width(&self) -> u64 {
         let msg = format!("winfo width {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -140,7 +140,7 @@ pub trait TkWidget {
     /// Gives the x position of the mouse on screen of widget.
     fn mouse_x(&self) -> i64 {
         let msg = format!("winfo pointerx {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<i64>() {
             value
         } else {
@@ -151,7 +151,7 @@ pub trait TkWidget {
     /// Gives the y position of the mouse on screen of widget.
     fn mouse_y(&self) -> i64 {
         let msg = format!("winfo pointery {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<i64>() {
             value
         } else {
@@ -162,7 +162,7 @@ pub trait TkWidget {
     /// Height of screen of widget in pixels.
     fn screen_height(&self) -> u64 {
         let msg = format!("winfo screenheight {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -173,7 +173,7 @@ pub trait TkWidget {
     /// Height of screen of widget in millimetres.
     fn screen_height_mm(&self) -> u64 {
         let msg = format!("winfo screenmmheight {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -184,7 +184,7 @@ pub trait TkWidget {
     /// Width of screen of widget in pixels.
     fn screen_width(&self) -> u64 {
         let msg = format!("winfo screenwidth {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -195,7 +195,7 @@ pub trait TkWidget {
     /// Width of screen of widget in millimetres.
     fn screen_width_mm(&self) -> u64 {
         let msg = format!("winfo screenmmwidth {}", self.id());
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -702,5 +702,5 @@ pub fn bind(pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
 ///
 /// Returns one of x11, win32, aqua
 pub fn windowing_system() -> String {
-    wish::eval_wish("tk windowingsystem")
+    wish::ask_wish("tk windowingsystem")
 }

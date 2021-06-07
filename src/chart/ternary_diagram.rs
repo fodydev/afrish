@@ -4,7 +4,6 @@
 
 use crate::canvas;
 use crate::chart::plotchart;
-use crate::widget;
 use crate::wish;
 
 /// Refers to a ternary diagram
@@ -87,10 +86,10 @@ impl TkTernaryDiagram {
 
     /// Plots a labelled point on the diagram.
     pub fn plot(&self, series: &str, (x, y, z): (f64, f64, f64), text: &str, 
-                direction: widget::Anchor) {
+                direction: plotchart::Direction) {
         let msg = format!("global {}; ${} plot {} {} {} {} {{{}}} {}",
                           &self.id, &self.id, series, x, y, z,
-                          text, direction);
+                          text, &direction.to_short_string());
         wish::tell_wish(&msg);
     }
 

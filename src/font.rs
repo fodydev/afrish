@@ -207,7 +207,7 @@ impl TkFont {
             "puts [font measure {{{}}} {{{}}}] ; flush stdout",
             self, text
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<u64>() {
             value
         } else {
@@ -219,7 +219,7 @@ impl TkFont {
     /// Returns font's metrics
     pub fn metrics(&self) -> TkFontMetrics {
         let msg = format!("puts [font metrics {{{}}}] ; flush stdout", self);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if let Ok(value) = result.parse::<TkFontMetrics>() {
             value
         } else {
@@ -235,7 +235,7 @@ impl TkFont {
 // description for named font from wish.
 fn font_from_name(name: &str) -> TkFont {
     let msg = format!("puts [font actual {}] ; flush stdout", name);
-    let result = wish::eval_wish(&msg);
+    let result = wish::ask_wish(&msg);
 
     // assume this cannot error
     result.parse::<TkFont>().unwrap_or(TkFont {
@@ -299,7 +299,7 @@ pub fn tk_tooltip_font() -> TkFont {
 
 /// Return list of font families available on current platform.
 pub fn font_families() -> Vec<String> {
-    let result = wish::eval_wish("puts [font families] ; flush stdout");
+    let result = wish::ask_wish("puts [font families] ; flush stdout");
     wish::split_items(&result)
 }
 

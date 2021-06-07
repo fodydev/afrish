@@ -114,7 +114,7 @@ impl TkListbox {
     /// Returns list of indices for selected items.
     pub fn selected_items(&self) -> Vec<u64> {
         let query = format!("puts [{} curselection] ; flush stdout", &self.id);
-        let values = wish::eval_wish(&query);
+        let values = wish::ask_wish(&query);
 
         let mut result: Vec<u64> = vec![];
         for value in values.split_whitespace() {

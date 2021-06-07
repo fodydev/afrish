@@ -183,7 +183,7 @@ impl TkMenu {
     /// Returns the value for a given radio-button group.
     pub fn radio_button_value_get(&self, group: &str) -> String {
         let msg = format!("puts $::mrb_group_{} ; flush stdout", group);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Sets the value for a given radio-button group.
@@ -209,7 +209,7 @@ impl TkMenu {
     /// menu-item at given index position.
     pub fn entry_cget(&self, index: u64, option: &str) -> String {
         let msg = format!("{} entrycfig {} {{{}}}", &self.id, index, option);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Sets the value (as a String) for given option for

@@ -145,7 +145,7 @@ impl TkMessageBox {
         msg.push_str(&format!("-type {} ", self.type_buttons));
         msg.push_str("] ; flush stdout");
 
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 }
 
@@ -214,7 +214,7 @@ impl TkColourChooser {
 
         msg.push_str("] ; flush stdout");
 
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if result.is_empty() {
             None
         } else {
@@ -296,7 +296,7 @@ impl TkDirectoryChooser {
 
         msg.push_str("] ; flush stdout");
 
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if result.is_empty() {
             None
         } else {
@@ -409,7 +409,7 @@ impl TkOpenFileChooser {
 
         msg.push_str("] ; flush stdout");
 
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if result.is_empty() {
             None
         } else {
@@ -537,7 +537,7 @@ impl TkSaveFileChooser {
 
         msg.push_str("] ; flush stdout");
 
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         if result.is_empty() {
             None
         } else {
@@ -570,7 +570,7 @@ pub fn font_chooser_command(command: impl Fn(font::TkFont) + Send + 'static) {
 /// Get the font for the font-chooser.
 pub fn font_chooser_font_get() -> String {
     let msg = "tk fontchooser configure -font ";
-    wish::eval_wish(&msg)
+    wish::ask_wish(&msg)
 }
 
 /// Set the font for the font-chooser.
@@ -594,6 +594,6 @@ pub fn font_chooser_show() {
 /// Check if the font-chooser is currently visible.
 pub fn font_chooser_visible() -> bool {
     let msg = "tk fontchooser configure -visible ";
-    let result = wish::eval_wish(&msg);
+    let result = wish::ask_wish(&msg);
     result == "1"
 }

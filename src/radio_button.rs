@@ -67,7 +67,7 @@ impl TkRadioButton {
     /// Returns the selected value from this radio-button's group.
     pub fn value_get(&self) -> String {
         let msg = format!("puts ${} ; flush stdout", self.var);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     pub fn value(&self, value: &str) {

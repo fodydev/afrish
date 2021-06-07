@@ -91,7 +91,7 @@ impl TkText {
             "puts [{} get {}.{} {}.{}] ; flush stdout",
             &self.id, from_line, from_character, to_line, to_character
         );
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Get a range of text from a position to end.
@@ -100,7 +100,7 @@ impl TkText {
             "puts [{} get {}.{} end] ; flush stdout",
             &self.id, from_line, from_character
         );
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Height of text, in rows
@@ -186,7 +186,7 @@ impl TkText {
     /// Returns a (line, character) tuple for the given mark's position.
     pub fn mark_index(&self, mark: &str) -> (u64, u64) {
         let msg = format!("puts [{} index {}] ; flush stdout", &self.id, mark);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         let parts: Vec<&str> = result.split('.').collect();
         if parts.len() == 2 {
             let line = parts[0].parse::<u64>().unwrap_or(1);
@@ -202,20 +202,20 @@ impl TkText {
     /// Returns a list of all the mark names defined in this text widget.
     pub fn mark_names(&self) -> Vec<String> {
         let msg = format!("puts [{} mark names] ; flush stdout", &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         wish::split_items(&result)
     }
 
     /// Returns name of next mark from given position.
     pub fn mark_next(&self, (line, character): (u64, u64)) -> String {
         let msg = format!("{} mark next {}.{}", &self.id, line, character);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Returns name of previous mark to given position.
     pub fn mark_previous(&self, (line, character): (u64, u64)) -> String {
         let msg = format!("{} mark prev {}.{}", &self.id, line, character);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Sets named mark to given position.
@@ -267,7 +267,7 @@ impl TkText {
             "puts [{} search {{{}}} {}.{}] ; flush stdout",
             &self.id, text, line, character
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         let parts: Vec<&str> = result.split('.').collect();
         if parts.len() == 2 {
             let line = parts[0].parse::<u64>().unwrap_or(1);
@@ -340,7 +340,7 @@ impl TkText {
     /// Returns a list of all the tag names defined in this text widget.
     pub fn tag_names(&self) -> Vec<String> {
         let msg = format!("puts [{} tag names] ; flush stdout", &self.id);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         wish::split_items(&result)
     }
 
@@ -351,7 +351,7 @@ impl TkText {
             "puts [{} tag names {}.{}] ; flush stdout",
             &self.id, line, character
         );
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         wish::split_items(&result)
     }
 

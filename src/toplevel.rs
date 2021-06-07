@@ -61,7 +61,7 @@ impl TkTopLevel {
     /// TODO: parse out of tcl format
     pub fn geometry_get(&self) -> String {
         let msg = format!("puts [wm geometry {}] ; flush stdout", self.id);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Sets the size and position of a top-level window.

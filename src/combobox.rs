@@ -69,7 +69,7 @@ impl TkCombobox {
     /// Returns the current value
     pub fn value_get(&self) -> String {
         let msg = format!("puts [{} get] ; flush stdout", self.id);
-        wish::eval_wish(&msg)
+        wish::ask_wish(&msg)
     }
 
     /// Sets the width of the widget, in characters

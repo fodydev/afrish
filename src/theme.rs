@@ -28,7 +28,7 @@ use super::wish;
 /// ```
 ///
 pub fn theme_names() -> Vec<String> {
-    let themes = wish::eval_wish("puts [ttk::style theme names] ; flush stdout");
+    let themes = wish::ask_wish("puts [ttk::style theme names] ; flush stdout");
 
     let mut result: Vec<String> = vec![];
     for theme in themes.split_whitespace() {

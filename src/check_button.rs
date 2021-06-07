@@ -54,7 +54,7 @@ impl TkCheckButton {
     /// Returns true/false if button is selected (checked) or not.
     pub fn is_selected(&self) -> bool {
         let msg = format!("puts ${} ; flush stdout", self.var);
-        let result = wish::eval_wish(&msg);
+        let result = wish::ask_wish(&msg);
         result == "1"
     }
 

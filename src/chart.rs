@@ -9,6 +9,9 @@ pub use bar_chart::*;
 pub mod box_plot;
 pub use box_plot::*;
 
+pub mod gantt_chart;
+pub use gantt_chart::*;
+
 pub mod histogram;
 pub use histogram::*;
 
@@ -30,11 +33,23 @@ pub use radial_chart::*;
 pub mod right_axis;
 pub use right_axis::*;
 
+pub mod status_timeline;
+pub use status_timeline::*;
+
 pub mod ternary_diagram;
 pub use ternary_diagram::*;
 
 pub mod threed_bar_chart;
 pub use threed_bar_chart::*;
+
+pub mod threed_plot;
+pub use threed_plot::*;
+
+pub mod threed_ribbon_plot;
+pub use threed_ribbon_plot::*;
+
+pub mod time_chart;
+pub use time_chart::*;
 
 pub mod tx_plot;
 pub use tx_plot::*;
