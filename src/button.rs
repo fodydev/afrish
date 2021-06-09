@@ -3,6 +3,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_button.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -29,6 +30,7 @@ impl widget::TkWidget for TkButton {
 }
 
 impl grid::TkGridLayout for TkButton {}
+impl pack::TkPackLayout for TkButton {}
 
 impl widget::TkLabelOptions for TkButton {}
 

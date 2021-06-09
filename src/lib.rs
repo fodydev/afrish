@@ -158,6 +158,9 @@ pub use menu::*;
 pub mod notebook;
 pub use notebook::*;
 
+pub mod pack;
+pub use pack::*;
+
 pub mod paned_window;
 pub use paned_window::*;
 

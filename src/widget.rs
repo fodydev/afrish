@@ -459,6 +459,50 @@ impl fmt::Display for Orientation {
     }
 }
 
+/// Defines fill property for pack layouts: whether 
+/// to expand in the x or y or both directions.
+#[derive(Clone, Debug, PartialEq)]
+pub enum PackFill {
+    Both,
+    None,
+    X,
+    Y
+}
+
+impl fmt::Display for PackFill {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            PackFill::Both => "both",
+            PackFill::None => "none",
+            PackFill::X => "x",
+            PackFill::Y => "y",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Defines side property for pack layouts: whether 
+/// widget is packed against top, bottom, left or right.
+#[derive(Clone, Debug, PartialEq)]
+pub enum PackSide {
+    Bottom,
+    Left,
+    Right,
+    Top,
+}
+
+impl fmt::Display for PackSide {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            PackSide::Bottom => "bottom",
+            PackSide::Left => "left",
+            PackSide::Right => "right",
+            PackSide::Top => "top",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
 /// Defines mode of progressbar.
 #[derive(Clone, Debug, PartialEq)]
 pub enum ProgressMode {

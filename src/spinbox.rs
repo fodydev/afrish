@@ -5,6 +5,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_spinbox.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -42,6 +43,7 @@ impl widget::TkWidget for TkSpinboxRange {
 }
 
 impl grid::TkGridLayout for TkSpinboxRange {}
+impl pack::TkPackLayout for TkSpinboxRange {}
 
 impl TkSpinboxRange {
     /// Sets the state of the widget; Readonly means user cannot enter
@@ -100,6 +102,7 @@ impl widget::TkWidget for TkSpinboxValues {
 }
 
 impl grid::TkGridLayout for TkSpinboxValues {}
+impl pack::TkPackLayout for TkSpinboxValues {}
 
 impl TkSpinboxValues {
     /// Sets the state of the widget; Readonly means user cannot enter

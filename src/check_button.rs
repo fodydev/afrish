@@ -5,6 +5,7 @@
 //!
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -32,6 +33,7 @@ impl widget::TkWidget for TkCheckButton {
     }
 }
 impl grid::TkGridLayout for TkCheckButton {}
+impl pack::TkPackLayout for TkCheckButton {}
 impl widget::TkLabelOptions for TkCheckButton {}
 
 impl TkCheckButton {

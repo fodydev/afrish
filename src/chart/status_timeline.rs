@@ -42,8 +42,8 @@ impl TkStatusTimeline {
     /// Draws a vertical line at given time point.
     pub fn draw_line(&self, text: &str, time_point: f64, colour: &str, dash: plotchart::ChartDash, width: f64) {
         let msg = format!(
-            "global {}; ${} vertline {{{}}} {} -colour {} -dash {} -width {}",
-            &self.id, &self.id, text, time_point, colour, dash, width
+            "global {}; ${} vertline {{{}}} {} -fill {} -dash {} -width {}",
+            &self.id, &self.id, text, time_point, colour, &dash.to_short_string(), width
         );
         wish::tell_wish(&msg);
     }

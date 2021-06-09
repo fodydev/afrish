@@ -4,6 +4,7 @@
 
 use super::grid;
 use super::image;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -30,6 +31,7 @@ impl widget::TkWidget for TkText {
 }
 
 impl grid::TkGridLayout for TkText {}
+impl pack::TkPackLayout for TkText {}
 
 impl TkText {
     /// Specifies the background colour.

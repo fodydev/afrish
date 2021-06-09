@@ -3,6 +3,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_frame.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -28,6 +29,7 @@ impl widget::TkWidget for TkFrame {
     }
 }
 impl grid::TkGridLayout for TkFrame {}
+impl pack::TkPackLayout for TkFrame {}
 
 impl TkFrame {
     /// Size of border around frame

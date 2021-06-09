@@ -10,6 +10,7 @@
 //! * `<<NotebookTabChanged>>` - when new tab selected
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -36,6 +37,7 @@ impl widget::TkWidget for TkNotebook {
 }
 
 impl grid::TkGridLayout for TkNotebook {}
+impl pack::TkPackLayout for TkNotebook {}
 
 impl TkNotebook {
     /// TODO: use builder pattern to support images+text

@@ -4,6 +4,7 @@
 //!
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -31,6 +32,7 @@ impl widget::TkWidget for TkScale {
 }
 
 impl grid::TkGridLayout for TkScale {}
+impl pack::TkPackLayout for TkScale {}
 
 impl TkScale {
     /// Sets the function to be called whenever the scale value is changed.

@@ -4,6 +4,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_panedwindow.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -33,6 +34,7 @@ impl widget::TkWidget for TkPanedWindow {
     }
 }
 impl grid::TkGridLayout for TkPanedWindow {}
+impl pack::TkPackLayout for TkPanedWindow {}
 
 impl TkPanedWindow {
     /// Adds given widget to the pane.

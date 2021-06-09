@@ -8,6 +8,7 @@
 //! * `<<ComboboxSelected>>` - when an element is selected
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -42,6 +43,7 @@ impl widget::TkWidget for TkCombobox {
     }
 }
 impl grid::TkGridLayout for TkCombobox {}
+impl pack::TkPackLayout for TkCombobox {}
 
 impl TkCombobox {
     /// Sets the height of the widget, in rows

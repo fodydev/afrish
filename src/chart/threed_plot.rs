@@ -86,7 +86,7 @@ impl Tk3DPlot  {
 
     /// Plot given data.
     pub fn plot_data<M: AsRef<[R]>, R: AsRef<[f64]>>(&self, data: M) {
-        let msg = format!("global {}; ${} plot {{{}}}",
+        let msg = format!("global {}; ${} plotdata {{{}}}",
                           &self.id, &self.id, widget::str_list_lists(&data));
         wish::tell_wish(&msg);
     }

@@ -3,6 +3,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_label.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -28,6 +29,7 @@ impl widget::TkWidget for TkLabel {
     }
 }
 impl grid::TkGridLayout for TkLabel {}
+impl pack::TkPackLayout for TkLabel {}
 impl widget::TkLabelOptions for TkLabel {}
 
 impl TkLabel {

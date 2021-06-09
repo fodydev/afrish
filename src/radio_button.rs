@@ -5,6 +5,7 @@
 //!
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -40,6 +41,7 @@ impl widget::TkWidget for TkRadioButton {
     }
 }
 impl grid::TkGridLayout for TkRadioButton {}
+impl pack::TkPackLayout for TkRadioButton {}
 impl widget::TkLabelOptions for TkRadioButton {}
 
 impl TkRadioButton {

@@ -6,6 +6,7 @@
 //!
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -35,3 +36,5 @@ impl widget::TkWidget for TkSeparator {
 }
 
 impl grid::TkGridLayout for TkSeparator {}
+impl pack::TkPackLayout for TkSeparator {}
+

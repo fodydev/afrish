@@ -10,6 +10,7 @@
 //! * `<<ListboxSelect>>` - whenever selection is changed
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -47,6 +48,7 @@ impl widget::TkWidget for TkListbox {
 }
 
 impl grid::TkGridLayout for TkListbox {}
+impl pack::TkPackLayout for TkListbox {}
 
 impl TkListbox {
     /// Adds item to end of list.

@@ -3,6 +3,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_entry.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -29,7 +30,9 @@ impl widget::TkWidget for TkEntry {
         &self.id
     }
 }
+
 impl grid::TkGridLayout for TkEntry {}
+impl pack::TkPackLayout for TkEntry {}
 
 impl TkEntry {
     /// Specifies the font to use for text.

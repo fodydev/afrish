@@ -4,6 +4,7 @@
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_labelframe.htm)
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -29,6 +30,7 @@ impl widget::TkWidget for TkLabelFrame {
     }
 }
 impl grid::TkGridLayout for TkLabelFrame {}
+impl pack::TkPackLayout for TkLabelFrame {}
 
 impl TkLabelFrame {
     /// Size of border around frame

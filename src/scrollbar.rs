@@ -4,6 +4,7 @@
 //!
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -61,5 +62,6 @@ impl widget::TkWidget for TkScrollbar {
 }
 
 impl grid::TkGridLayout for TkScrollbar {}
+impl pack::TkPackLayout for TkScrollbar {}
 
 impl TkScrollbar {}

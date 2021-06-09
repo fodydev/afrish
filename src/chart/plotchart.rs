@@ -86,6 +86,20 @@ impl fmt::Display for ChartDash {
     }
 }
 
+impl ChartDash {
+    pub fn to_short_string(&self) -> String {
+        let value = match self {
+            ChartDash::Dots1 => ".",
+            ChartDash::Dots2 => "..",
+            ChartDash::Dots3 => "...",
+            ChartDash::Dots4 => "....",
+            ChartDash::Dots5 => ".....",
+            ChartDash::Lines => "{}",
+        };
+        String::from(value)
+    }
+}
+
 /// Specifies interpretation of coordinates.
 #[derive(Clone, Debug, PartialEq)]
 pub enum CoordinatesType {

@@ -4,6 +4,7 @@
 
 use super::grid;
 use super::image;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -85,6 +86,7 @@ impl widget::TkWidget for TkCanvas {
     }
 }
 impl grid::TkGridLayout for TkCanvas {}
+impl pack::TkPackLayout for TkCanvas {}
 
 impl TkCanvas {
     /// Colour of canvas background.

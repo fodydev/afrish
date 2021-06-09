@@ -24,6 +24,7 @@
 
 use super::grid;
 use super::image;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -57,6 +58,7 @@ impl widget::TkWidget for TkTreeview {
 }
 
 impl grid::TkGridLayout for TkTreeview {}
+impl pack::TkPackLayout for TkTreeview {}
 
 impl TkTreeview {
     /// Defines the names for the columns, used when referring to

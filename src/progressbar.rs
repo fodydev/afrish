@@ -4,6 +4,7 @@
 //!
 
 use super::grid;
+use super::pack;
 use super::widget;
 use super::wish;
 
@@ -38,6 +39,7 @@ impl widget::TkWidget for TkProgressbar {
 }
 
 impl grid::TkGridLayout for TkProgressbar {}
+impl pack::TkPackLayout for TkProgressbar {}
 
 impl TkProgressbar {
     /// Displayed length of progress bar in pixels.

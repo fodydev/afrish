@@ -68,7 +68,7 @@ pub trait PieChartMethods: plotchart::TkPlotchart {
     fn plot(&self, data: &[(&str, f64)]) {
         let mut data_str = String::new();
         for (label, angle) in data {
-            data_str.push_str(&format!("{} {} ", label, angle));
+            data_str.push_str(&format!("{{{}}} {} ", label, angle));
         }
 
         let msg = format!("global {}; ${} plot {{{}}}",
