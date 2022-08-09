@@ -11,11 +11,15 @@
 //! in the [wish] module.
 //!
 //! The remaining modules describe a widget or supporting component
-//! (such as a font or image). Within these modules, functions usually
-//! act as constructors/modifiers for the widget or component.
+//! (such as a font or image). Each widget has a constructor function, 
+//! usually named "make_WIDGET", and this returns a struct of name "TkWIDGET". 
 //!
 //! Click on the struct name to get a list of methods supported by the
-//! widget; functionality is divided between various traits.
+//! widget; functionality is divided between various traits, such as 
+//! [TkWidget](widget::TkWidget).
+//!
+//! For examples and additional documentation, see the project
+//! [webpage](https://peterlane.netlify.app/rstk/).
 //!
 //! # Example
 //!
@@ -36,9 +40,6 @@
 //! }
 //! ```
 //!
-//! For more examples and documentation, see the project
-//! [webpage](https://peterlane.netlify.app/rstk/).
-//!
 //! ## Widget lifetimes
 //!
 //! The Tk process operates independently of your rust program. All references
@@ -48,67 +49,6 @@
 //! If you wish to destroy a widget, use the [destroy](widget::TkWidget::destroy)
 //! method available on all widgets.
 //!
-//! The above example can be rewritten in separate functions as:
-//!
-//! ```
-//! use rstk::*;
-//!
-//! fn setup(root: &impl rstk::TkWidget) {
-//!     let hello = rstk::make_label(root);
-//!     hello.text("Hello from Rust/Tk");
-//!
-//!     hello.grid().layout();
-//! }
-//!
-//! fn main() {
-//!     let root = rstk::start_wish().unwrap();
-//!
-//!     setup(&root);
-//!
-//!     rstk::mainloop();
-//! }
-//! ```
-//!
-//! ## Low-level API
-//!
-//! The main wrapper aims to provide a rust-friendly, type-checked set of structs
-//! and methods for using the Tk library.
-//!
-//! However, there are many features in Tk and not all of it is likely to be
-//! wrapped. If there is a feature missing, it is possible to directly use Tk
-//! commands to access it.
-//!
-//! 1. every widget has an `id` field, which gives the Tk identifier.
-//! 2. [tell_wish](wish::tell_wish) sends a given string directly to wish
-//! 3. [ask_wish](wish::ask_wish) sends a given string directly to wish and
-//!    returns, as a [String], the response.
-//!
-//! For example, label's
-//! [takefocus](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
-//! flag is not wrapped. You can nevertheless set it using:
-//!
-//! ```
-//! let label = rstk::make_label(&root);
-//!
-//! rstk::tell_wish(&format!("{} configure -takefocus 0", label.id));
-//! ```
-//!
-//! Also useful are:
-//!
-//! * [cget](widget::TkWidget::cget) - queries any option and returns its current value
-//! * [configure](widget::TkWidget::configure) - used to set any option to a value
-//! * [winfo](widget::TkWidget::winfo) - returns window-related information
-//!
-//! ## Extensions
-//!
-//! Extensions can be created with the help of [next_wid](wish::next_wid),
-//! which returns a new, unique ID in Tk format. Writing an extension requires:
-//!
-//! 1. importing the tcl/tk library (using `tell_wish`)
-//! 2. creating an instance of the underlying Tk widget using a unique id
-//! 3. retaining that id in a struct, for later reference
-//! 4. wrapping the widget's functions as methods, calling out to Tk with
-//!    the stored id as a reference.
 
 pub mod button;
 pub use button::*;

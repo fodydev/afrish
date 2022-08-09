@@ -1,6 +1,39 @@
 //! Label widgets - displays text/image.
 //!
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_label.htm)
+//!
+//! ## Examples
+//!
+//! The simplest label has some text:
+//!
+//! ```
+//! let label_1 = rstk::make_label(&root);
+//! label_1.text("Label text");
+//! ```
+//!
+//! Labels can also display images, with or without text, and how these are 
+//! displayed can be controlled using [compound](widget::TkLabelOptions::compound).
+//! In the following example, a label with both an image and text is set to show 
+//! the image below the text:
+//!
+//! ```
+//! let label_3 = rstk::make_label(&root);
+//! label_3.image(&read_image("tcllogo.gif"));
+//! label_3.text("Tcl Logo");
+//! label_3.compound(rstk::Compound::Bottom);
+//! ```
+//! 
+//! Labels can also show multi-line text. For this, specify a wrap-length (in pixels):
+//!
+//! ```
+//! let label_7 = rstk::make_label(&root);
+//! label_7.wrap_length(300);
+//! label_7.text("Rust has great documentation, a friendly compiler with useful error messages, and
+//! top-notch tooling - an integrated package manager and build tool, smart multi-editor support
+//! with auto-completion and type inspections, an auto-formatter, and more. --
+//! https://rust-lang.org");
+//! ```
+//!
 
 use super::grid;
 use super::pack;
@@ -33,20 +66,13 @@ impl pack::TkPackLayout for TkLabel {}
 impl widget::TkLabelOptions for TkLabel {}
 
 impl TkLabel {
-    /// Positioning of information with respect to internal margins.
+    /// Position of information with respect to internal margins.
+    ///
+    /// e.g. the space allocated to the label can be larger than its 
+    /// text needs, so an Anchor value of E (east) will display the 
+    /// text against the right-margin.
     pub fn anchor(&self, value: widget::Anchor) {
-        let value = match value {
-            widget::Anchor::N => "n",
-            widget::Anchor::NE => "ne",
-            widget::Anchor::E => "e",
-            widget::Anchor::SE => "se",
-            widget::Anchor::S => "s",
-            widget::Anchor::SW => "sw",
-            widget::Anchor::W => "w",
-            widget::Anchor::NW => "nw",
-            widget::Anchor::Center | widget::Anchor::Centre => "center",
-        };
-        widget::configure(&self.id, "anchor", value);
+        widget::configure(&self.id, "anchor", &value.to_string());
     }
 
     /// Specifies the background colour.
@@ -59,7 +85,7 @@ impl TkLabel {
         widget::configure(&self.id, "background", colour);
     }
 
-    /// Alignment of text within widget
+    /// Alignment of text within widget.
     pub fn justify(&self, value: widget::Justify) {
         widget::configure(&self.id, "justify", &value.to_string());
     }

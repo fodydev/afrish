@@ -11,89 +11,19 @@ use crate::wish;
 pub struct TkPolarPlot {
     pub id: String,
 }
-/// Intermediate definition for a polar plot
-#[derive(Clone, Debug, PartialEq)]
-pub struct TkPolarDefinition {
-    canvas_id: String,
-    radius_data: (f64, f64),
-    x_labels: Option<String>,
-    y_labels: Option<String>,
-    axes_at_zero: Option<bool>,
-    isometric: Option<bool>,
-}
-
-/// Methods to set options for polar-plot - call 'plot' method at
-/// end to finally create the chart.
-impl TkPolarDefinition {
-    /// Adds custom labels for the x-axis.
-    pub fn x_labels(&mut self, labels: &[&str]) -> &mut Self {
-        self.x_labels = Some(widget::strings_list(labels));
-        self
-    }
-
-    /// Adds custom labels for the y-axis.
-    pub fn y_labels(&mut self, labels: &[&str]) -> &mut Self {
-        self.y_labels = Some(widget::strings_list(labels));
-        self
-    }
-
-    /// Set to true to show axes at (0.0, 0.0) rather than lower-left corner.
-    pub fn axes_at_zero(&mut self, value: bool) -> &mut Self {
-        self.axes_at_zero = Some(value);
-        self
-    }
-
-    /// Set to true to draw isometrically, i.e. x/y axes have equal physical size.
-    pub fn isometric(&mut self, value: bool) -> &mut Self {
-        self.isometric = Some(value);
-        self
-    }
-
-    /// Completes the definition of a polar-plot and creates the chart.
-    pub fn plot(&self) -> TkPolarPlot {
-        let id = wish::next_var();
-        let mut msg = format!(
-            "global {}; set {} [::Plotchart::createPolarplot {} {{{} {}}} ",
-            id, id, &self.canvas_id,
-            self.radius_data.0, self.radius_data.1
-        );
-
-        if let Some(labels) = &self.x_labels {
-            msg.push_str(&format!("-xlabels {{{}}} ", labels));
-        }
-        if let Some(labels) = &self.y_labels {
-            msg.push_str(&format!("-ylabels {{{}}} ", labels));
-        }
-        if let Some(value) = self.axes_at_zero {
-            msg.push_str(&format!("-axesatzero {} ", if value { "1" } else { "0" }));
-        }
-        if let Some(value) = self.isometric {
-            msg.push_str(&format!("-isometric {} ", if value { "1" } else { "0" }));
-        }
-
-        msg.push_str("]");
-        wish::tell_wish(&msg);
-
-        TkPolarPlot { id }
-    }
-}
 
 /// Creates an instance of a polar plot in given canvas.
-///
-/// Constructor creates an instance of a polar-plot definition in given canvas.
-///
-/// Options must be added and then 'plot' called to finally
-/// create the chart.
 pub fn make_polar(canvas: &canvas::TkCanvas, 
-                  radius_data: (f64, f64)) -> TkPolarDefinition {
-    TkPolarDefinition {
-        canvas_id: String::from(&canvas.id),
-        radius_data,
-        x_labels: None,
-        y_labels: None,
-        axes_at_zero: None,
-        isometric: None,
-    }
+                  radius_data: (f64, f64)) -> TkPolarPlot {
+    let id = wish::next_var();
+    let msg = format!(
+        "global {}; set {} [::Plotchart::createPolarplot {} {{{} {}}}]",
+        id, id, &canvas.id,
+        radius_data.0, radius_data.1
+        );
+    wish::tell_wish(&msg);
+
+    TkPolarPlot { id }
 }
 
 impl plotchart::TkPlotchart for TkPolarPlot {

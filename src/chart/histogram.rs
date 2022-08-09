@@ -26,12 +26,20 @@ pub struct TkHistogramDefinition {
 /// end to finally create the chart.
 impl TkHistogramDefinition {
     /// Adds custom labels for the x-axis.
+    ///
+    /// This will replace the step value for the x-axis.
+    /// Labels which are numbers will be placed according to the given scale, 
+    /// and otherwise are evenly distributed.
     pub fn x_labels(&mut self, labels: &[&str]) -> &mut Self {
         self.x_labels = Some(widget::strings_list(labels));
         self
     }
 
     /// Adds custom labels for the y-axis.
+    ///
+    /// This will replace the step value for the y-axis.
+    /// Labels which are numbers will be placed according to the given scale, 
+    /// and otherwise are evenly distributed.
     pub fn y_labels(&mut self, labels: &[&str]) -> &mut Self {
         self.y_labels = Some(widget::strings_list(labels));
         self
@@ -39,13 +47,23 @@ impl TkHistogramDefinition {
 
     /// Completes the definition of a histogram and creates the chart.
     pub fn plot(&self) -> TkHistogram {
+        // if a labels set is defined, ignore the relevant step value.
+        let x_str;
+        if self.x_labels.is_none() {
+            x_str = format!("{{{} {} {}}}", self.x_axis.0, self.x_axis.1, self.x_axis.2);
+        } else { 
+            x_str = format!("{{{} {}}}", self.x_axis.0, self.x_axis.1);
+        };
+        let y_str;
+        if self.y_labels.is_none() {
+            y_str = format!("{{{} {} {}}}", self.y_axis.0, self.y_axis.1, self.y_axis.2);
+        } else { 
+            y_str = format!("{{{} {}}}", self.y_axis.0, self.y_axis.1);
+        };
         let id = wish::next_var();
         let mut msg = format!(
-            "global {}; set {} [::Plotchart::createHistogram {} {{{} {} {}}} {{{} {} {}}}",
-            id, id, &self.canvas_id,
-            self.x_axis.0, self.x_axis.1, self.x_axis.2,
-            self.y_axis.0, self.y_axis.1, self.y_axis.2
-        );
+            "global {}; set {} [::Plotchart::createHistogram {} {} {} ",
+            id, id, &self.canvas_id, &x_str, &y_str);
 
         if let Some(labels) = &self.x_labels {
             msg.push_str(&format!("-xlabels {{{}}} ", labels));

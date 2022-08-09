@@ -56,12 +56,12 @@ impl TkTopLevel {
         wish::tell_wish(&msg);
     }
 
-    /// Retrieves the geometry of the window.
-    ///
-    /// TODO: parse out of tcl format
-    pub fn geometry_get(&self) -> String {
+    /// Retrieves the geometry of the window as a tuple: (width, height, x, y).
+    pub fn geometry_get(&self) -> (u64, u64, u64, u64) {
         let msg = format!("puts [wm geometry {}] ; flush stdout", self.id);
-        wish::ask_wish(&msg)
+        let result = wish::ask_wish(&msg);
+
+        string_geometry(&result)
     }
 
     /// Sets the size and position of a top-level window.
@@ -170,5 +170,39 @@ impl TkTopLevel {
     pub fn withdraw(&self) {
         let msg = format!("wm withdraw {}", self.id);
         wish::tell_wish(&msg);
+    }
+}
+
+// Parse the widthxheight+x+y tcl string into a tuple: (width, height, x, y).
+// -- we will ignore errors because this is only called on the return value 
+// from a tcl call.
+// -- return (0,0,0,0) if there is a problem
+fn string_geometry(text: &str) -> (u64, u64, u64, u64) {
+    let parts: Vec<&str> = text.split(&['x', '+'][..]).collect();
+    let mut w = 0;
+    let mut h = 0;
+    let mut x = 0;
+    let mut y = 0;
+    if parts.len() == 4 {
+        w = parts[0].parse::<u64>().unwrap_or(0);
+        h = parts[1].parse::<u64>().unwrap_or(0);
+        x = parts[2].parse::<u64>().unwrap_or(0);
+        y = parts[3].parse::<u64>().unwrap_or(0);
+    }
+    (w, h, x, y)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::string_geometry;
+
+    #[test]
+    fn geometry() {
+        assert_eq!((0, 0, 0, 0), string_geometry("0x0+0+0"));
+        assert_eq!((10, 20, 100, 200), string_geometry("10x20+100+200"));
+        // - check some unlikely errors
+        assert_eq!((0, 0, 0, 0), string_geometry("0x00+0"));
+        assert_eq!((0, 0, 0, 0), string_geometry(""));
+        assert_eq!((0, 0, 0, 0), string_geometry("axbxcxd"));
     }
 }

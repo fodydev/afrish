@@ -14,29 +14,72 @@
 //!
 //! The call to `start_wish` starts the "wish" program and sets up some
 //! internal structure to store information about your program's interaction
-//! with wish. The return value is a `Result`, so must be unwrapped to
-//! obtain the top-level window.
+//! with wish. The return value is a `Result`, so must be unwrapped (or 
+//! otherwise handled) to obtain the top-level window.
 //!
 //! If you are using a different program to "wish", e.g. a tclkit, then
 //! call instead:
 //!
 //! ```
-//!   let root = rst::start_with("tclkit");
+//!   let root = rstk::start_with("tclkit").unwrap();
 //! ```
 //!
 //! All construction of the GUI must be done after starting a wish process.
+//!
+//! (For debugging purposes, [trace_with] additionally displays all 
+//! messages to/from the wish program on stdout.)
 //!
 //! Tk is event-driven, so the code sets up the content and design
 //! of various widgets and associates commands to particular events: events
 //! can be button-clicks or the movement of a mouse onto a canvas.
 //!
-//! Once the GUI is created, then the `mainloop` must be started, which will
+//! Once the GUI is created, then the [mainloop] must be started, which will
 //! process and react to events: the call to `mainloop` is usually the last
 //! statement in the program.
 //!
-//! The other modules within "rstk" provide implementations of widgets,
-//! including buttons, labels, menus, and text widgets, as well as associated
-//! data as fonts and images.
+//! The program will usually exit when the top-level window is closed. However,
+//! that can be over-ridden or, to exit in another way, use [end_wish].
+//!
+//! ## Low-level API
+//!
+//! The modules in this crate aim to provide a rust-friendly, type-checked set 
+//! of structs and methods for using the Tk library.
+//!
+//! However, there are many features in Tk and not all of them are likely to be
+//! wrapped. If there is a feature missing they may be used by directly calling 
+//! Tk commands through the low-level API.
+//!
+//! 1. every widget has an `id` field, which gives the Tk identifier.
+//! 2. [tell_wish] sends a given string directly to wish
+//! 3. [ask_wish] sends a given string directly to wish and
+//!    returns, as a [String], the response.
+//!
+//! For example, label's
+//! [takefocus](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
+//! flag is not wrapped. You can nevertheless set its value using:
+//!
+//! ```
+//! let label = rstk::make_label(&root);
+//!
+//! rstk::tell_wish(&format!("{} configure -takefocus 0", &label.id));
+//! ```
+//!
+//! Also useful are:
+//!
+//! * [cget](widget::TkWidget::cget) - queries any option and returns its current value
+//! * [configure](widget::TkWidget::configure) - used to set any option to a value
+//! * [winfo](widget::TkWidget::winfo) - returns window-related information
+//!
+//! ## Extensions
+//!
+//! Extensions can be created with the help of [next_wid],
+//! which returns a new, unique ID in Tk format. Writing an extension requires:
+//!
+//! 1. importing the tcl/tk library (using `tell_wish`)
+//! 2. creating an instance of the underlying Tk widget using a unique id
+//! 3. retaining that id in a struct, for later reference
+//! 4. wrapping the widget's functions as methods, calling out to Tk with
+//!    the stored id as a reference.
 //!
 
 use std::collections::HashMap;
@@ -54,9 +97,15 @@ use super::widget;
 use once_cell::sync::Lazy;
 use once_cell::sync::OnceCell;
 
+/// Reports an error in interacting with the Tk program.
 #[derive(Debug)]
 pub struct TkError {
     message: String,
+}
+
+static TRACE_WISH: OnceCell<bool> = OnceCell::new();
+fn tracing() -> bool {
+    *TRACE_WISH.get().unwrap_or(&false)
 }
 
 static mut WISH: OnceCell<process::Child> = OnceCell::new();
@@ -78,7 +127,9 @@ pub(super) fn kill_wish() {
 /// Use with caution: the message must be valid tcl.
 ///
 pub fn tell_wish(msg: &str) {
-    println!("wish: {}", msg);
+    if tracing() {
+        println!("wish: {}", msg);
+    }
     unsafe {
         SENDER.get_mut().unwrap().send(String::from(msg)).unwrap();
         SENDER.get_mut().unwrap().send(String::from("\n")).unwrap();
@@ -97,7 +148,9 @@ pub fn ask_wish(msg: &str) -> String {
         let mut input = [32; 10000]; // TODO - long inputs can get split?
         if OUTPUT.get_mut().unwrap().read(&mut input).is_ok() {
             if let Ok(input) = String::from_utf8(input.to_vec()) {
-                println!("Result {:?}", &input.trim());
+                if tracing() {
+                    println!("---: {:?}", &input.trim());
+                }
                 return input.trim().to_string();
             }
         }
@@ -326,19 +379,19 @@ fn eval_callback1_font(wid: &str, value: font::TkFont) {
 /// Loops while GUI events occur
 pub fn mainloop() {
     unsafe {
-        let mut counter = 1;
         loop {
             let mut input = [32; 10000];
             if OUTPUT.get_mut().unwrap().read(&mut input).is_ok() {
                 if let Ok(input) = String::from_utf8(input.to_vec()) {
-                    println!("Input {:?}", &input.trim());
+                    if tracing() {
+                        println!("Callback: {:?}", &input.trim());
+                    }
 
                     // here - do a match or similar on what was read from wish
                     if input.starts_with("clicked") {
                         // -- callbacks
                         if let Some(n) = input.find('\n') {
                             let widget = &input[8..n];
-                            println!("Callback on |{}|", widget);
                             eval_callback0(widget);
                         }
                     } else if input.starts_with("cb1b") {
@@ -346,13 +399,11 @@ pub fn mainloop() {
                         let parts: Vec<&str> = input.split('-').collect();
                         let widget = parts[1].trim();
                         let value = parts[2].trim();
-                        println!("Callback on |{}| with |{}|", widget, value);
                         eval_callback1_bool(widget, value == "1");
                     } else if input.starts_with("cb1e") {
                         // -- callback 1 with event
                         let parts: Vec<&str> = input.split(':').collect();
                         let widget_pattern = parts[1].trim();
-                        println!("Callback on |{}| with event", widget_pattern);
                         let x = parts[2].parse::<i64>().unwrap_or(0);
                         let y = parts[3].parse::<i64>().unwrap_or(0);
                         let root_x = parts[4].parse::<i64>().unwrap_or(0);
@@ -383,18 +434,15 @@ pub fn mainloop() {
                     } else if let Some(font) = input.strip_prefix("font") {
                         // -- callback 1 with font
                         let font = font.trim();
-                        println!("Callback with font |{}|", font);
                         if let Ok(font) = font.parse::<font::TkFont>() {
                             eval_callback1_font("font", font);
                         }
                     } else if input.starts_with("exit") {
                         // -- wish has exited
-                        println!("Counter: {}", counter);
                         kill_wish();
                         return; // exit loop and program
                     }
                 }
-                counter += 1;
             }
         }
     }
@@ -407,30 +455,50 @@ pub fn start_wish() -> Result<toplevel::TkTopLevel, TkError> {
 
 /// Creates a connection with the given wish/tclkit program.
 pub fn start_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
+    if let Ok(_) = TRACE_WISH.set(false) {
+        start_tk_connection(wish)
+    } else {
+        return Err(TkError { message: String::from("Failed to set trace option") })
+    }
+}
+
+/// Creates a connection with the given wish/tclkit program with 
+/// debugging output enabled (wish interactions are reported to stdout).
+pub fn trace_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
+    if let Ok(_) = TRACE_WISH.set(true) {
+        start_tk_connection(wish)
+    } else {
+        return Err(TkError { message: String::from("Failed to set trace option") })
+    }
+}
+
+/// Creates a connection with the given wish/tclkit program.
+fn start_tk_connection(wish: &str)-> Result<toplevel::TkTopLevel, TkError> {
+
     let err_msg = format!("Do not start {} twice", wish);
 
     unsafe {
         if let Ok(wish_process) = process::Command::new(wish)
             .stdin(process::Stdio::piped())
-            .stdout(process::Stdio::piped())
-            .spawn()
-        {
-            if WISH.set(wish_process).is_err() {
-                return Err(TkError { message: err_msg });
-            }
-        } else {
-            return Err(TkError {
-                message: format!("Failed to start {} process", wish),
-            });
-        };
+                .stdout(process::Stdio::piped())
+                .spawn()
+                {
+                    if WISH.set(wish_process).is_err() {
+                        return Err(TkError { message: err_msg });
+                    }
+                } else {
+                    return Err(TkError {
+                        message: format!("Failed to start {} process", wish),
+                    });
+                };
 
         let mut input = WISH.get_mut().unwrap().stdin.take().unwrap();
         if OUTPUT
             .set(WISH.get_mut().unwrap().stdout.take().unwrap())
-            .is_err()
-        {
-            return Err(TkError { message: err_msg });
-        }
+                .is_err()
+                {
+                    return Err(TkError { message: err_msg });
+                }
 
         // -- initial setup of Tcl/Tk environment
 
@@ -452,7 +520,7 @@ pub fn start_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
                 puts $res
                 flush stdout
         }\n",
-            )
+        )
             .unwrap();
         // tcl function to help working with scale widget
         input
@@ -461,7 +529,7 @@ pub fn start_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
             puts cb1f-$w-$value
                 flush stdout
         }\n",
-            )
+        )
             .unwrap();
 
         let (sender, receiver) = mpsc::channel();
@@ -514,49 +582,49 @@ pub(super) fn split_items(text: &str) -> Vec<String> {
             }
             break;
         }
-    }
+        }
 
-    result
-}
+        result
+    }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
+    mod tests {
+        use super::*;
 
-    #[test]
-    fn split_items_1() {
-        let result = split_items("");
-        assert_eq!(0, result.len());
-    }
+        #[test]
+        fn split_items_1() {
+            let result = split_items("");
+            assert_eq!(0, result.len());
+        }
 
-    #[test]
-    fn split_items_2() {
-        let result = split_items("abc");
-        assert_eq!(1, result.len());
-        assert_eq!("abc", result[0]);
-    }
+        #[test]
+        fn split_items_2() {
+            let result = split_items("abc");
+            assert_eq!(1, result.len());
+            assert_eq!("abc", result[0]);
+        }
 
-    #[test]
-    fn split_items_3() {
-        let result = split_items("  abc  def  ");
-        assert_eq!(2, result.len());
-        assert_eq!("abc", result[0]);
-        assert_eq!("def", result[1]);
-    }
+        #[test]
+        fn split_items_3() {
+            let result = split_items("  abc  def  ");
+            assert_eq!(2, result.len());
+            assert_eq!("abc", result[0]);
+            assert_eq!("def", result[1]);
+        }
 
-    #[test]
-    fn split_items_4() {
-        let result = split_items("{abc def}");
-        assert_eq!(1, result.len());
-        assert_eq!("abc def", result[0]);
-    }
+        #[test]
+        fn split_items_4() {
+            let result = split_items("{abc def}");
+            assert_eq!(1, result.len());
+            assert_eq!("abc def", result[0]);
+        }
 
-    #[test]
-    fn split_items_5() {
-        let result = split_items("{abc def} xy_z {another}");
-        assert_eq!(3, result.len());
-        assert_eq!("abc def", result[0]);
-        assert_eq!("xy_z", result[1]);
-        assert_eq!("another", result[2]);
+        #[test]
+        fn split_items_5() {
+            let result = split_items("{abc def} xy_z {another}");
+            assert_eq!(3, result.len());
+            assert_eq!("abc def", result[0]);
+            assert_eq!("xy_z", result[1]);
+            assert_eq!("another", result[2]);
+        }
     }
-}

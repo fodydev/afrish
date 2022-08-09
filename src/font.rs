@@ -1,8 +1,11 @@
 //! Font - support for defining and customising fonts.
 //!
+//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm)
+//!
 //! Tk provides a lot of control over font objects.
 //!
-//! Defining a new customised font can be done using the struct and its defaults.
+//! Fonts are created using the struct, specifying those properties we want to 
+//! set, and relying on its defaults for the remaining fields.
 //! For example, creating a bold Helvetica font with size 12:
 //!
 //! ```
@@ -13,7 +16,14 @@
 //! };
 //! ```
 //!
-//! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm)
+//! Fonts can be provided to many widgets which display text, e.g. a label:
+//!
+//! ```
+//! let label = rstk::make_label(&root);
+//! label.font(&font);
+//! label.text("Label text");
+//! ```
+//!
 
 use std::fmt;
 use std::str;
@@ -90,6 +100,7 @@ impl fmt::Display for TkFontMetrics {
     }
 }
 
+/// Error returned if expected font-metrics are incorrectly formatted.
 #[derive(Debug)]
 pub struct ParseFontMetricsErr;
 
@@ -157,6 +168,7 @@ impl fmt::Display for TkFont {
     }
 }
 
+/// Error returned if expected font definition is incorrectly formatted.
 #[derive(Debug)]
 pub struct ParseFontErr;
 

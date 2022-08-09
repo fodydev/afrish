@@ -6,6 +6,12 @@ use crate::chart::plotchart;
 use crate::widget;
 use crate::wish;
 
+#[derive(Clone,Debug,PartialEq)]
+enum XYAxis {
+    Log(f64, f64),
+    Scale(f64, f64, f64),
+}
+
 /// Refers to an xy_plot
 #[derive(Clone, Debug, PartialEq)]
 pub struct TkXYPlot {
@@ -17,8 +23,8 @@ pub struct TkXYPlot {
 pub struct TkXYDefinition {
     canvas_id: String,
     tkname: String, // used in creating the plot
-    x_axis: (f64, f64, f64),
-    y_axis: (f64, f64, f64),
+    x_axis: XYAxis,
+    y_axis: XYAxis,
     x_labels: Option<String>,
     y_labels: Option<String>,
     time_format: Option<String>,
@@ -31,12 +37,20 @@ pub struct TkXYDefinition {
 /// end to finally create the chart.
 impl TkXYDefinition {
     /// Adds custom labels for the x-axis.
+    ///
+    /// This will replace the step value for the x-axis.
+    /// Labels which are numbers will be placed according to the given scale, 
+    /// and otherwise are evenly distributed.
     pub fn x_labels(&mut self, labels: &[&str]) -> &mut Self {
         self.x_labels = Some(widget::strings_list(labels));
         self
     }
 
     /// Adds custom labels for the y-axis.
+    ///
+    /// This will replace the step value for the y-axis.
+    /// Labels which are numbers will be placed according to the given scale, 
+    /// and otherwise are evenly distributed.
     pub fn y_labels(&mut self, labels: &[&str]) -> &mut Self {
         self.y_labels = Some(widget::strings_list(labels));
         self
@@ -68,12 +82,29 @@ impl TkXYDefinition {
 
     /// Completes the definition of an XY-plot and creates the chart.
     pub fn plot(&self) -> TkXYPlot {
+        // if a labels set is defined, ignore the relevant step value.
+        let x_str;
+        match self.x_axis {
+            XYAxis::Log(min, max) => x_str = format!("{{{} {}}}", min, max),
+            XYAxis::Scale(min, max, step) => if self.x_labels.is_none() {
+                x_str = format!("{{{} {} {}}}", min, max, step)
+            } else {
+                x_str = format!("{{{} {}}}", min, max)
+            },
+        };
+        let y_str;
+        match self.y_axis {
+            XYAxis::Log(min, max) => y_str = format!("{{{} {}}}", min, max),
+            XYAxis::Scale(min, max, step) => if self.y_labels.is_none() {
+                y_str = format!("{{{} {} {}}}", min, max, step)
+            } else {
+                y_str = format!("{{{} {}}}", min, max)
+            },
+        };
         let id = wish::next_var();
         let mut msg = format!(
-            "global {}; set {} [::Plotchart::create{} {} {{{} {} {}}} {{{} {} {}}}",
-            id, id, &self.tkname, &self.canvas_id,
-            self.x_axis.0, self.x_axis.1, self.x_axis.2,
-            self.y_axis.0, self.y_axis.1, self.y_axis.2
+            "global {}; set {} [::Plotchart::create{} {} {} {} ",
+            id, id, &self.tkname, &self.canvas_id, &x_str, &y_str
         );
 
         if let Some(labels) = &self.x_labels {
@@ -116,8 +147,8 @@ pub fn make_x_y(
     TkXYDefinition {
         canvas_id: String::from(&canvas.id),
         tkname: String::from("XYPlot"),
-        x_axis,
-        y_axis,
+        x_axis: XYAxis::Scale(x_axis.0, x_axis.1, x_axis.2),
+        y_axis: XYAxis::Scale(y_axis.0, y_axis.1, y_axis.2),
         x_labels: None,
         y_labels: None,
         time_format: None,
@@ -129,20 +160,20 @@ pub fn make_x_y(
 
 /// Creates an xy_plot where the x axis uses log values.
 ///
-/// Cronstructor ceates an instance of an XY plot definition in given canvas.
+/// Constructor ceates an instance of an XY plot definition in given canvas.
 ///
 /// Options must be added and then 'plot' called to finally
 /// create the chart.
 pub fn make_logx_y(
     canvas: &canvas::TkCanvas,
-    x_axis: (f64, f64, f64),
+    x_axis: (f64, f64),
     y_axis: (f64, f64, f64),
 ) -> TkXYDefinition {
     TkXYDefinition {
         canvas_id: String::from(&canvas.id),
         tkname: String::from("LogXYPlot"),
-        x_axis,
-        y_axis,
+        x_axis: XYAxis::Log(x_axis.0, x_axis.1),
+        y_axis: XYAxis::Scale(y_axis.0, y_axis.1, y_axis.2),
         x_labels: None,
         y_labels: None,
         time_format: None,
@@ -161,13 +192,13 @@ pub fn make_logx_y(
 pub fn make_x_logy(
     canvas: &canvas::TkCanvas,
     x_axis: (f64, f64, f64),
-    y_axis: (f64, f64, f64),
+    y_axis: (f64, f64),
 ) -> TkXYDefinition {
     TkXYDefinition {
         canvas_id: String::from(&canvas.id),
         tkname: String::from("XLogYPlot"),
-        x_axis,
-        y_axis,
+        x_axis: XYAxis::Scale(x_axis.0, x_axis.1, x_axis.2),
+        y_axis: XYAxis::Log(y_axis.0, y_axis.1),
         x_labels: None,
         y_labels: None,
         time_format: None,
@@ -185,14 +216,14 @@ pub fn make_x_logy(
 /// create the chart.
 pub fn make_logx_logy(
     canvas: &canvas::TkCanvas,
-    x_axis: (f64, f64, f64),
-    y_axis: (f64, f64, f64),
+    x_axis: (f64, f64),
+    y_axis: (f64, f64),
 ) -> TkXYDefinition {
     TkXYDefinition {
         canvas_id: String::from(&canvas.id),
         tkname: String::from("LogXLogYPlot"),
-        x_axis,
-        y_axis,
+        x_axis: XYAxis::Log(x_axis.0, x_axis.1),
+        y_axis: XYAxis::Log(y_axis.0, y_axis.1),
         x_labels: None,
         y_labels: None,
         time_format: None,
@@ -216,8 +247,8 @@ pub fn make_strip_chart(
     TkXYDefinition {
         canvas_id: String::from(&canvas.id),
         tkname: String::from("Stripchart"),
-        x_axis,
-        y_axis,
+        x_axis: XYAxis::Scale(x_axis.0, x_axis.1, x_axis.2),
+        y_axis: XYAxis::Scale(y_axis.0, y_axis.1, y_axis.2),
         x_labels: None,
         y_labels: None,
         time_format: None,
@@ -409,7 +440,7 @@ impl TkXYPlot {
         location: plotchart::Location,
     ) {
         let msg = format!(
-            "global {}; ${} labeldot {} {} {} {}",
+            "global {}; ${} labeldot {} {} {{{}}} {}",
             &self.id, &self.id, x, y, label, location
         );
         wish::tell_wish(&msg);

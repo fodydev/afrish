@@ -11,6 +11,7 @@ use crate::wish;
 
 /// Used to give either the number of series in a bar chart, or 
 /// indicate they should be drawn in a stacked manner.
+#[derive(Clone, Debug, PartialEq)]
 pub enum BarSeries {
     Count(u64),
     Stacked,
@@ -27,6 +28,7 @@ impl fmt::Display for BarSeries {
 }
 
 /// Used to define type of whiskers to draw in a box plot.
+#[derive(Clone, Debug, PartialEq)]
 pub enum BoxWhiskers {
     Extremes,
     Iqr,
@@ -97,6 +99,29 @@ impl ChartDash {
             ChartDash::Lines => "{}",
         };
         String::from(value)
+    }
+}
+
+/// Specifies colour map scheme.
+#[derive(Clone, Debug, PartialEq)]
+pub enum ColourMap {
+    Cool,
+    Gray,
+    Grey,
+    Hot,
+    Jet,
+}
+
+impl fmt::Display for ColourMap {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            ColourMap::Cool => "cool",
+            ColourMap::Gray => "gray",
+            ColourMap::Grey => "grey",
+            ColourMap::Hot => "hot",
+            ColourMap::Jet => "jet",
+        };
+        write!(f, "{}", &value)
     }
 }
 
@@ -275,10 +300,31 @@ pub enum Location {
 impl fmt::Display for Location {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let value = match self {
-            Location::North => "north",
-            Location::East => "east",
-            Location::South => "south",
-            Location::West => "west",
+            Location::North => "n",
+            Location::East => "e",
+            Location::South => "s",
+            Location::West => "w",
+        };
+        write!(f, "{}", &value)
+    }
+}
+
+/// Used to give direction of adding charts in [plot_pack](widget::plot_pack).
+#[derive(Clone, Debug, PartialEq)]
+pub enum PlotDirection {
+    Bottom,
+    Left,
+    Right,
+    Top,
+}
+
+impl fmt::Display for PlotDirection {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value = match self {
+            PlotDirection::Bottom => "bottom",
+            PlotDirection::Left => "left",
+            PlotDirection::Right => "right",
+            PlotDirection::Top => "top",
         };
         write!(f, "{}", &value)
     }
@@ -306,6 +352,7 @@ impl fmt::Display for Position {
 }
 
 /// Style of plot on a radial chart
+#[derive(Clone, Debug, PartialEq)]
 pub enum RadialStyle {
     Cumulative,
     Filled,
@@ -325,6 +372,7 @@ impl fmt::Display for RadialStyle {
 
 /// Used to give either the step size on the axes of an isometric plot, or
 /// indicate there should be no axes drawn.
+#[derive(Clone, Debug, PartialEq)]
 pub enum StepSize {
     NoAxes,
     Value(u64),
@@ -341,6 +389,7 @@ impl fmt::Display for StepSize {
 }
 
 /// Type of symbol used when plotting data series.
+#[derive(Clone, Debug, PartialEq)]
 pub enum Symbol {
     Circle,
     Cross,
@@ -686,7 +735,7 @@ pub trait TkPlotchart {
 
     /// Sets length in pixels of tick lines.
     fn x_tick_length(&self, value: u64) {
-        let msg = format!("global {}; ${} xconfig -ticklines {}",
+        let msg = format!("global {}; ${} xconfig -ticklength {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }
@@ -751,7 +800,7 @@ pub trait TkPlotchart {
 
     /// Sets length in pixels of tick lines.
     fn y_tick_length(&self, value: u64) {
-        let msg = format!("global {}; ${} yconfig -ticklines {}",
+        let msg = format!("global {}; ${} yconfig -ticklength {}",
                           self.id(), self.id(), value);
         wish::tell_wish(&msg);
     }

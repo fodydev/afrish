@@ -96,6 +96,21 @@ pub trait BarChartMethods : plotchart::TkPlotchart {
         wish::tell_wish(&msg);
     }
 
+    /// Plot given data with a colour gradient.
+    fn plot_gradient(&self, series: &str, data: &[f64], colour: &str, 
+                     direction: plotchart::GradientDirection, 
+                     brightness: plotchart::Brightness) {
+        let mut data_str = String::new();
+        for datum in data {
+            data_str.push_str(&format!("{} ", datum));
+        }
+
+        let msg = format!("global {}; ${} plot {} {{{}}} {} {} {}",
+                          self.id(), self.id(), series,
+                          data_str, colour, direction, brightness);
+        wish::tell_wish(&msg);
+    }
+
     /// Set to true to show values on top of bar.
     fn show_values(&self, value: bool) {
         let msg = format!("global {}; ${} config -showvalues {}",

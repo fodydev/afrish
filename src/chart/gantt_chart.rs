@@ -257,7 +257,7 @@ impl TkGanttChart {
     }
 
     /// Adds a task to the chart.
-    pub fn task(&self, text: &str, time_begin: &str, time_end: &str, completed: u64) -> TkGanttTask {
+    pub fn task(&self, text: &str, (time_begin, time_end): (&str, &str), completed: u64) -> TkGanttTask {
         let id = wish::next_var();
         let msg = format!("global {}; set {} [${} task {{{}}} {{{}}} {{{}}} {}]",
                           &self.id, id, &self.id, text, time_begin, time_end, completed);

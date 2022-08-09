@@ -14,6 +14,21 @@
 //! 2. `layout` must be called last, to perform the layout.
 //! 3. zero or more options are added to the GridLayout, to control the position
 //!   and layout of the widget.
+//! 
+//! ## Example
+//!
+//! The following example places a label:
+//!
+//! ```
+//! label.grid()                    // starts layout definition
+//!     .row(1)                     // at row 1
+//!     .column(2)                  // at column 2
+//!     .column_span(3)             // spanning three columns (i.e. 2,3,4)
+//!     .padx(5)                    // with 5 pixels horizontal spacing
+//!     .sticky(rstk::Sticky::E)    // "attached" to the right-hand side
+//!     .layout();                  // completes the layout
+//! ```
+//!
 
 use super::widget;
 use super::wish;
@@ -148,18 +163,27 @@ impl GridLayout {
 
 /// Common functions for widgets that can be arranged using GridLayouts
 pub trait TkGridLayout: widget::TkWidget {
-    /// Creates a GridLayout instance for placing this widget within its parent
+    /// Creates a GridLayout instance for placing this widget within its parent.
     fn grid(&self) -> GridLayout {
         GridLayout::new(self.id())
     }
 
-    /// Sets properties for widget layout
+    /// Sets properties for widget layout directly through Tk: see Tk 
+    /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/grid.htm#M9) for 
+    /// options.
+    ///
+    /// e.g. to set the "padx" value to "5" on a label:
+    ///
+    /// ```
+    /// label.grid_configure("padx", "5");
+    /// ```
+    ///
     fn grid_configure(&self, option: &str, value: &str) {
         let msg = format!("grid configure {} -{} {{{}}}", self.id(), option, value);
         wish::tell_wish(&msg);
     }
 
-    /// Removes this widget from layout
+    /// Removes this widget from layout.
     fn grid_forget(&self) {
         let msg = format!("grid forget {}", self.id());
         wish::tell_wish(&msg);

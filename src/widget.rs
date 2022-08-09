@@ -4,6 +4,8 @@
 
 use std::fmt;
 
+use super::canvas;
+use crate::chart::plotchart;
 use super::font;
 use super::image;
 use super::wish;
@@ -34,7 +36,7 @@ pub struct TkEvent {
 
 /// Common trait for container widgets. Child widgets should implement the `id`
 /// method. The remaining methods are standard Tk methods and convenient,
-/// type-save versions of them.
+/// type-safe versions of them.
 pub trait TkWidget {
     /// Returns the widget's id reference - used within tk
     fn id(&self) -> &str;
@@ -256,17 +258,17 @@ pub trait TkWidget {
 /// * `rgb` - as a 6-digit hexadecimal value in form "#RRGGBB"
 ///
 pub trait TkLabelOptions: TkWidget {
-    /// Specifies how to arrange the text relative to the image.
+    /// Sets how to arrange the image relative to the text.
     fn compound(&self, value: Compound) {
         configure(&self.id(), "compound", &value.to_string());
     }
 
-    /// Specifies the font to use for text.
+    /// Sets the font to use for text.
     fn font(&self, definition: &font::TkFont) {
         configure(&self.id(), "font", &definition.to_string());
     }
 
-    /// Specifies the foreground (text) colour.
+    /// Sets the foreground (text) colour.
     fn foreground(&self, colour: &str) {
         configure(&self.id(), "foreground", colour);
     }
@@ -276,8 +278,8 @@ pub trait TkLabelOptions: TkWidget {
         configure(&self.id(), "image", &image.id);
     }
 
-    /// Sets space around the widget. Takes
-    /// an array of up to four values, specifying:
+    /// Sets space around the widget. Takes an array of up to four values, 
+    /// specifying the number of pixels on the different sides:
     ///
     /// * \[all]
     /// * [left-right top-bottom]
@@ -739,6 +741,26 @@ pub fn after(time: u64, command: impl Fn() + Send + 'static) {
 /// Binds command for event pattern to _all_ widgets.
 pub fn bind(pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
     bind_to("all", pattern, command);
+}
+
+/// Sets colour map (for xy_plots).
+pub fn colour_map(map: plotchart::ColourMap) {
+    let msg = format!("::Plotchart::colorMap {}", map);
+    wish::tell_wish(&msg);
+}
+
+/// Copies contents of one or more plots onto another canvas widget.
+pub fn plot_pack(canvas: &canvas::TkCanvas, 
+                 direction: plotchart::PlotDirection,
+                 charts: &[&impl plotchart::TkPlotchart]) {
+    let mut charts_str = String::new();
+    for chart in charts {
+        charts_str.push_str(&format!("${} ", chart.id()));
+    }
+
+    let msg = format!("::Plotchart::plotpack {} {} {}",
+                      &canvas.id, direction, charts_str);
+    wish::tell_wish(&msg);
 }
 
 /// Checks what the current OS system is: see

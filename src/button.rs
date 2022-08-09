@@ -1,6 +1,30 @@
 //! Button widget - displays text/image. Executes a command when clicked.
 //!
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_button.htm)
+//!
+//! ## Examples
+//!
+//! The simplest button has some text and a command:
+//!
+//! ```
+//! let button_1 = rstk::make_button(&root);
+//! button_1.text("Button text");
+//! button_1.command(|| { println!("Clicked button_1"); });
+//! ```
+//! 
+//! Buttons can also display images, with or without text, and how these are 
+//! displayed can be controlled using [compound](widget::TkLabelOptions::compound).
+//! In the following example, a button with both an image and text is set to show 
+//! the image below the text:
+//!
+//! ```
+//! let button_3 = rstk::make_button(&root);
+//! button_3.image(&read_image("tcllogo.gif"));
+//! button_3.text("Tcl Logo");
+//! button_3.command(|| { println!("Clicked button_3"); });
+//! button_3.compound(rstk::Compound::Bottom);
+//! ```
+//! 
 
 use super::grid;
 use super::pack;
@@ -45,13 +69,14 @@ impl TkButton {
         wish::tell_wish(&msg);
     }
 
-    /// Calls the button's command.
+    /// Calls the button's command as if it were clicked.
     pub fn invoke(&self) {
         let msg = format!("{} invoke", self.id);
         wish::tell_wish(&msg);
     }
 
-    /// Sets the state of the button.
+    /// Sets the state of the button, usually normal (clickable) 
+    /// or disabled (unclickable).
     pub fn state(&self, value: widget::State) {
         widget::configure(&self.id, "state", &value.to_string());
     }
