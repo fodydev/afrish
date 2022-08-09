@@ -1,4 +1,4 @@
-# rstk - in progress
+# rstk 
 
 A Rust binding for the Tk graphics toolkit.
 
