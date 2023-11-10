@@ -30,9 +30,9 @@ fn main() {
 }
 ```
 
-## MIT License
+## MIT Licence
 
-Copyright (c) 2021, Peter Lane <peterlane@gmx.com>
+Copyright (c) 2021-23, Peter Lane <peterlane@gmx.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
