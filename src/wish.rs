@@ -388,7 +388,7 @@ pub fn mainloop() {
                     // here - do a match or similar on what was read from wish
                     if input.starts_with("clicked") {
                         // -- callbacks
-                        if let Some(n) = input.find('\n') {
+                        if let Some(n) = input.find(&['\n', '\r']) {
                             let widget = &input[8..n];
                             eval_callback0(widget);
                         }
