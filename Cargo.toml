@@ -2,7 +2,7 @@
 name = "rstk"
 version = "0.3.0"
 authors = ["Peter Lane <peterlane@gmx.com>"]
-edition = "2018"
+edition = "2021"
 
 categories = ["gui"]
 description = "A Rust binding for the Tk graphics toolkit."
