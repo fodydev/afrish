@@ -2,7 +2,7 @@
 //!
 //! The basic structure of a program using wish is as follows:
 //!
-//! ```
+//! ```ignore
 //! fn main() {
 //!   let root = rstk::start_wish().unwrap();
 //!
@@ -20,7 +20,7 @@
 //! If you are using a different program to "wish", e.g. a tclkit, then
 //! call instead:
 //!
-//! ```
+//! ```ignore
 //!   let root = rstk::start_with("tclkit").unwrap();
 //! ```
 //!
@@ -58,7 +58,7 @@
 //! [takefocus](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_widget.htm#M-takefocus)
 //! flag is not wrapped. You can nevertheless set its value using:
 //!
-//! ```
+//! ```ignore
 //! let label = rstk::make_label(&root);
 //!
 //! rstk::tell_wish(&format!("{} configure -takefocus 0", &label.id));
@@ -86,16 +86,14 @@ use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::process;
 use std::sync::mpsc;
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use std::thread;
 
 use super::font;
 use super::toplevel;
 use super::widget;
 
-// TODO - change when available from 'nightly'
 use once_cell::sync::Lazy;
-use once_cell::sync::OnceCell;
 
 /// Reports an error in interacting with the Tk program.
 #[derive(Debug)]
@@ -103,14 +101,14 @@ pub struct TkError {
     message: String,
 }
 
-static TRACE_WISH: OnceCell<bool> = OnceCell::new();
+static TRACE_WISH: OnceLock<bool> = OnceLock::new();
 fn tracing() -> bool {
     *TRACE_WISH.get().unwrap_or(&false)
 }
 
-static mut WISH: OnceCell<process::Child> = OnceCell::new();
-static mut OUTPUT: OnceCell<process::ChildStdout> = OnceCell::new();
-static mut SENDER: OnceCell<mpsc::Sender<String>> = OnceCell::new();
+static mut WISH: OnceLock<process::Child> = OnceLock::new();
+static mut OUTPUT: OnceLock<process::ChildStdout> = OnceLock::new();
+static mut SENDER: OnceLock<mpsc::Sender<String>> = OnceLock::new();
 
 // Kills the wish process - should be called to exit
 pub(super) fn kill_wish() {

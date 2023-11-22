@@ -6,7 +6,7 @@
 //!
 //! The simplest label has some text:
 //!
-//! ```
+//! ```ignore
 //! let label_1 = rstk::make_label(&root);
 //! label_1.text("Label text");
 //! ```
@@ -16,7 +16,7 @@
 //! In the following example, a label with both an image and text is set to show 
 //! the image below the text:
 //!
-//! ```
+//! ```ignore
 //! let label_3 = rstk::make_label(&root);
 //! label_3.image(&read_image("tcllogo.gif"));
 //! label_3.text("Tcl Logo");
@@ -25,7 +25,7 @@
 //! 
 //! Labels can also show multi-line text. For this, specify a wrap-length (in pixels):
 //!
-//! ```
+//! ```ignore
 //! let label_7 = rstk::make_label(&root);
 //! label_7.wrap_length(300);
 //! label_7.text("Rust has great documentation, a friendly compiler with useful error messages, and

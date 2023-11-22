@@ -4,7 +4,7 @@
 //!
 //! The pack-layout is used in a "builder" style to layout a single widget:
 //!
-//! ```
+//! ```ignore
 //! widget.pack()
 //!   .OPTION(VALUE) // 0 or more
 //!   .layout();

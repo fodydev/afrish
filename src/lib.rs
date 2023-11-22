@@ -25,7 +25,7 @@
 //!
 //! A simple hello-world example:
 //!
-//! ```
+//! ```ignore
 //! use rstk::*;
 //!
 //! fn main() {

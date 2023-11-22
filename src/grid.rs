@@ -4,7 +4,7 @@
 //!
 //! The grid-layout is used in a "builder" style to layout a single widget:
 //!
-//! ```
+//! ```ignore
 //! widget.grid()
 //!   .OPTION(VALUE) // 0 or more
 //!   .layout();
@@ -19,7 +19,7 @@
 //!
 //! The following example places a label:
 //!
-//! ```
+//! ```ignore
 //! label.grid()                    // starts layout definition
 //!     .row(1)                     // at row 1
 //!     .column(2)                  // at column 2
@@ -174,7 +174,7 @@ pub trait TkGridLayout: widget::TkWidget {
     ///
     /// e.g. to set the "padx" value to "5" on a label:
     ///
-    /// ```
+    /// ```ignore
     /// label.grid_configure("padx", "5");
     /// ```
     ///

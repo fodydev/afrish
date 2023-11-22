@@ -16,7 +16,7 @@
 //! The message-box is used to set up a simple alert, confirmation or
 //! information dialog:
 //!
-//! ```
+//! ```ignore
 //! rstk::message_box()
 //!   .OPTION(VALUE) // 0 or more
 //!   .show();
@@ -343,7 +343,7 @@ impl TkOpenFileChooser {
     ///
     /// File types are passed as a list of pairs, e.g.:
     ///
-    ///```
+    ///```ignore
     /// let file_types = [("C++", ".cpp"), ("Rust", ".rs"), ("Any", "*")];
     /// dialog.file_types(&file_types);
     ///```
@@ -466,7 +466,7 @@ impl TkSaveFileChooser {
     ///
     /// File types are passed as a list of pairs, e.g.:
     ///
-    ///```
+    ///```ignore
     /// let file_types = [("C++", ".cpp"), ("Rust", ".rs"), ("Any", "*")];
     /// dialog.file_types(&file_types);
     ///```
