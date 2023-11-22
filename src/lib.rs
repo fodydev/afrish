@@ -19,7 +19,7 @@
 //! [TkWidget](widget::TkWidget).
 //!
 //! For examples and additional documentation, see the project
-//! [webpage](https://peterlane.netlify.app/rstk/).
+//! [webpage](https://peterlane.codeberg.page/rstk/).
 //!
 //! # Example
 //!

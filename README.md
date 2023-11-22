@@ -15,7 +15,7 @@ The library provides:
 
 A simple hello-world example:
 
-```
+```rust
 use rstk::*;
 
 fn main() {
