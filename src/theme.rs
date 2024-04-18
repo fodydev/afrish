@@ -10,7 +10,7 @@ use super::wish;
 /// For example:
 ///
 /// ```ignore
-/// let themes = rstk::theme_names();
+/// let themes = rish::theme_names();
 /// println!("{} available themes: ", themes.len());
 /// for theme in themes {
 ///     println!(" - {}", theme);

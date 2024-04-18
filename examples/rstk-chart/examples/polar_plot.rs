@@ -1,20 +1,20 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
-    root.title("Polar Plot in rstk");
+    let root = rish::start_wish().unwrap();
+    root.title("Polar Plot in rish");
 
-    let canvas = rstk::make_canvas(&root);
+    let canvas = rish::make_canvas(&root);
     canvas.width(400);
     canvas.height(300);
     canvas.background("white");
     canvas.grid().layout();
 
-    let polar_plot = rstk::make_polar(&canvas, (3.0, 1.0));
+    let polar_plot = rish::make_polar(&canvas, (3.0, 1.0));
 
     polar_plot.series_colour("line", "blue");
-    polar_plot.series_drawing_mode("line", rstk::DrawingMode::Both);
-    polar_plot.series_symbol("line", rstk::Symbol::Cross, 5);
+    polar_plot.series_drawing_mode("line", rish::DrawingMode::Both);
+    polar_plot.series_symbol("line", rish::Symbol::Cross, 5);
 
     for i in 0..30 {
         let i = i as f64;
@@ -24,8 +24,8 @@ fn main() {
         polar_plot.plot("line", (r, a));
     }
 
-    polar_plot.draw_labelled_dot((2.0, 60.0), "Mark", rstk::Location::North);
+    polar_plot.draw_labelled_dot((2.0, 60.0), "Mark", rish::Location::North);
 
-    rstk::mainloop();
+    rish::mainloop();
 }
 

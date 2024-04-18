@@ -1,31 +1,31 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("treeview-example.rs");
 
-    let treeview = rstk::make_treeview(&root);
+    let treeview = rish::make_treeview(&root);
     treeview.columns(&["size", "modified"]);
     treeview.heading_text("#0", "Name");
     treeview.heading_text("size", "Size (kB)");
     treeview.heading_text("modified", "Last Modified");
 
-    let hscroll = rstk::make_horizontal_scrollbar(&root, &treeview);
-    let vscroll = rstk::make_vertical_scrollbar(&root, &treeview);
+    let hscroll = rish::make_horizontal_scrollbar(&root, &treeview);
+    let vscroll = rish::make_vertical_scrollbar(&root, &treeview);
 
-    treeview.grid().column(0).row(0).sticky(rstk::Sticky::NESW).layout();
-    hscroll.grid().column(0).row(1).sticky(rstk::Sticky::EW).layout();
-    vscroll.grid().column(1).row(0).sticky(rstk::Sticky::NS).layout();
+    treeview.grid().column(0).row(0).sticky(rish::Sticky::NESW).layout();
+    hscroll.grid().column(0).row(1).sticky(rish::Sticky::EW).layout();
+    vscroll.grid().column(1).row(0).sticky(rish::Sticky::NS).layout();
     root.grid_configure_column(0, "weight", "1");
     root.grid_configure_row(0, "weight", "1");
 
     // -- alter alignments
-    treeview.column_anchor("size", rstk::Anchor::Centre);
-    treeview.column_anchor("modified", rstk::Anchor::Centre);
+    treeview.column_anchor("size", rish::Anchor::Centre);
+    treeview.column_anchor("modified", rish::Anchor::Centre);
 
     // -- add a feedback label
-    let label = rstk::make_label(&root);
-    label.grid().column(0).row(2).sticky(rstk::Sticky::EW).layout();
+    let label = rish::make_label(&root);
+    label.grid().column(0).row(2).sticky(rish::Sticky::EW).layout();
 
     // -- populate treeview with dummy items
     let item1 = treeview.insert_item();
@@ -49,6 +49,6 @@ fn main() {
         label.text(&format!("{} selected items", selected_items.len()));
     });
 
-    rstk::mainloop();
+    rish::mainloop();
 }
 

@@ -1,14 +1,14 @@
 // translation of plotdemos6.tcl
 
-use rstk::*;
+use rish::*;
 use rand::Rng;
 use core::f64::consts::PI;
 
 // -- convenience function
-fn make_white_canvas(root: &rstk::TkTopLevel,
+fn make_white_canvas(root: &rish::TkTopLevel,
                      width: u64,
-                     height: u64) -> rstk::TkCanvas {
-    let canvas = rstk::make_canvas(root);
+                     height: u64) -> rish::TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
     canvas.width(width);
     canvas.height(height);
@@ -33,18 +33,18 @@ fn forces_dipole(x: f64, y: f64) -> (f64, f64) {
 }
 
 // -- frame 1
-fn frame_1(root: &rstk::TkTopLevel) {
+fn frame_1(root: &rish::TkTopLevel) {
     let canvas1 = make_white_canvas(root, 400, 400);
     let canvas2 = make_white_canvas(root, 400, 200);
     canvas1.grid().row(0).layout();
     canvas2.grid().row(1).layout();
 
-    let s = rstk::make_x_y(&canvas1, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0)).plot();
+    let s = rish::make_x_y(&canvas1, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0)).plot();
     s.vector_colour("series1", "red");
     s.vector_scale("series1", 40.0);
     s.vector_colour("series2", "blue");
     s.vector_scale("series2", 50.0);
-    s.vector_type("series2", rstk::CoordinatesType::Nautical);
+    s.vector_type("series2", rish::CoordinatesType::Nautical);
     s.vector_centred("series2", true);
 
     // cartesian
@@ -56,7 +56,7 @@ fn frame_1(root: &rstk::TkTopLevel) {
         s.draw_vector("series2", (60.0, 40.0), pair);
     }
 
-    let s = rstk::make_x_y(&canvas2, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0)).plot();
+    let s = rish::make_x_y(&canvas2, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0)).plot();
     s.dot_colour("series1", "red");
     s.dot_scale_by_value("series1", true);
     s.dot_scale("series1", 2.5);
@@ -87,20 +87,20 @@ fn frame_1(root: &rstk::TkTopLevel) {
 }
 
 // -- frame 2
-fn frame_2(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_2(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos6.rs - dipole");
 
     let canvas = make_white_canvas(&window, 500, 500);
     canvas.grid().layout();
 
-    let s = rstk::make_x_y(&canvas, (45.0, 55.0, 1.0), (45.0, 55.0, 1.0))
+    let s = rish::make_x_y(&canvas, (45.0, 55.0, 1.0), (45.0, 55.0, 1.0))
         .plot();
 
-    s.title("Forces in a dipole field", rstk::Justify::Centre);
+    s.title("Forces in a dipole field", rish::Justify::Centre);
     s.vector_colour("series1", "black");
     s.vector_scale("series1", 40.0);
-    s.vector_type("series1", rstk::CoordinatesType::Polar);
+    s.vector_type("series1", rish::CoordinatesType::Polar);
     s.dot_colour("dipole", "red");
     s.dot_scale_by_value("dipole", false);
     s.dot_radius("dipole", 5.0);
@@ -124,16 +124,16 @@ fn frame_2(root: &rstk::TkTopLevel) {
 }
 
 // -- frame 3
-fn frame_3(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_3(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos6.rs - rchart");
 
     let canvas = make_white_canvas(&window, 400, 200);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 50.0, 10.0))
+    let chart = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 50.0, 10.0))
         .plot();
-    chart.title("R-chart (arbitrary data)", rstk::Justify::Centre);
+    chart.title("R-chart (arbitrary data)", rish::Justify::Centre);
 
     chart.series_colour("series1", "green");
     for x in (1..50).step_by(3) {
@@ -154,12 +154,12 @@ fn frame_3(root: &rstk::TkTopLevel) {
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("plotdemos6.rs");
 
     frame_1(&root);
     frame_2(&root);
     frame_3(&root);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

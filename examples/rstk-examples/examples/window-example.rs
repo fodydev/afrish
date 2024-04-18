@@ -1,12 +1,12 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
 
     root.title("window-example.rs");
-    let open_1 = rstk::make_button(&root);
+    let open_1 = rish::make_button(&root);
     open_1.text("Open 1");
-    let open_2 = rstk::make_button(&root);
+    let open_2 = rish::make_button(&root);
     open_2.text("Open 2");
 
     println!("Geometry of root at start: {}", root.geometry_get());
@@ -20,7 +20,7 @@ fn main() {
         let root = root.clone();
 
         open_1.command(move || {
-            let new_window = rstk::make_toplevel(&root);
+            let new_window = rish::make_toplevel(&root);
             new_window.title("Window 1");
             new_window.iconify();
         });
@@ -30,23 +30,23 @@ fn main() {
         let root = root.clone();
 
         open_2.command(move || {
-            let new_window = rstk::make_toplevel(&root);
+            let new_window = rish::make_toplevel(&root);
             new_window.title("Window 2");
             new_window.resizable(false, false);
         });
     }
 
     root.on_close(|| {
-        let result = rstk::message_box()
+        let result = rish::message_box()
             .title("Really close?")
             .message("Still a chance to say no")
-            .type_buttons(rstk::DialogType::YesNo)
+            .type_buttons(rish::DialogType::YesNo)
             .show();
 
         if result == "yes" {
-            rstk::end_wish();
+            rish::end_wish();
         }
     });
 
-    rstk::mainloop();
+    rish::mainloop();
 }

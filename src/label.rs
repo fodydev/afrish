@@ -7,7 +7,7 @@
 //! The simplest label has some text:
 //!
 //! ```ignore
-//! let label_1 = rstk::make_label(&root);
+//! let label_1 = rish::make_label(&root);
 //! label_1.text("Label text");
 //! ```
 //!
@@ -17,16 +17,16 @@
 //! the image below the text:
 //!
 //! ```ignore
-//! let label_3 = rstk::make_label(&root);
+//! let label_3 = rish::make_label(&root);
 //! label_3.image(&read_image("tcllogo.gif"));
 //! label_3.text("Tcl Logo");
-//! label_3.compound(rstk::Compound::Bottom);
+//! label_3.compound(rish::Compound::Bottom);
 //! ```
 //! 
 //! Labels can also show multi-line text. For this, specify a wrap-length (in pixels):
 //!
 //! ```ignore
-//! let label_7 = rstk::make_label(&root);
+//! let label_7 = rish::make_label(&root);
 //! label_7.wrap_length(300);
 //! label_7.text("Rust has great documentation, a friendly compiler with useful error messages, and
 //! top-notch tooling - an integrated package manager and build tool, smart multi-editor support

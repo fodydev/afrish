@@ -1,6 +1,6 @@
 // translation of plotdemos5.tcl
 
-use rstk::*;
+use rish::*;
 
 static X: [[f64; 3]; 4] = [
     [0.0, 100.0, 200.0],
@@ -47,92 +47,92 @@ static X_LIMITS: (f64, f64, f64) = (0.0, 200.0, 50.0);
 static Y_LIMITS: (f64, f64, f64) = (0.0, 100.0, 20.0);
 
 // -- convenience function
-fn make_white_canvas(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
-    let canvas = rstk::make_canvas(root);
+fn make_white_canvas(root: &rish::TkTopLevel) -> rish::TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
     canvas.width(500);
     canvas.height(500);
     canvas
 }
 
-fn frame_1(root: &rstk::TkTopLevel) {
+fn frame_1(root: &rish::TkTopLevel) {
     let canvas = make_white_canvas(root);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
-    rstk::colour_map(rstk::ColourMap::Jet);
+    let chart = rish::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
+    rish::colour_map(rish::ColourMap::Jet);
     chart.draw_contour_fill(&X, &Y, &F, &CONTOURS);
     chart.draw_grid(&X, &Y);
 }
 
-fn frame_2(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_2(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("Contour Demo : contourlines (default colourmap)");
 
     let canvas = make_white_canvas(&window);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
+    let chart = rish::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
     chart.draw_contour_lines(&X, &Y, &F, &CONTOURS);
     chart.draw_grid(&X, &Y);
 }
 
-fn frame_3(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_3(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("Contour Demo : contourlines (hot colourmap)");
 
     let canvas = make_white_canvas(&window);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
-    rstk::colour_map(rstk::ColourMap::Hot);
+    let chart = rish::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
+    rish::colour_map(rish::ColourMap::Hot);
     chart.draw_contour_lines(&X, &Y, &F, &CONTOURS);
     chart.draw_grid(&X, &Y);
 }
 
-fn frame_4(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_4(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("Contour Demo : grey contourfill, jet contourlines");
 
     let canvas = make_white_canvas(&window);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
-    rstk::colour_map(rstk::ColourMap::Grey);
+    let chart = rish::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
+    rish::colour_map(rish::ColourMap::Grey);
     chart.draw_contour_fill(&X, &Y, &F, &CONTOURS);
-    rstk::colour_map(rstk::ColourMap::Jet);
+    rish::colour_map(rish::ColourMap::Jet);
     chart.draw_contour_lines(&X, &Y, &F, &CONTOURS);
     chart.draw_grid(&X, &Y);
 }
 
-fn frame_5(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_5(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("Contour Demo : contourlines (cool colourmap)");
 
     let canvas = make_white_canvas(&window);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
-    rstk::colour_map(rstk::ColourMap::Cool);
+    let chart = rish::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
+    rish::colour_map(rish::ColourMap::Cool);
     chart.draw_contour_lines(&X, &Y, &F, &CONTOURS);
     chart.draw_grid(&X, &Y);
 }
 
-fn frame_6(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_6(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("Contour Demo : default contours (jet colourmap)");
 
     let canvas = make_white_canvas(&window);
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
-    rstk::colour_map(rstk::ColourMap::Jet);
+    let chart = rish::make_x_y(&canvas, X_LIMITS, Y_LIMITS).plot();
+    rish::colour_map(rish::ColourMap::Jet);
     chart.draw_contour_fill(&X, &Y, &F, &CONTOURS);
     chart.draw_grid(&X, &Y);
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("Contour Demo : shade (jet colourmap)");
 
     frame_1(&root);
@@ -142,5 +142,5 @@ fn main() {
     frame_5(&root);
     frame_6(&root);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

@@ -1,36 +1,36 @@
-use rstk;
+use rish;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
 
     root.title("Menu Example");
-    let menubar = rstk::make_menu(&root);
+    let menubar = rish::make_menu(&root);
 
     // -- create file menu
-    let file_menu = rstk::make_menu(&menubar);
+    let file_menu = rish::make_menu(&menubar);
     file_menu.command()
         .label("New")
         .command(|| println!("You clicked 'New'"))
         .add();
     file_menu.command()
         .label("Save")
-        .state(rstk::State::Disabled)
+        .state(rish::State::Disabled)
         .add();
     file_menu.separator().add();
     file_menu.command()
         .label("Quit")
         .underline(0)
         .accelerator("Ctrl-Q")
-        .command(|| rstk::end_wish())
+        .command(|| rish::end_wish())
         .add();
 
     // -- create example menu
-    let example_menu = rstk::make_menu(&menubar);
+    let example_menu = rish::make_menu(&menubar);
     example_menu.check_button()
         .label("Select")
         .command(|value| println!("Selection is now {}", value))
         .add();
-    let colours_menu = rstk::make_menu(&example_menu);
+    let colours_menu = rish::make_menu(&example_menu);
     colours_menu.radio_button("colours", "red")
         .label("Red")
         .add();
@@ -59,6 +59,6 @@ fn main() {
     menubar.cascade().menu(&file_menu).label("File").add();
     menubar.cascade().menu(&example_menu).label("Example").add();
 
-    rstk::mainloop();
+    rish::mainloop();
 }
 

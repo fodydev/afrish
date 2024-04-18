@@ -1,12 +1,12 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
 
-    let button = rstk::make_button(&root);
+    let button = rish::make_button(&root);
     button.text("Hello from Rust/TK");
     button.grid().layout();
 
-    rstk::mainloop();
+    rish::mainloop();
 }
 

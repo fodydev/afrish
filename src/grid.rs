@@ -25,7 +25,7 @@
 //!     .column(2)                  // at column 2
 //!     .column_span(3)             // spanning three columns (i.e. 2,3,4)
 //!     .padx(5)                    // with 5 pixels horizontal spacing
-//!     .sticky(rstk::Sticky::E)    // "attached" to the right-hand side
+//!     .sticky(rish::Sticky::E)    // "attached" to the right-hand side
 //!     .layout();                  // completes the layout
 //! ```
 //!

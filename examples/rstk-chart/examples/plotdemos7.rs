@@ -1,13 +1,13 @@
 // Translation of plotdemos7.tcl
 
-use rstk::*;
+use rish::*;
 use rand;
 
 // -- convenience function
-fn make_white_canvas(root: &rstk::TkTopLevel,
+fn make_white_canvas(root: &rish::TkTopLevel,
                      width: u64,
-                     height: u64) -> rstk::TkCanvas {
-    let canvas = rstk::make_canvas(root);
+                     height: u64) -> rish::TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
     canvas.width(width);
     canvas.height(height);
@@ -15,23 +15,23 @@ fn make_white_canvas(root: &rstk::TkTopLevel,
 }
 
 // XY plot
-fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_1(root: &rish::TkTopLevel) -> rish::TkCanvas {
     // customise the xy-plot
     // -- plot-config not implemented, so make raw calls
-    rstk::tell_wish("::Plotchart::plotconfig xyplot title font {Times 14}");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot title textcolor red");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot leftaxis font {Helvetica 10 italic}");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot leftaxis thickness 2");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot leftaxis ticklength -5");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot rightaxis font {Times 10 bold}");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot rightaxis color green");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot rightaxis thickness 2");
-    rstk::tell_wish("::Plotchart::plotconfig xyplot margin right 100");
+    rish::tell_wish("::Plotchart::plotconfig xyplot title font {Times 14}");
+    rish::tell_wish("::Plotchart::plotconfig xyplot title textcolor red");
+    rish::tell_wish("::Plotchart::plotconfig xyplot leftaxis font {Helvetica 10 italic}");
+    rish::tell_wish("::Plotchart::plotconfig xyplot leftaxis thickness 2");
+    rish::tell_wish("::Plotchart::plotconfig xyplot leftaxis ticklength -5");
+    rish::tell_wish("::Plotchart::plotconfig xyplot rightaxis font {Times 10 bold}");
+    rish::tell_wish("::Plotchart::plotconfig xyplot rightaxis color green");
+    rish::tell_wish("::Plotchart::plotconfig xyplot rightaxis thickness 2");
+    rish::tell_wish("::Plotchart::plotconfig xyplot margin right 100");
 
     let canvas = make_white_canvas(root, 400, 200);
-    let s = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
+    let s = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
         .plot();
-    let r = rstk::make_right_axis(&canvas, (0.0, 0.1, 0.01));
+    let r = rish::make_right_axis(&canvas, (0.0, 0.1, 0.01));
     s.series_colour("series1", "red");
     s.series_colour("series2", "blue");
     s.series_colour("series3", "magenta");
@@ -58,10 +58,10 @@ fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
     s.x_title("X-coordinate");
     s.y_title("Y-data");
     r.y_title("Right axis");
-    s.title("Aha!", rstk::Justify::Centre);
+    s.title("Aha!", rish::Justify::Centre);
 
     // some data for the right axis
-    r.series_drawing_mode("right", rstk::DrawingMode::Both);
+    r.series_drawing_mode("right", rish::DrawingMode::Both);
     r.series_colour("right", "green");
     r.plot("right", (10.0, 0.01));
     r.plot("right", (30.0, 0.03));
@@ -71,45 +71,45 @@ fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // Pie chart
-fn canvas_2(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_2(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
     
-    let s = rstk::make_pie_chart(&canvas);
+    let s = rish::make_pie_chart(&canvas);
     s.plot(&[("Long names", 10.0), ("Short names", 30.0),
              ("Average", 40.0), ("Ultra-short names", 5.0)]);
-    s.title("Okay - this works", rstk::Justify::Centre);
+    s.title("Okay - this works", rish::Justify::Centre);
 
     canvas
 }
 
 // Polar plot
-fn canvas_3(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_3(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_polar(&canvas, (3.0, 1.0));
+    let s = rish::make_polar(&canvas, (3.0, 1.0));
     for angle in (0..360).step_by(10) {
         let angle = angle as f64;
         let rad = 1.0 + (std::f64::consts::PI * angle/180.0).cos();
         s.plot("cardioid", (rad, angle));
     }
 
-    s.title("Cardioid", rstk::Justify::Centre);
+    s.title("Cardioid", rish::Justify::Centre);
 
     canvas
 }
 
 // Bar chart with two series
-fn canvas_5(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_5(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
+    let s = rish::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
                                  (0.0, 10.0, 2.0),
-                                 rstk::BarSeries::Count(2), 
+                                 rish::BarSeries::Count(2), 
                                  0.0);
     s.plot("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red");
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Arbitrary data", rstk::Justify::Centre);
+    s.title("Arbitrary data", rish::Justify::Centre);
     s.legend_spacing(20);
     s.legend("series1", "Series 1");
     s.legend("series2", "Series 2");
@@ -118,62 +118,62 @@ fn canvas_5(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // Stacked bar chart
-fn canvas_6(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_6(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
+    let s = rish::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
                                  (0.0, 20.0, 5.0),
-                                 rstk::BarSeries::Stacked, 
+                                 rish::BarSeries::Stacked, 
                                  0.0);
     s.plot("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red");
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Stacked diagram", rstk::Justify::Centre);
+    s.title("Stacked diagram", rish::Justify::Centre);
 
     canvas
 }
 
 // Horizontal bar chart - with two series
-fn canvas_7(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_7(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_horizontal_bar_chart(&canvas,
+    let s = rish::make_horizontal_bar_chart(&canvas,
                                             (0.0, 10.0, 2.0),
                                             &["Antarctica", "Eurasia", "The Americas", "Australia and Oceania", "Ocean"],
-                                            rstk::BarSeries::Count(2));
+                                            rish::BarSeries::Count(2));
 
     s.plot_gradient("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red",
-                    rstk::GradientDirection::LeftRight, rstk::Brightness::Bright);
+                    rish::GradientDirection::LeftRight, rish::Brightness::Bright);
     s.plot_gradient("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green",
-                    rstk::GradientDirection::RightLeft, rstk::Brightness::Bright);
+                    rish::GradientDirection::RightLeft, rish::Brightness::Bright);
 
-    s.title("Arbitrary data", rstk::Justify::Centre);
+    s.title("Arbitrary data", rish::Justify::Centre);
 
     canvas
 }
 
 // Horizontal bar chart - stacked
-fn canvas_8(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_8(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_horizontal_bar_chart(&canvas,
+    let s = rish::make_horizontal_bar_chart(&canvas,
                                             (0.0, 20.0, 5.0),
                                             &["A", "B", "C", "D", "E"],
-                                            rstk::BarSeries::Stacked);
+                                            rish::BarSeries::Stacked);
     s.plot_gradient("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red", 
-                    rstk::GradientDirection::LeftRight, rstk::Brightness::Bright);
+                    rish::GradientDirection::LeftRight, rish::Brightness::Bright);
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Stacked diagram", rstk::Justify::Centre);
+    s.title("Stacked diagram", rish::Justify::Centre);
 
     canvas
 }
 
 // Time chart
-fn canvas_9(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_9(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_time_chart(&canvas,
+    let s = rish::make_time_chart(&canvas,
                                   "1 january 2004",
                                   "31 december 2004")
         .num_items(4)
@@ -187,21 +187,21 @@ fn canvas_9(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
     s.draw_line("1 oct", "1 october 2004", "black");
     s.milestone("Longest day", "21 july 2004", "black");
 
-    s.title("Seasons (northern hemisphere)", rstk::Justify::Centre);
+    s.title("Seasons (northern hemisphere)", rish::Justify::Centre);
 
     canvas
 }
 
 // -- frame 1
-fn frame_1(root: &rstk::TkTopLevel) { 
+fn frame_1(root: &rish::TkTopLevel) { 
     canvas_1(root).grid().row(0).layout();
     canvas_2(root).grid().row(1).layout();
     canvas_3(root).grid().row(2).layout();
 }
 
 // -- frame 2
-fn frame_2(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_2(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos7.rs - h");
 
     canvas_5(&window).grid().row(0).layout();
@@ -209,14 +209,14 @@ fn frame_2(root: &rstk::TkTopLevel) {
 }
 
 // -- frame 3
-fn frame_3(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_3(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos7.rs - v");
 
     // - use plotconfig to set up display for all horizontal bar-charts
-    rstk::tell_wish("::Plotchart::plotconfig horizbars leftaxis font {Helvetica 10 italic}");
-    rstk::tell_wish("::Plotchart::plotconfig horizbars background outercolor steelblue3");
-    rstk::tell_wish("::Plotchart::plotconfig horizbars bottomaxis ticklength -5");
+    rish::tell_wish("::Plotchart::plotconfig horizbars leftaxis font {Helvetica 10 italic}");
+    rish::tell_wish("::Plotchart::plotconfig horizbars background outercolor steelblue3");
+    rish::tell_wish("::Plotchart::plotconfig horizbars bottomaxis ticklength -5");
     
     canvas_7(&window).grid().row(0).layout();
     canvas_8(&window).grid().row(1).layout();
@@ -224,12 +224,12 @@ fn frame_3(root: &rstk::TkTopLevel) {
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("plotdemos7.rs");
 
     frame_1(&root);
     frame_2(&root);
     frame_3(&root);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

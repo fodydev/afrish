@@ -9,9 +9,9 @@
 //! For example, creating a bold Helvetica font with size 12:
 //!
 //! ```
-//! let font = rstk::TkFont { family: "Helvetica".to_string(),
+//! let font = rish::TkFont { family: "Helvetica".to_string(),
 //!                             size: 12,
-//!                             weight: rstk::Weight::Bold,
+//!                             weight: rish::Weight::Bold,
 //!                             ..Default::default() // completes the remaining values
 //! };
 //! ```
@@ -19,7 +19,7 @@
 //! Fonts can be provided to many widgets which display text, e.g. a label:
 //!
 //! ```ignore
-//! let label = rstk::make_label(&root);
+//! let label = rish::make_label(&root);
 //! label.font(&font);
 //! label.text("Label text");
 //! ```

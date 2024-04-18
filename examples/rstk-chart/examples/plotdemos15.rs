@@ -1,6 +1,6 @@
 // Translation of plotdemos15.tcl
 
-use rstk::*;
+use rish::*;
 
 fn main() {
     let y_scale = (0.0, 40.0, 5.0);         // Y axis is miles along route
@@ -44,31 +44,31 @@ fn main() {
     ];
 
     // GUI part
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("3D Ribbon Plotchart");
     // example with full 3D axes
-    let canvas1 = rstk::make_canvas(&root);
+    let canvas1 = rish::make_canvas(&root);
     canvas1.width(800);
     canvas1.height(400);
     canvas1.background("#aaeeff");
     canvas1.configure("border", "0");
     canvas1.configure("highlightthickness", "0");
-    canvas1.pack().side(rstk::PackSide::Top).fill(rstk::PackFill::Both).expand(true).layout();
+    canvas1.pack().side(rish::PackSide::Top).fill(rish::PackFill::Both).expand(true).layout();
 
-    let s1 = rstk::make_3d_plot(&canvas1, x_scale, y_scale, z_scale);
+    let s1 = rish::make_3d_plot(&canvas1, x_scale, y_scale, z_scale);
     s1.ribbon(&yz);
 
     // example with full minimal axes
-    let canvas2 = rstk::make_canvas(&root);
+    let canvas2 = rish::make_canvas(&root);
     canvas2.width(800);
     canvas2.height(400);
     canvas2.background("#aaeeff");
     canvas2.configure("border", "0");
     canvas2.configure("highlightthickness", "0");
-    canvas2.pack().side(rstk::PackSide::Top).fill(rstk::PackFill::Both).expand(true).layout();
+    canvas2.pack().side(rish::PackSide::Top).fill(rish::PackFill::Both).expand(true).layout();
 
-    let s2 = rstk::make_3d_ribbon_plot(&canvas2, y_scale, z_scale);
+    let s2 = rish::make_3d_ribbon_plot(&canvas2, y_scale, z_scale);
     s2.plot(&yz);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

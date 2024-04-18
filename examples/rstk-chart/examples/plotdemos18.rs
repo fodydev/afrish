@@ -1,6 +1,6 @@
 // Translation of plotdemos18.tcl
 
-use rstk::*;
+use rish::*;
 use rand::Rng;
 
 fn rand(upper: f64) -> f64 {
@@ -8,21 +8,21 @@ fn rand(upper: f64) -> f64 {
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("plotdemos18.rs");
 
-    let canvas = rstk::make_canvas(&root);
+    let canvas = rish::make_canvas(&root);
     canvas.width(600);
     canvas.height(400);
     canvas.background("white");
     canvas.grid().layout();
 
     let devices = vec!["e1", "e2", "e12231", "r1", "r2"];
-    let timeline = rstk::make_status_timeline(&canvas, 
+    let timeline = rish::make_status_timeline(&canvas, 
                                               (0.0, 7200.0, 900.0),
                                               &devices,
                                               false);
-    timeline.title("Operational over time", rstk::Justify::Centre);
+    timeline.title("Operational over time", rish::Justify::Centre);
 
     // add randomised data
     let mut last_i = 0.0;
@@ -40,11 +40,11 @@ fn main() {
     for x in (0..7200).step_by(900) {
         let text = format!("{:02}h:{:02}", x/3600, x % 60);
         if (x % 3600) == 0 {
-            timeline.draw_line(&text, x as f64, "black", rstk::ChartDash::Lines, 2.0);
+            timeline.draw_line(&text, x as f64, "black", rish::ChartDash::Lines, 2.0);
         } else {
-            timeline.draw_line("", x as f64, "grey", rstk::ChartDash::Dots3, 2.0);
+            timeline.draw_line("", x as f64, "grey", rish::ChartDash::Dots3, 2.0);
         }
     }
 
-    rstk::mainloop();
+    rish::mainloop();
 }

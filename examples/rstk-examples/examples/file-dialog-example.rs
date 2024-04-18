@@ -1,21 +1,21 @@
-use rstk;
+use rish;
 
 fn main() {
-    rstk::start_wish().unwrap();
+    rish::start_wish().unwrap();
 
-    let file = rstk::open_file_chooser()
+    let file = rish::open_file_chooser()
         .title("Open")
         .file_types(&[("C++", ".cpp"), ("Rust", ".rs"), ("Any", "*")])
         .show();
 
     println!("Filename: {}", file.unwrap_or(String::from("cancelled")));
     
-    let file = rstk::save_file_chooser()
+    let file = rish::save_file_chooser()
         .title("Save")
         .file_types(&[("C++", ".cpp"), ("Rust", ".rs"), ("Any", "*")])
         .show();
 
     println!("Filename: {}", file.unwrap_or(String::from("cancelled")));
 
-    rstk::mainloop();
+    rish::mainloop();
 }

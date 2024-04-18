@@ -1,14 +1,14 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    if let Ok(root) = rstk::start_wish() {
+    if let Ok(root) = rish::start_wish() {
 
-        let hello = rstk::make_label(&root);
+        let hello = rish::make_label(&root);
         hello.text("Hello from Rust/Tk");
 
         hello.grid().row(0).column(0).layout();
 
-        rstk::mainloop();
+        rish::mainloop();
     } else {
         println!("Failed to start wish program");
     }

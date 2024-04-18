@@ -549,7 +549,7 @@ impl fmt::Display for Relief {
 
 /// Defines mode of selection.
 ///
-/// Note: rstk diverges from the Tk terminology:
+/// Note: rish diverges from the Tk terminology:
 ///
 /// * 'Single' is equivalent to Tk's "browse"
 /// * 'Multiple' is equivalent to Tk's "extended"

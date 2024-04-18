@@ -1,6 +1,6 @@
 //! A Rust binding for the Tk graphics toolkit.
 //!
-//! rstk opens and communicates with Tk's wish program as a separate process.
+//! rish opens and communicates with Tk's wish program as a separate process.
 //! The library provides:
 //!
 //! * low-level functions to directly communicate with wish, suitable for
@@ -18,25 +18,22 @@
 //! widget; functionality is divided between various traits, such as 
 //! [TkWidget](widget::TkWidget).
 //!
-//! For examples and additional documentation, see the project
-//! [webpage](https://peterlane.codeberg.page/rstk/).
-//!
 //! # Example
 //!
 //! A simple hello-world example:
 //!
 //! ```ignore
-//! use rstk::*;
+//! use rish::*;
 //!
 //! fn main() {
-//!   let root = rstk::start_wish().unwrap();
+//!   let root = rish::start_wish().unwrap();
 //!
-//!   let hello = rstk::make_label(&root);
+//!   let hello = rish::make_label(&root);
 //!   hello.text("Hello from Rust/Tk");
 //!
 //!   hello.grid().layout();
 //!
-//!   rstk::mainloop();
+//!   rish::mainloop();
 //! }
 //! ```
 //!

@@ -1,10 +1,10 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("xy_plot example 3 - from plotdemos5");
 
-    let canvas = rstk::make_canvas(&root);
+    let canvas = rish::make_canvas(&root);
     canvas.width(500);
     canvas.height(500);
     canvas.background("white");
@@ -54,13 +54,13 @@ fn main() {
     let x_limits = (0.0, 200.0, 50.0);
     let y_limits = (0.0, 100.0, 20.0);
 
-    let chart = rstk::make_x_y(&canvas, x_limits, y_limits).plot();
+    let chart = rish::make_x_y(&canvas, x_limits, y_limits).plot();
     chart.title(
         "Contour Demo: contourlines (default colourmap)",
-        rstk::Justify::Centre,
+        rish::Justify::Centre,
     );
     chart.draw_contour_fill(&x, &y, &f, &contours);
     chart.draw_grid(&x, &y);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

@@ -17,7 +17,7 @@
 //! information dialog:
 //!
 //! ```ignore
-//! rstk::message_box()
+//! rish::message_box()
 //!   .OPTION(VALUE) // 0 or more
 //!   .show();
 //! ```

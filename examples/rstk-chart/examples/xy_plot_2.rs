@@ -1,19 +1,19 @@
-use rstk::*;
+use rish::*;
 use rand::Rng;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("xy_plot example 2 - plotdemos6: rchart");
 
-    let canvas = rstk::make_canvas(&root);
+    let canvas = rish::make_canvas(&root);
     canvas.width(400);
     canvas.height(200);
     canvas.background("white");
     canvas.grid().layout();
 
-    let chart = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 50.0, 10.0))
+    let chart = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 50.0, 10.0))
         .plot();
-    chart.title("R-chart (arbitrary data)", rstk::Justify::Centre);
+    chart.title("R-chart (arbitrary data)", rish::Justify::Centre);
 
     chart.series_colour("series1", "green");
     for x in (1..50).step_by(3) {
@@ -31,5 +31,5 @@ fn main() {
         chart.rchart("series1", (x as f64, y));
     }
 
-    rstk::mainloop();
+    rish::mainloop();
 }

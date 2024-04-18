@@ -1,20 +1,20 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
-    root.title("Horizontal Bar Chart from rstk");
+    let root = rish::start_wish().unwrap();
+    root.title("Horizontal Bar Chart from rish");
 
-    let canvas = rstk::make_canvas(&root);
+    let canvas = rish::make_canvas(&root);
     canvas.height(400);
     canvas.width(400);
     canvas.background("white");
     canvas.grid().layout();
 
-    let bar_chart = rstk::make_horizontal_bar_chart(&canvas,
+    let bar_chart = rish::make_horizontal_bar_chart(&canvas,
                                                     (0.0, 50.0, 5.0),
                                                     &["2018", "2019", "2020", "2021"],
-                                                    rstk::BarSeries::Stacked);
-    bar_chart.title("Book Reading History", rstk::Justify::Centre);
+                                                    rish::BarSeries::Stacked);
+    bar_chart.title("Book Reading History", rish::Justify::Centre);
     bar_chart.x_title("Number of Books");
     bar_chart.v_title("Year");
 
@@ -23,11 +23,11 @@ fn main() {
     bar_chart.plot("type-2", &[10.0, 7.0, 11.0, 15.0], "red"); 
     bar_chart.plot("type-3", &[25.0, 18.0, 21.0, 22.0], "green");
 
-    bar_chart.legend_position(rstk::Position::BottomRight);
+    bar_chart.legend_position(rish::Position::BottomRight);
     bar_chart.legend_spacing(12);
     bar_chart.legend("type-1", "Computing");
     bar_chart.legend("type-2", "Fiction");
     bar_chart.legend("type-3", "Technical");
 
-    rstk::mainloop();
+    rish::mainloop();
 }

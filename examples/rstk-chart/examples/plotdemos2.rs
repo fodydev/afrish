@@ -1,9 +1,9 @@
 // Translation of plotdemos2.tcl
 
-use rstk::*;
+use rish::*;
 use rand;
 
-fn generate_data(s: rstk::TkXYPlot, xold: f64, xd: f64, yold: f64, yd: f64) {
+fn generate_data(s: rish::TkXYPlot, xold: f64, xd: f64, yold: f64, yd: f64) {
     let xnew = xold + xd;
     let ynew = yold + (rand::random::<f64>() - 0.5) * yd;
     let ynew2 = yold + (rand::random::<f64>() - 0.5) * 2.0 * yd;
@@ -11,15 +11,15 @@ fn generate_data(s: rstk::TkXYPlot, xold: f64, xd: f64, yold: f64, yd: f64) {
     s.plot("series2", (xnew, ynew2));
 
     if xnew < 200.0 {
-        rstk::after(500, move || { 
+        rish::after(500, move || { 
             generate_data(s.clone(), xnew, xd, ynew, yd); 
         });
     }
 }
 
 // -- convenience function
-fn make_white_canvas(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
-    let canvas = rstk::make_canvas(root);
+fn make_white_canvas(root: &rish::TkTopLevel) -> rish::TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
     canvas.width(400);
     canvas.height(200);
@@ -27,23 +27,23 @@ fn make_white_canvas(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // strip chart - adding data over time
-fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_1(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root);
 
-    let s = rstk::make_strip_chart(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
+    let s = rish::make_strip_chart(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
         .plot();
-    s.title("Aha!", rstk::Justify::Centre);
-    rstk::after(100, move || { generate_data(s.clone(), 0.0, 15.0, 50.0, 30.0); });
+    s.title("Aha!", rish::Justify::Centre);
+    rish::after(100, move || { generate_data(s.clone(), 0.0, 15.0, 50.0, 30.0); });
 
     canvas
 }
 
 // isometric plot
-fn canvas_2(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_2(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root);
 
-    let s = rstk::make_isometric_plot(&canvas, (0.0, 100.0), (0.0, 200.0),
-                                        rstk::StepSize::NoAxes);
+    let s = rish::make_isometric_plot(&canvas, (0.0, 100.0), (0.0, 200.0),
+                                        rish::StepSize::NoAxes);
 
     s.rectangle((10.0, 10.0), (50.0, 50.0), "green");
     s.filled_rectangle((20.0, 20.0), (40.0, 40.0), "red");
@@ -54,26 +54,26 @@ fn canvas_2(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // different symbols on xy plot
-fn canvas_3(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_3(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root);
 
-    let s = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
+    let s = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
         .plot();
     s.series_colour("series1", "red");
-    s.series_drawing_mode("series1", rstk::DrawingMode::Symbol);
+    s.series_drawing_mode("series1", rish::DrawingMode::Symbol);
     s.series_colour("series2", "green");
-    s.series_drawing_mode("series2", rstk::DrawingMode::Both);
+    s.series_drawing_mode("series2", rish::DrawingMode::Both);
     s.y_format("%12.2e");
 
     let mut x = 5.0;
-    for symbol in [rstk::Symbol::Circle,
-                    rstk::Symbol::Cross,
-                    rstk::Symbol::Dot,
-                    rstk::Symbol::Down,
-                    rstk::Symbol::DownFilled,
-                    rstk::Symbol::Plus,
-                    rstk::Symbol::Up,
-                    rstk::Symbol::UpFilled].iter().cloned() {
+    for symbol in [rish::Symbol::Circle,
+                    rish::Symbol::Cross,
+                    rish::Symbol::Dot,
+                    rish::Symbol::Down,
+                    rish::Symbol::DownFilled,
+                    rish::Symbol::Plus,
+                    rish::Symbol::Up,
+                    rish::Symbol::UpFilled].iter().cloned() {
         s.series_symbol("series1", symbol.clone(), 5);
         s.series_symbol("series2", symbol, 5);
         s.plot("series1", (x, 50.0));
@@ -84,15 +84,15 @@ fn canvas_3(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
     canvas
 }
 
-fn canvas_4(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_4(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root);
 
-    let s = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
+    let s = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
         .plot();
     s.background_gradient_colour("green", 
-                                 rstk::GradientDirection::TopDown, 
-                                 rstk::Brightness::Dark);
-    s.series_fill_area("series1", rstk::FillArea::AboveLine);
+                                 rish::GradientDirection::TopDown, 
+                                 rish::Brightness::Dark);
+    s.series_fill_area("series1", rish::FillArea::AboveLine);
     s.series_fill_colour("series1", "white");
 
     s.plot("series1", (0.0, 20.0));
@@ -103,21 +103,21 @@ fn canvas_4(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
     s.plot("series1", (75.0, 55.0));
     s.plot("series1", (100.0, 55.0));
 
-    s.plaintext((30.0, 60.0), "Peak", rstk::Direction::South);
+    s.plaintext((30.0, 60.0), "Peak", rish::Direction::South);
 
     canvas
 }
 
-fn canvas_5(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_5(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root);
 
-    let s = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
+    let s = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
         .plot();
     s.background_gradient_colour("green", 
-                                 rstk::GradientDirection::TopDown, 
-                                 rstk::Brightness::Dark);
+                                 rish::GradientDirection::TopDown, 
+                                 rish::Brightness::Dark);
 
-    s.background_image(&rstk::read_image("examples/tcllogo.gif"));
+    s.background_image(&rish::read_image("examples/tcllogo.gif"));
     s.plot("series1", (0.0, 20.0));
     s.plot("series1", (10.0, 20.0));
     s.plot("series1", (30.0, 50.0));
@@ -130,22 +130,22 @@ fn canvas_5(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // -- frame 1
-fn frame_1(root: &rstk::TkTopLevel) { 
+fn frame_1(root: &rish::TkTopLevel) { 
     canvas_1(root).grid().row(0).layout();
     canvas_2(root).grid().row(1).layout();
 }
 
 // -- frame 2
-fn frame_2(root: &rstk::TkTopLevel) { 
-    let window = rstk::make_toplevel(root);
+fn frame_2(root: &rish::TkTopLevel) { 
+    let window = rish::make_toplevel(root);
     window.title("plotdemos2.rs - h");
 
     canvas_3(&window).grid().row(0).layout();
 }
 
 // -- frame 3
-fn frame_3(root: &rstk::TkTopLevel) { 
-    let window = rstk::make_toplevel(root);
+fn frame_3(root: &rish::TkTopLevel) { 
+    let window = rish::make_toplevel(root);
     window.title("plotdemos2.rs - t2");
 
     canvas_4(&window).grid().row(0).layout();
@@ -153,12 +153,12 @@ fn frame_3(root: &rstk::TkTopLevel) {
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("plotdemos2.rs");
 
     frame_1(&root);
     frame_2(&root);
     frame_3(&root);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

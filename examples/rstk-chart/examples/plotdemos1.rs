@@ -1,13 +1,13 @@
 // Translation of plotdemos1.tcl
 
-use rstk::*;
+use rish::*;
 use rand;
 
 // -- convenience function
-fn make_white_canvas(root: &rstk::TkTopLevel,
+fn make_white_canvas(root: &rish::TkTopLevel,
                      width: u64,
-                     height: u64) -> rstk::TkCanvas {
-    let canvas = rstk::make_canvas(root);
+                     height: u64) -> rish::TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
     canvas.width(width);
     canvas.height(height);
@@ -15,11 +15,11 @@ fn make_white_canvas(root: &rstk::TkTopLevel,
 }
 
 // XY plot
-fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_1(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
-    let s = rstk::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
+    let s = rish::make_x_y(&canvas, (0.0, 100.0, 10.0), (0.0, 100.0, 20.0))
         .plot();
-    let r = rstk::make_right_axis(&canvas, (0.0, 0.1, 0.01));
+    let r = rish::make_right_axis(&canvas, (0.0, 0.1, 0.01));
     s.series_colour("series1", "red");
     s.series_colour("series2", "blue");
     s.series_colour("series3", "magenta");
@@ -46,10 +46,10 @@ fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
     s.x_title("X-coordinate");
     s.y_title("Y-data");
     r.y_title("Right axis");
-    s.title("Aha!", rstk::Justify::Centre);
+    s.title("Aha!", rish::Justify::Centre);
 
     // some data for the right axis
-    r.series_drawing_mode("right", rstk::DrawingMode::Both);
+    r.series_drawing_mode("right", rish::DrawingMode::Both);
     r.series_colour("right", "green");
     r.plot("right", (10.0, 0.01));
     r.plot("right", (30.0, 0.03));
@@ -59,45 +59,45 @@ fn canvas_1(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // Pie chart
-fn canvas_2(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_2(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
     
-    let s = rstk::make_pie_chart(&canvas);
+    let s = rish::make_pie_chart(&canvas);
     s.plot(&[("Long names", 10.0), ("Short names", 30.0),
              ("Average", 40.0), ("Ultra-short names", 5.0)]);
-    s.title("Okay - this works", rstk::Justify::Centre);
+    s.title("Okay - this works", rish::Justify::Centre);
 
     canvas
 }
 
 // Polar plot
-fn canvas_3(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_3(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_polar(&canvas, (3.0, 1.0));
+    let s = rish::make_polar(&canvas, (3.0, 1.0));
     for angle in (0..360).step_by(10) {
         let angle = angle as f64;
         let rad = 1.0 + (std::f64::consts::PI * angle/180.0).cos();
         s.plot("cardioid", (rad, angle));
     }
 
-    s.title("Cardioid", rstk::Justify::Centre);
+    s.title("Cardioid", rish::Justify::Centre);
 
     canvas
 }
 
 // Time series plot
-fn canvas_4(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_4(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
     
-    let s = rstk::make_tx(&canvas, ("2006-01-01", "2007-01-01", 120),
+    let s = rish::make_tx(&canvas, ("2006-01-01", "2007-01-01", 120),
                           (0.0, 100.0, 20.0)).plot();
     s.series_colour("series1", "red");
     s.series_colour("series2", "blue");
 
     s.x_title("Time");
     s.y_title("Data");
-    s.x_tick_lines("green", rstk::ChartDash::Dots2);
+    s.x_tick_lines("green", rish::ChartDash::Dots2);
 
     s.plot("series1", ("2006-02-01", 10.0));
     s.plot("series1", ("2006-02-11", 50.0));
@@ -118,17 +118,17 @@ fn canvas_4(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // Bar chart with two series
-fn canvas_5(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_5(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
+    let s = rish::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
                                  (0.0, 10.0, 2.0),
-                                 rstk::BarSeries::Count(2), 
+                                 rish::BarSeries::Count(2), 
                                  0.0);
     s.plot("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red");
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Arbitrary data", rstk::Justify::Centre);
+    s.title("Arbitrary data", rish::Justify::Centre);
     s.legend_spacing(20);
     s.legend("series1", "Series 1");
     s.legend("series2", "Series 2");
@@ -137,58 +137,58 @@ fn canvas_5(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // Stacked bar chart
-fn canvas_6(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_6(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
+    let s = rish::make_bar_chart(&canvas, &["A", "B", "C", "D", "E"],
                                  (0.0, 20.0, 5.0),
-                                 rstk::BarSeries::Stacked, 
+                                 rish::BarSeries::Stacked, 
                                  0.0);
     s.plot("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red");
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Stacked diagram", rstk::Justify::Centre);
+    s.title("Stacked diagram", rish::Justify::Centre);
 
     canvas
 }
 
 // Horizontal bar chart - with two series
-fn canvas_7(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_7(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_horizontal_bar_chart(&canvas,
+    let s = rish::make_horizontal_bar_chart(&canvas,
                                             (0.0, 10.0, 2.0),
                                             &["A", "B", "C", "D", "E"],
-                                            rstk::BarSeries::Count(2));
+                                            rish::BarSeries::Count(2));
     s.plot("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red");
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Arbitrary data", rstk::Justify::Centre);
+    s.title("Arbitrary data", rish::Justify::Centre);
 
     canvas
 }
 
 // Horizontal bar chart - stacked
-fn canvas_8(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_8(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_horizontal_bar_chart(&canvas,
+    let s = rish::make_horizontal_bar_chart(&canvas,
                                             (0.0, 20.0, 5.0),
                                             &["A", "B", "C", "D", "E"],
-                                            rstk::BarSeries::Stacked);
+                                            rish::BarSeries::Stacked);
     s.plot("series1", &[1.0, 4.0, 6.0, 1.0, 7.0], "red");
     s.plot("series2", &[0.0, 3.0, 7.0, 9.3, 2.0], "green");
 
-    s.title("Stacked diagram", rstk::Justify::Centre);
+    s.title("Stacked diagram", rish::Justify::Centre);
 
     canvas
 }
 
 // Time chart
-fn canvas_9(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_9(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 200);
 
-    let s = rstk::make_time_chart(&canvas,
+    let s = rish::make_time_chart(&canvas,
                                   "1 january 2004",
                                   "31 december 2004")
         .num_items(4)
@@ -202,7 +202,7 @@ fn canvas_9(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
     s.draw_line("1 oct", "1 october 2004", "black");
     s.milestone("Longest day", "21 july 2004", "black");
 
-    s.title("Seasons (northern hemisphere)", rstk::Justify::Centre);
+    s.title("Seasons (northern hemisphere)", rish::Justify::Centre);
 
     canvas
 }
@@ -216,7 +216,7 @@ fn cowboyhat(x: f64, y: f64) -> f64 {
 }
 
 // 3D plot
-fn canvas_10(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_10(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let mut data: Vec<Vec<f64>> = vec![];
     for r in (-10..=10).step_by(2) {
         let r = r as f64;
@@ -231,25 +231,25 @@ fn canvas_10(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 
     let canvas = make_white_canvas(root, 400, 300);
 
-    let s = rstk::make_3d_plot(&canvas,
+    let s = rish::make_3d_plot(&canvas,
                                (0.0, 10.0, 3.0),
                                (-10.0, 10.0, 10.0),
                                (0.0, 10.0, 2.5));
-    s.title("3D Plot", rstk::Justify::Centre);
+    s.title("3D Plot", rish::Justify::Centre);
     s.plot_data(&data);
 
     canvas
 }
 
 // 3D plot - interpolated data
-fn canvas_11(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_11(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 250);
 
-    let s = rstk::make_3d_plot(&canvas,
+    let s = rish::make_3d_plot(&canvas,
                                (0.0, 10.0, 3.0),
                                (-10.0, 10.0, 10.0),
                                (0.0, 10.0, 2.5));
-    s.title("3D Plot - data", rstk::Justify::Centre);
+    s.title("3D Plot - data", rish::Justify::Centre);
     s.colours("green", "black");
     s.plot_data(&[[1.0, 2.0, 1.0, 0.0], 
                 [1.1, 3.0, 1.1, -0.5], 
@@ -259,15 +259,15 @@ fn canvas_11(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // 3D plot
-fn canvas_12(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
+fn canvas_12(root: &rish::TkTopLevel) -> rish::TkCanvas {
     let canvas = make_white_canvas(root, 400, 250);
 
-    let s = rstk::make_3d_plot_with_labels(&canvas,
+    let s = rish::make_3d_plot_with_labels(&canvas,
                                            (0.0, 10.0, 3.0),
                                            (-10.0, 10.0, 10.0),
                                            (0.0, 10.0, 2.5),
                                            &["A", "B", "C"]);
-    s.title("3D Plot - data", rstk::Justify::Centre);
+    s.title("3D Plot - data", rish::Justify::Centre);
     s.colours("green", "black");
     s.interpolate_data(&[[1.0, 2.0, 1.0, 0.0], 
                        [1.1, 3.0, 1.1, -0.5], 
@@ -277,7 +277,7 @@ fn canvas_12(root: &rstk::TkTopLevel) -> rstk::TkCanvas {
 }
 
 // -- frame 1
-fn frame_1(root: &rstk::TkTopLevel) { 
+fn frame_1(root: &rish::TkTopLevel) { 
     canvas_1(root).grid().row(0).layout();
     canvas_2(root).grid().row(1).layout();
     canvas_3(root).grid().row(2).layout();
@@ -285,8 +285,8 @@ fn frame_1(root: &rstk::TkTopLevel) {
 }
 
 // -- frame 2
-fn frame_2(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_2(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos1.rs - h");
 
     canvas_5(&window).grid().row(0).layout();
@@ -294,8 +294,8 @@ fn frame_2(root: &rstk::TkTopLevel) {
 }
 
 // -- frame 3
-fn frame_3(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_3(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos1.rs - v");
 
     canvas_7(&window).grid().row(0).layout();
@@ -304,8 +304,8 @@ fn frame_3(root: &rstk::TkTopLevel) {
 }
 
 // -- frame 4
-fn frame_4(root: &rstk::TkTopLevel) {
-    let window = rstk::make_toplevel(root);
+fn frame_4(root: &rish::TkTopLevel) {
+    let window = rish::make_toplevel(root);
     window.title("plotdemos1.rs - h3");
 
     canvas_10(&window).grid().row(0).layout();
@@ -314,7 +314,7 @@ fn frame_4(root: &rstk::TkTopLevel) {
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("plotdemos1.rs");
 
     frame_1(&root);
@@ -322,5 +322,5 @@ fn main() {
     frame_3(&root);
     frame_4(&root);
 
-    rstk::mainloop();
+    rish::mainloop();
 }

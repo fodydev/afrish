@@ -1,12 +1,12 @@
 // Translation of plotdemos11.tcl
 
-use rstk::*;
+use rish::*;
 
-fn canvas_1(root: &rstk::TkTopLevel) -> TkCanvas {
-    let canvas = rstk::make_canvas(root);
+fn canvas_1(root: &rish::TkTopLevel) -> TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
 
-    let logxy = rstk::make_logx_y(&canvas,
+    let logxy = rish::make_logx_y(&canvas,
                                   (1.0, 1000.0),
                                   (0.0, 5.0, 1.0))
         .plot();
@@ -15,16 +15,16 @@ fn canvas_1(root: &rstk::TkTopLevel) -> TkCanvas {
         logxy.plot("series1", (*x, (*x).ln()));
     }
     
-    logxy.title("y = log(x)", rstk::Justify::Centre);
+    logxy.title("y = log(x)", rish::Justify::Centre);
 
     canvas
 }
 
-fn canvas_2(root: &rstk::TkTopLevel) -> TkCanvas {
-    let canvas = rstk::make_canvas(root);
+fn canvas_2(root: &rish::TkTopLevel) -> TkCanvas {
+    let canvas = rish::make_canvas(root);
     canvas.background("white");
 
-    let logxlogy = rstk::make_logx_logy(&canvas,
+    let logxlogy = rish::make_logx_logy(&canvas,
                                   (1.0, 1000.0),
                                   (1.0, 1000000.0))
         .plot();
@@ -37,18 +37,18 @@ fn canvas_2(root: &rstk::TkTopLevel) -> TkCanvas {
         logxlogy.plot("series2", (*x, (*x)*(*x)));
         logxlogy.plot("series3", (*x, (*x)*(*x).sqrt()));
     }
-    logxlogy.title("y = x**n, n = 1/2, 2, 3/2", rstk::Justify::Centre);
-    logxlogy.x_tick_lines("grey", rstk::ChartDash::Lines);
+    logxlogy.title("y = x**n, n = 1/2, 2, 3/2", rish::Justify::Centre);
+    logxlogy.x_tick_lines("grey", rish::ChartDash::Lines);
 
     canvas
 }
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
     root.title("plotdemos11.rs");
 
     canvas_1(&root).pack().layout();
     canvas_2(&root).pack().layout();
 
-    rstk::mainloop();
+    rish::mainloop();
 }

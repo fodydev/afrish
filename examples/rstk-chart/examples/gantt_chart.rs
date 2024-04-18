@@ -1,16 +1,16 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
-    root.title("Gantt Chart in rstk");
+    let root = rish::start_wish().unwrap();
+    root.title("Gantt Chart in rish");
 
-    let canvas = rstk::make_canvas(&root);
+    let canvas = rish::make_canvas(&root);
     canvas.width(400);
     canvas.height(400);
     canvas.background("white");
     canvas.grid().layout();
 
-    let gantt = rstk::make_gantt_chart(&canvas, "1 March 2021", "10 April 2021")
+    let gantt = rish::make_gantt_chart(&canvas, "1 March 2021", "10 April 2021")
         .num_items(5)
         .ylabel_width(15)
         .plot();
@@ -29,9 +29,9 @@ fn main() {
     gantt.draw_line("22 Mar", "22 March 2021", "green");
     gantt.draw_line("1 Apr", "1 April 2021", "blue");
 
-    gantt.title("Learning Rust/Tk", rstk::Justify::Right);
+    gantt.title("Learning Rust/Tk", rish::Justify::Right);
     gantt.uncompleted_colour("red");
 
-    rstk::mainloop();
+    rish::mainloop();
 }
 

@@ -7,7 +7,7 @@
 //! The simplest button has some text and a command:
 //!
 //! ```ignore
-//! let button_1 = rstk::make_button(&root);
+//! let button_1 = rish::make_button(&root);
 //! button_1.text("Button text");
 //! button_1.command(|| { println!("Clicked button_1"); });
 //! ```
@@ -18,11 +18,11 @@
 //! the image below the text:
 //!
 //! ```ignore
-//! let button_3 = rstk::make_button(&root);
+//! let button_3 = rish::make_button(&root);
 //! button_3.image(&read_image("tcllogo.gif"));
 //! button_3.text("Tcl Logo");
 //! button_3.command(|| { println!("Clicked button_3"); });
-//! button_3.compound(rstk::Compound::Bottom);
+//! button_3.compound(rish::Compound::Bottom);
 //! ```
 //! 
 

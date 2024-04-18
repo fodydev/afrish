@@ -1,9 +1,9 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
 
-    let label = rstk::make_label(&root);
+    let label = rish::make_label(&root);
     label.text("Starting ...");
     label.grid().padx(10).pady(10).layout();
 
@@ -33,5 +33,5 @@ fn main() {
                                               event.x, event.y));
                        });
 
-    rstk::mainloop();
+    rish::mainloop();
 }

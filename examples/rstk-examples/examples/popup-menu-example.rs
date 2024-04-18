@@ -1,11 +1,11 @@
-use rstk::*;
+use rish::*;
 
 fn main() {
-    let root = rstk::start_wish().unwrap();
+    let root = rish::start_wish().unwrap();
 
     root.title("popup-menu-example.rs");
 
-    let menu = rstk::make_menu(&root);
+    let menu = rish::make_menu(&root);
     for item in ["One", "Two", "Three"].iter() {
         menu.command()
             .label(item)
@@ -17,5 +17,5 @@ fn main() {
         menu.popup(event.root_x, event.root_y);
     });
 
-    rstk::mainloop();
+    rish::mainloop();
 }
