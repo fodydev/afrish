@@ -93,8 +93,6 @@ use super::font;
 use super::toplevel;
 use super::widget;
 
-use once_cell::sync::Lazy;
-
 /// Reports an error in interacting with the Tk program.
 #[derive(Debug)]
 pub struct TkError {
@@ -160,7 +158,11 @@ pub fn ask_wish(msg: &str) -> String {
 
 // -- Counter for making new ids
 
-static NEXT_ID: Lazy<Mutex<i64>> = Lazy::new(|| Mutex::new(0));
+fn next_static_id() -> &'static Mutex<i64> {
+    static NEXT_ID: OnceLock<Mutex<i64>> = OnceLock::new();
+
+    NEXT_ID.get_or_init(|| Mutex::new(0))
+}
 
 /// Returns a new id string which can be used to name a new
 /// widget instance. The new id will be in reference to the
@@ -169,7 +171,7 @@ static NEXT_ID: Lazy<Mutex<i64>> = Lazy::new(|| Mutex::new(0));
 /// This is only for use when writing an extension library.
 ///
 pub fn next_wid(parent: &str) -> String {
-    let mut nid = NEXT_ID.lock().unwrap();
+    let mut nid = next_static_id().lock().unwrap();
     *nid += 1;
     if parent == "." {
         format!(".r{}", nid)
@@ -184,13 +186,13 @@ pub fn next_wid(parent: &str) -> String {
 /// This is only for use when writing an extension library.
 ///
 pub fn next_var() -> String {
-    let mut nid = NEXT_ID.lock().unwrap();
+    let mut nid = next_static_id().lock().unwrap();
     *nid += 1;
     format!("::var{}", nid)
 }
 
 pub(super) fn current_id() -> i64 {
-    let nid = NEXT_ID.lock().unwrap();
+    let nid = next_static_id().lock().unwrap();
     *nid
 }
 
@@ -204,25 +206,32 @@ where
     Box::new(f)
 }
 
-static CALLBACKS0: Lazy<Mutex<HashMap<String, Callback0>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+fn static_callbacks0() -> &'static Mutex<HashMap<String, Callback0>> {
+    static CALLBACKS0: OnceLock<Mutex<HashMap<String, Callback0>>> = OnceLock::new();
+
+    CALLBACKS0.get_or_init(|| Mutex::new(HashMap::new()))
+}
 
 pub(super) fn add_callback0(wid: &str, callback: Callback0) {
-    CALLBACKS0
+    static_callbacks0()
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback0(wid: &str) -> Option<Callback0> {
-    CALLBACKS0.lock().unwrap().remove(wid)
+    if let Some((_, command)) = static_callbacks0().lock().unwrap().remove_entry(wid) {
+        Some(command)
+    } else {
+        None
+    }
 }
 
 fn eval_callback0(wid: &str) {
     if let Some(command) = get_callback0(wid) {
         command();
         if !wid.contains("after") && // after commands apply once only
-            !CALLBACKS0.lock().unwrap().contains_key(wid)
+            !static_callbacks0().lock().unwrap().contains_key(wid)
         // do not overwrite if a replacement command added
         {
             add_callback0(wid, command);
@@ -238,24 +247,31 @@ where
     Box::new(f)
 }
 
-static CALLBACKS1BOOL: Lazy<Mutex<HashMap<String, Callback1Bool>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+fn static_callbacks1bool() -> &'static Mutex<HashMap<String, Callback1Bool>> {
+    static CALLBACKS1BOOL: OnceLock<Mutex<HashMap<String, Callback1Bool>>> = OnceLock::new();
+
+    CALLBACKS1BOOL.get_or_init(|| Mutex::new(HashMap::new()))
+}
 
 pub(super) fn add_callback1_bool(wid: &str, callback: Callback1Bool) {
-    CALLBACKS1BOOL
+    static_callbacks1bool()
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_bool(wid: &str) -> Option<Callback1Bool> {
-    CALLBACKS1BOOL.lock().unwrap().remove(wid)
+    if let Some((_, command)) = static_callbacks1bool().lock().unwrap().remove_entry(wid) {
+        Some(command)
+    } else {
+        None
+    }
 }
 
 fn eval_callback1_bool(wid: &str, value: bool) {
     if let Some(command) = get_callback1_bool(wid) {
         command(value);
-        if !CALLBACKS1BOOL.lock().unwrap().contains_key(wid) {
+        if !static_callbacks1bool().lock().unwrap().contains_key(wid) {
             add_callback1_bool(wid, command);
         }
     } // TODO - error?
@@ -271,24 +287,31 @@ where
 
 // for bound events, key is widgetid/all + pattern, as multiple events can be
 // bound to same entity
-static CALLBACKS1EVENT: Lazy<Mutex<HashMap<String, Callback1Event>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+fn static_callbacks1event() -> &'static Mutex<HashMap<String, Callback1Event>> {
+    static CALLBACKS1EVENT: OnceLock<Mutex<HashMap<String, Callback1Event>>> = OnceLock::new();
+
+    CALLBACKS1EVENT.get_or_init(|| Mutex::new(HashMap::new()))
+}
 
 pub(super) fn add_callback1_event(wid: &str, callback: Callback1Event) {
-    CALLBACKS1EVENT
+    static_callbacks1event()
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_event(wid: &str) -> Option<Callback1Event> {
-    CALLBACKS1EVENT.lock().unwrap().remove(wid)
+    if let Some((_, command)) = static_callbacks1event().lock().unwrap().remove_entry(wid) {
+        Some(command)
+    } else {
+        None
+    }
 }
 
 fn eval_callback1_event(wid: &str, value: widget::TkEvent) {
     if let Some(command) = get_callback1_event(wid) {
         command(value);
-        if !CALLBACKS1EVENT.lock().unwrap().contains_key(wid) {
+        if !static_callbacks1event().lock().unwrap().contains_key(wid) {
             add_callback1_event(wid, command);
         }
     } // TODO - error?
@@ -302,24 +325,31 @@ where
     Box::new(f)
 }
 
-static CALLBACKS1FLOAT: Lazy<Mutex<HashMap<String, Callback1Float>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+fn static_callbacks1float() -> &'static Mutex<HashMap<String, Callback1Float>> {
+    static CALLBACKS1FLOAT: OnceLock<Mutex<HashMap<String, Callback1Float>>> = OnceLock::new();
+
+    CALLBACKS1FLOAT.get_or_init(|| Mutex::new(HashMap::new()))
+}
 
 pub(super) fn add_callback1_float(wid: &str, callback: Callback1Float) {
-    CALLBACKS1FLOAT
+    static_callbacks1float()
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_float(wid: &str) -> Option<Callback1Float> {
-    CALLBACKS1FLOAT.lock().unwrap().remove(wid)
+    if let Some((_, command)) = static_callbacks1float().lock().unwrap().remove_entry(wid) {
+        Some(command)
+    } else {
+        None
+    }
 }
 
 fn eval_callback1_float(wid: &str, value: f64) {
     if let Some(command) = get_callback1_float(wid) {
         command(value);
-        if !CALLBACKS1FLOAT.lock().unwrap().contains_key(wid) {
+        if !static_callbacks1float().lock().unwrap().contains_key(wid) {
             add_callback1_float(wid, command);
         }
     } // TODO - error?
@@ -333,24 +363,31 @@ where
     Box::new(f)
 }
 
-static CALLBACKS1FONT: Lazy<Mutex<HashMap<String, Callback1Font>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+fn static_callbacks1font() -> &'static Mutex<HashMap<String, Callback1Font>> {
+    static CALLBACKS1FONT: OnceLock<Mutex<HashMap<String, Callback1Font>>> = OnceLock::new();
+
+    CALLBACKS1FONT.get_or_init(|| Mutex::new(HashMap::new()))
+}
 
 pub(super) fn add_callback1_font(wid: &str, callback: Callback1Font) {
-    CALLBACKS1FONT
+    static_callbacks1font()
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_font(wid: &str) -> Option<Callback1Font> {
-    CALLBACKS1FONT.lock().unwrap().remove(wid)
+    if let Some((_, command)) = static_callbacks1font().lock().unwrap().remove_entry(wid) {
+        Some(command)
+    } else {
+        None
+    }
 }
 
 fn eval_callback1_font(wid: &str, value: font::TkFont) {
     if let Some(command) = get_callback1_font(wid) {
         command(value);
-        if !CALLBACKS1FONT.lock().unwrap().contains_key(wid) {
+        if !static_callbacks1font().lock().unwrap().contains_key(wid) {
             add_callback1_font(wid, command);
         }
     } // TODO - error?
