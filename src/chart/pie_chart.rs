@@ -1,8 +1,8 @@
 //! Pie chart - display data as slices of a circle.
 //!
 
-use crate::chart::plotchart;
 use crate::canvas;
+use crate::chart::plotchart;
 use crate::wish;
 
 /// Refers to a pie chart
@@ -20,8 +20,10 @@ pub struct TkSpiralPieChart {
 /// Creates an instance of a pie chart in given canvas.
 pub fn make_pie_chart(canvas: &canvas::TkCanvas) -> TkPieChart {
     let id = wish::next_var();
-    let msg = format!("global {}; set {} [::Plotchart::createPiechart {}]",
-                      id, id, &canvas.id);
+    let msg = format!(
+        "global {}; set {} [::Plotchart::createPiechart {}]",
+        id, id, &canvas.id
+    );
     wish::tell_wish(&msg);
 
     TkPieChart { id }
@@ -30,8 +32,10 @@ pub fn make_pie_chart(canvas: &canvas::TkCanvas) -> TkPieChart {
 /// Creates an instance of a spiral pie chart in given canvas.
 pub fn make_spiral_pie_chart(canvas: &canvas::TkCanvas) -> TkSpiralPieChart {
     let id = wish::next_var();
-    let msg = format!("global {}; set {} [::Plotchart::createSpiralPie {}]",
-                      id, id, &canvas.id);
+    let msg = format!(
+        "global {}; set {} [::Plotchart::createSpiralPie {}]",
+        id, id, &canvas.id
+    );
     wish::tell_wish(&msg);
 
     TkSpiralPieChart { id }
@@ -58,9 +62,13 @@ pub trait PieChartMethods: plotchart::TkPlotchart {
         for colour in colours {
             colour_str.push_str(&format!("{} ", colour));
         }
-        
-        let msg = format!("global {}; ${} colours {}",
-                          self.id(), self.id(), colour_str);
+
+        let msg = format!(
+            "global {}; ${} colours {}",
+            self.id(),
+            self.id(),
+            colour_str
+        );
         wish::tell_wish(&msg);
     }
 
@@ -71,8 +79,7 @@ pub trait PieChartMethods: plotchart::TkPlotchart {
             data_str.push_str(&format!("{{{}}} {} ", label, angle));
         }
 
-        let msg = format!("global {}; ${} plot {{{}}}",
-                          self.id(), self.id(), data_str);
+        let msg = format!("global {}; ${} plot {{{}}}", self.id(), self.id(), data_str);
         wish::tell_wish(&msg);
     }
 }
@@ -80,13 +87,14 @@ pub trait PieChartMethods: plotchart::TkPlotchart {
 impl PieChartMethods for TkPieChart {}
 
 impl TkPieChart {
-        /// Given slice number is displayed offset from circle.
+    /// Given slice number is displayed offset from circle.
     pub fn explode(&self, slice_number: u64) {
-        let msg = format!("global {}; ${} explode {}",
-                          &self.id, &self.id, slice_number);
+        let msg = format!(
+            "global {}; ${} explode {}",
+            &self.id, &self.id, slice_number
+        );
         wish::tell_wish(&msg);
     }
 }
 
 impl PieChartMethods for TkSpiralPieChart {}
-

@@ -1,8 +1,8 @@
 //! Radial chart - plots points along a circular axis.
 //!
 
-use crate::chart::plotchart;
 use crate::canvas;
+use crate::chart::plotchart;
 use crate::wish;
 
 /// Refers to a radial chart
@@ -16,7 +16,7 @@ pub fn make_radial_chart(
     canvas: &canvas::TkCanvas,
     labels: &[&str],
     scale: f64,
-    style: plotchart::RadialStyle
+    style: plotchart::RadialStyle,
 ) -> TkRadialChart {
     let mut labels_str = String::new();
     for label in labels {
@@ -51,9 +51,10 @@ impl TkRadialChart {
             data_str.push_str(&format!("{} ", datum));
         }
 
-        let msg = format!("global {}; ${} plot {{{}}} {} {}",
-                          &self.id, &self.id, data_str, colour, thickness);
+        let msg = format!(
+            "global {}; ${} plot {{{}}} {} {}",
+            &self.id, &self.id, data_str, colour, thickness
+        );
         wish::tell_wish(&msg);
     }
 }
-

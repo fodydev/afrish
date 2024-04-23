@@ -1,4 +1,4 @@
-//! Themes - functions to list and set the overall theme (look and feel) of 
+//! Themes - functions to list and set the overall theme (look and feel) of
 //! the Tk program.
 //!
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_style.htm#M17)

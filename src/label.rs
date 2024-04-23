@@ -11,9 +11,9 @@
 //! label_1.text("Label text");
 //! ```
 //!
-//! Labels can also display images, with or without text, and how these are 
+//! Labels can also display images, with or without text, and how these are
 //! displayed can be controlled using [compound](widget::TkLabelOptions::compound).
-//! In the following example, a label with both an image and text is set to show 
+//! In the following example, a label with both an image and text is set to show
 //! the image below the text:
 //!
 //! ```ignore
@@ -22,7 +22,7 @@
 //! label_3.text("Tcl Logo");
 //! label_3.compound(rish::Compound::Bottom);
 //! ```
-//! 
+//!
 //! Labels can also show multi-line text. For this, specify a wrap-length (in pixels):
 //!
 //! ```ignore
@@ -68,8 +68,8 @@ impl widget::TkLabelOptions for TkLabel {}
 impl TkLabel {
     /// Position of information with respect to internal margins.
     ///
-    /// e.g. the space allocated to the label can be larger than its 
-    /// text needs, so an Anchor value of E (east) will display the 
+    /// e.g. the space allocated to the label can be larger than its
+    /// text needs, so an Anchor value of E (east) will display the
     /// text against the right-margin.
     pub fn anchor(&self, value: widget::Anchor) {
         widget::configure(&self.id, "anchor", &value.to_string());

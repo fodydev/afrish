@@ -1,4 +1,4 @@
-//! Spinbox widget - displays a range with up/down buttons. 
+//! Spinbox widget - displays a range with up/down buttons.
 //!
 //! User can select between either a range of numbers or a list of values.
 //!

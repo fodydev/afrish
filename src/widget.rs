@@ -5,10 +5,10 @@
 use std::fmt;
 
 use super::canvas;
-use crate::chart::plotchart;
 use super::font;
 use super::image;
 use super::wish;
+use crate::chart::plotchart;
 
 /// Struct holding information from a bound event,
 /// returned as a parameter to the bound closure.
@@ -278,7 +278,7 @@ pub trait TkLabelOptions: TkWidget {
         configure(&self.id(), "image", &image.id);
     }
 
-    /// Sets space around the widget. Takes an array of up to four values, 
+    /// Sets space around the widget. Takes an array of up to four values,
     /// specifying the number of pixels on the different sides:
     ///
     /// * \[all]
@@ -461,14 +461,14 @@ impl fmt::Display for Orientation {
     }
 }
 
-/// Defines fill property for pack layouts: whether 
+/// Defines fill property for pack layouts: whether
 /// to expand in the x or y or both directions.
 #[derive(Clone, Debug, PartialEq)]
 pub enum PackFill {
     Both,
     None,
     X,
-    Y
+    Y,
 }
 
 impl fmt::Display for PackFill {
@@ -483,7 +483,7 @@ impl fmt::Display for PackFill {
     }
 }
 
-/// Defines side property for pack layouts: whether 
+/// Defines side property for pack layouts: whether
 /// widget is packed against top, bottom, left or right.
 #[derive(Clone, Debug, PartialEq)]
 pub enum PackSide {
@@ -731,10 +731,9 @@ pub(super) fn str_list_lists<M: AsRef<[R]>, R: AsRef<[f64]>>(values: M) -> Strin
 /// Triggers given command after 'time' milliseconds.
 pub fn after(time: u64, command: impl Fn() + Send + 'static) {
     wish::next_wid(".");
-    let name = format!("after{}", wish::current_id()); 
+    let name = format!("after{}", wish::current_id());
     wish::add_callback0(&name, wish::mk_callback0(command));
-    let msg = format!("after {} {{ puts clicked-{} ; flush stdout }}",
-                      time, name);
+    let msg = format!("after {} {{ puts clicked-{} ; flush stdout }}", time, name);
     wish::tell_wish(&msg);
 }
 
@@ -750,16 +749,20 @@ pub fn colour_map(map: plotchart::ColourMap) {
 }
 
 /// Copies contents of one or more plots onto another canvas widget.
-pub fn plot_pack(canvas: &canvas::TkCanvas, 
-                 direction: plotchart::PlotDirection,
-                 charts: &[&impl plotchart::TkPlotchart]) {
+pub fn plot_pack(
+    canvas: &canvas::TkCanvas,
+    direction: plotchart::PlotDirection,
+    charts: &[&impl plotchart::TkPlotchart],
+) {
     let mut charts_str = String::new();
     for chart in charts {
         charts_str.push_str(&format!("${} ", chart.id()));
     }
 
-    let msg = format!("::Plotchart::plotpack {} {} {}",
-                      &canvas.id, direction, charts_str);
+    let msg = format!(
+        "::Plotchart::plotpack {} {} {}",
+        &canvas.id, direction, charts_str
+    );
     wish::tell_wish(&msg);
 }
 

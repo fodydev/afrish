@@ -1,14 +1,14 @@
-//! Check button widget - displays text/image with an on/off widget. 
+//! Check button widget - displays text/image with an on/off widget.
 //! Executes a command when clicked.
 //!
 //! * also see the Tk [manual](https://tcl.tk/man/tcl/TkCmd/ttk_checkbutton.htm)
 //!
 //! ## Examples
 //!
-//! The check button works like a regular [button](crate::button), except that it 
-//! has a _state_. 
+//! The check button works like a regular [button](crate::button), except that it
+//! has a _state_.
 //!
-//! The simplest check button has some text and a command - the command 
+//! The simplest check button has some text and a command - the command
 //! accepts a single boolean, which is the _new_ state of the button:
 //!
 //! ```ignore
@@ -16,11 +16,11 @@
 //! button_1.text("Button label");
 //! button_1.command(|value| { println!("button_1 now {}", value); });
 //! ```
-//! 
-//! Check buttons can also display images, with or without text, and how these 
-//! are displayed can be controlled using 
-//! [compound](widget::TkLabelOptions::compound). In the following example, a 
-//! check button with both an image and text is set to show the image below the 
+//!
+//! Check buttons can also display images, with or without text, and how these
+//! are displayed can be controlled using
+//! [compound](widget::TkLabelOptions::compound). In the following example, a
+//! check button with both an image and text is set to show the image below the
 //! text:
 //!
 //! ```ignore
@@ -30,9 +30,9 @@
 //! button_3.command(|state| { println!("Clicked button_3"); });
 //! button_3.compound(rish::Compound::Bottom);
 //! ```
-//! 
-//! The check button's state can be changed or checked using the 
-//! [selected](TkCheckButton::selected) and 
+//!
+//! The check button's state can be changed or checked using the
+//! [selected](TkCheckButton::selected) and
 //! [is_selected](TkCheckButton::is_selected) methods.
 //!
 
@@ -81,7 +81,7 @@ impl TkCheckButton {
         wish::tell_wish(&msg);
     }
 
-    /// Toggles the button's state and calls the button's command, 
+    /// Toggles the button's state and calls the button's command,
     /// as if it were clicked.
     pub fn invoke(&self) {
         let msg = format!("{} invoke", self.id);
@@ -101,7 +101,7 @@ impl TkCheckButton {
         wish::tell_wish(&msg);
     }
 
-    /// Sets the state of the button, usually normal (clickable) 
+    /// Sets the state of the button, usually normal (clickable)
     /// or disabled (unclickable).
     pub fn state(&self, value: widget::State) {
         widget::configure(&self.id, "state", &value.to_string());

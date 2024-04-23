@@ -4,7 +4,7 @@
 //!
 //! Tk provides a lot of control over font objects.
 //!
-//! Fonts are created using the struct, specifying those properties we want to 
+//! Fonts are created using the struct, specifying those properties we want to
 //! set, and relying on its defaults for the remaining fields.
 //! For example, creating a bold Helvetica font with size 12:
 //!

@@ -56,4 +56,3 @@ pub use tx_plot::*;
 
 pub mod xy_plots;
 pub use xy_plots::*;
-

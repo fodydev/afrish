@@ -174,7 +174,7 @@ impl TkTopLevel {
 }
 
 // Parse the widthxheight+x+y tcl string into a tuple: (width, height, x, y).
-// -- we will ignore errors because this is only called on the return value 
+// -- we will ignore errors because this is only called on the return value
 // from a tcl call.
 // -- return (0,0,0,0) if there is a problem
 fn string_geometry(text: &str) -> (u64, u64, u64, u64) {

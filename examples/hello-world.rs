@@ -2,7 +2,6 @@ use rish::*;
 
 fn main() {
     if let Ok(root) = rish::start_wish() {
-
         let hello = rish::make_label(&root);
         hello.text("Hello from Rust/Tk");
 

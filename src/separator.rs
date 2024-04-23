@@ -37,4 +37,3 @@ impl widget::TkWidget for TkSeparator {
 
 impl grid::TkGridLayout for TkSeparator {}
 impl pack::TkPackLayout for TkSeparator {}
-

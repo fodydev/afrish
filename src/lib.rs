@@ -11,11 +11,11 @@
 //! in the [wish] module.
 //!
 //! The remaining modules describe a widget or supporting component
-//! (such as a font or image). Each widget has a constructor function, 
-//! usually named "make_WIDGET", and this returns a struct of name "TkWIDGET". 
+//! (such as a font or image). Each widget has a constructor function,
+//! usually named "make_WIDGET", and this returns a struct of name "TkWIDGET".
 //!
 //! Click on the struct name to get a list of methods supported by the
-//! widget; functionality is divided between various traits, such as 
+//! widget; functionality is divided between various traits, such as
 //! [TkWidget](widget::TkWidget).
 //!
 //! # Example
