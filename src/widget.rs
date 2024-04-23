@@ -43,7 +43,7 @@ pub trait TkWidget {
 
     /// Binds a command to this widget to call on given event pattern
     fn bind(&self, pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
-        bind_to(&self.id(), pattern, command);
+        bind_to(self.id(), pattern, command);
     }
 
     /// Retrieve the value of a configuration option
@@ -64,7 +64,7 @@ pub trait TkWidget {
     /// * `value` - the value to change it to
     ///
     fn configure(&self, option: &str, value: &str) {
-        configure(&self.id(), option, value);
+        configure(self.id(), option, value);
     }
 
     /// Destroys a widget and its children.
@@ -260,22 +260,22 @@ pub trait TkWidget {
 pub trait TkLabelOptions: TkWidget {
     /// Sets how to arrange the image relative to the text.
     fn compound(&self, value: Compound) {
-        configure(&self.id(), "compound", &value.to_string());
+        configure(self.id(), "compound", &value.to_string());
     }
 
     /// Sets the font to use for text.
     fn font(&self, definition: &font::TkFont) {
-        configure(&self.id(), "font", &definition.to_string());
+        configure(self.id(), "font", &definition.to_string());
     }
 
     /// Sets the foreground (text) colour.
     fn foreground(&self, colour: &str) {
-        configure(&self.id(), "foreground", colour);
+        configure(self.id(), "foreground", colour);
     }
 
     /// Sets an image to display on the widget.
     fn image(&self, image: &image::TkImage) {
-        configure(&self.id(), "image", &image.id);
+        configure(self.id(), "image", &image.id);
     }
 
     /// Sets space around the widget. Takes an array of up to four values,
@@ -286,17 +286,17 @@ pub trait TkLabelOptions: TkWidget {
     /// * [left top-bottom right]
     /// * [left top right bottom]
     fn padding(&self, values: &[u64]) {
-        padding(&self.id(), values);
+        padding(self.id(), values);
     }
 
     /// Sets the text label for the widget.
     fn text(&self, value: &str) {
-        configure(&self.id(), "text", value);
+        configure(self.id(), "text", value);
     }
 
     /// Underlines the character at the given index position.
     fn underline(&self, index: u64) {
-        configure(&self.id(), "underline", &index.to_string());
+        configure(self.id(), "underline", &index.to_string());
     }
 
     /// Sets the width of the widget, in characters
@@ -718,7 +718,7 @@ pub(super) fn str_list_lists<M: AsRef<[R]>, R: AsRef<[f64]>>(values: M) -> Strin
     let mut values_str = String::new();
 
     for vs in values.as_ref() {
-        values_str.push_str("{");
+        values_str.push('{');
         values_str.push_str(&str_list(vs.as_ref()));
         values_str.push_str("} ");
     }

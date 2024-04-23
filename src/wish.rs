@@ -98,6 +98,7 @@ use once_cell::sync::Lazy;
 /// Reports an error in interacting with the Tk program.
 #[derive(Debug)]
 pub struct TkError {
+    #[allow(dead_code)]
     message: String,
 }
 
@@ -147,7 +148,7 @@ pub fn ask_wish(msg: &str) -> String {
         if OUTPUT.get_mut().unwrap().read(&mut input).is_ok() {
             if let Ok(input) = String::from_utf8(input.to_vec()) {
                 if tracing() {
-                    println!("---: {:?}", &input.trim());
+                    println!("---: {:?}", input.trim());
                 }
                 return input.trim().to_string();
             }
@@ -200,7 +201,7 @@ pub(super) fn mk_callback0<F>(f: F) -> Callback0
 where
     F: Fn() + Send + 'static,
 {
-    Box::new(f) as Callback0
+    Box::new(f)
 }
 
 static CALLBACKS0: Lazy<Mutex<HashMap<String, Callback0>>> =
@@ -214,11 +215,7 @@ pub(super) fn add_callback0(wid: &str, callback: Callback0) {
 }
 
 fn get_callback0(wid: &str) -> Option<Callback0> {
-    if let Some((_, command)) = CALLBACKS0.lock().unwrap().remove_entry(wid) {
-        Some(command)
-    } else {
-        None
-    }
+    CALLBACKS0.lock().unwrap().remove(wid)
 }
 
 fn eval_callback0(wid: &str) {
@@ -238,7 +235,7 @@ pub(super) fn mk_callback1_bool<F>(f: F) -> Callback1Bool
 where
     F: Fn(bool) + Send + 'static,
 {
-    Box::new(f) as Callback1Bool
+    Box::new(f)
 }
 
 static CALLBACKS1BOOL: Lazy<Mutex<HashMap<String, Callback1Bool>>> =
@@ -252,11 +249,7 @@ pub(super) fn add_callback1_bool(wid: &str, callback: Callback1Bool) {
 }
 
 fn get_callback1_bool(wid: &str) -> Option<Callback1Bool> {
-    if let Some((_, command)) = CALLBACKS1BOOL.lock().unwrap().remove_entry(wid) {
-        Some(command)
-    } else {
-        None
-    }
+    CALLBACKS1BOOL.lock().unwrap().remove(wid)
 }
 
 fn eval_callback1_bool(wid: &str, value: bool) {
@@ -273,7 +266,7 @@ pub(super) fn mk_callback1_event<F>(f: F) -> Callback1Event
 where
     F: Fn(widget::TkEvent) + Send + 'static,
 {
-    Box::new(f) as Callback1Event
+    Box::new(f)
 }
 
 // for bound events, key is widgetid/all + pattern, as multiple events can be
@@ -289,11 +282,7 @@ pub(super) fn add_callback1_event(wid: &str, callback: Callback1Event) {
 }
 
 fn get_callback1_event(wid: &str) -> Option<Callback1Event> {
-    if let Some((_, command)) = CALLBACKS1EVENT.lock().unwrap().remove_entry(wid) {
-        Some(command)
-    } else {
-        None
-    }
+    CALLBACKS1EVENT.lock().unwrap().remove(wid)
 }
 
 fn eval_callback1_event(wid: &str, value: widget::TkEvent) {
@@ -310,7 +299,7 @@ pub(super) fn mk_callback1_float<F>(f: F) -> Callback1Float
 where
     F: Fn(f64) + Send + 'static,
 {
-    Box::new(f) as Callback1Float
+    Box::new(f)
 }
 
 static CALLBACKS1FLOAT: Lazy<Mutex<HashMap<String, Callback1Float>>> =
@@ -324,11 +313,7 @@ pub(super) fn add_callback1_float(wid: &str, callback: Callback1Float) {
 }
 
 fn get_callback1_float(wid: &str) -> Option<Callback1Float> {
-    if let Some((_, command)) = CALLBACKS1FLOAT.lock().unwrap().remove_entry(wid) {
-        Some(command)
-    } else {
-        None
-    }
+    CALLBACKS1FLOAT.lock().unwrap().remove(wid)
 }
 
 fn eval_callback1_float(wid: &str, value: f64) {
@@ -345,7 +330,7 @@ pub(super) fn mk_callback1_font<F>(f: F) -> Callback1Font
 where
     F: Fn(font::TkFont) + Send + 'static,
 {
-    Box::new(f) as Callback1Font
+    Box::new(f)
 }
 
 static CALLBACKS1FONT: Lazy<Mutex<HashMap<String, Callback1Font>>> =
@@ -359,11 +344,7 @@ pub(super) fn add_callback1_font(wid: &str, callback: Callback1Font) {
 }
 
 fn get_callback1_font(wid: &str) -> Option<Callback1Font> {
-    if let Some((_, command)) = CALLBACKS1FONT.lock().unwrap().remove_entry(wid) {
-        Some(command)
-    } else {
-        None
-    }
+    CALLBACKS1FONT.lock().unwrap().remove(wid)
 }
 
 fn eval_callback1_font(wid: &str, value: font::TkFont) {
@@ -389,7 +370,7 @@ pub fn mainloop() {
                     // here - do a match or similar on what was read from wish
                     if input.starts_with("clicked") {
                         // -- callbacks
-                        if let Some(n) = input.find(&['\n', '\r']) {
+                        if let Some(n) = input.find(['\n', '\r']) {
                             let widget = &input[8..n];
                             eval_callback0(widget);
                         }
@@ -454,24 +435,24 @@ pub fn start_wish() -> Result<toplevel::TkTopLevel, TkError> {
 
 /// Creates a connection with the given wish/tclkit program.
 pub fn start_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
-    if let Ok(_) = TRACE_WISH.set(false) {
+    if TRACE_WISH.set(false).is_ok() {
         start_tk_connection(wish)
     } else {
-        return Err(TkError {
+        Err(TkError {
             message: String::from("Failed to set trace option"),
-        });
+        })
     }
 }
 
 /// Creates a connection with the given wish/tclkit program with
 /// debugging output enabled (wish interactions are reported to stdout).
 pub fn trace_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
-    if let Ok(_) = TRACE_WISH.set(true) {
+    if TRACE_WISH.set(true).is_ok() {
         start_tk_connection(wish)
     } else {
-        return Err(TkError {
+        Err(TkError {
             message: String::from("Failed to set trace option"),
-        });
+        })
     }
 }
 

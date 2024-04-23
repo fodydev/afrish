@@ -48,17 +48,15 @@ impl TkHistogramDefinition {
     /// Completes the definition of a histogram and creates the chart.
     pub fn plot(&self) -> TkHistogram {
         // if a labels set is defined, ignore the relevant step value.
-        let x_str;
-        if self.x_labels.is_none() {
-            x_str = format!("{{{} {} {}}}", self.x_axis.0, self.x_axis.1, self.x_axis.2);
+        let x_str = if self.x_labels.is_none() {
+            format!("{{{} {} {}}}", self.x_axis.0, self.x_axis.1, self.x_axis.2)
         } else {
-            x_str = format!("{{{} {}}}", self.x_axis.0, self.x_axis.1);
+            format!("{{{} {}}}", self.x_axis.0, self.x_axis.1)
         };
-        let y_str;
-        if self.y_labels.is_none() {
-            y_str = format!("{{{} {} {}}}", self.y_axis.0, self.y_axis.1, self.y_axis.2);
+        let y_str = if self.y_labels.is_none() {
+            format!("{{{} {} {}}}", self.y_axis.0, self.y_axis.1, self.y_axis.2)
         } else {
-            y_str = format!("{{{} {}}}", self.y_axis.0, self.y_axis.1);
+            format!("{{{} {}}}", self.y_axis.0, self.y_axis.1)
         };
         let id = wish::next_var();
         let mut msg = format!(
@@ -73,7 +71,7 @@ impl TkHistogramDefinition {
             msg.push_str(&format!("-ylabels {{{}}} ", labels));
         }
 
-        msg.push_str("]");
+        msg.push(']');
         wish::tell_wish(&msg);
 
         TkHistogram { id }

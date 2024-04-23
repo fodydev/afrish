@@ -79,7 +79,7 @@ impl TkTXDefinition {
             msg.push_str(&format!("-isometric {} ", if value { "1" } else { "0" }));
         }
 
-        msg.push_str("]");
+        msg.push(']');
         wish::tell_wish(&msg);
 
         TkTXPlot { id }

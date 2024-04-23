@@ -32,8 +32,9 @@ use super::wish;
 
 /// Defines possible weights for font: normal and bold.
 /// See Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M27)
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub enum Weight {
+    #[default]
     Normal,
     Bold,
 }
@@ -48,17 +49,12 @@ impl fmt::Display for Weight {
     }
 }
 
-impl Default for Weight {
-    fn default() -> Self {
-        Weight::Normal
-    }
-}
-
 /// Defines possible slants for font: roman and italic.
 /// See Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/font.htm#M28)
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub enum Slant {
     Italic,
+    #[default]
     Roman,
 }
 
@@ -69,12 +65,6 @@ impl fmt::Display for Slant {
             Slant::Roman => "roman",
         };
         write!(f, "{}", &value)
-    }
-}
-
-impl Default for Slant {
-    fn default() -> Self {
-        Slant::Roman
     }
 }
 

@@ -91,7 +91,7 @@ impl TkGanttChartDefinition {
             msg.push_str(&format!("-ylabelwidth {} ", value));
         }
 
-        msg.push_str("]");
+        msg.push(']');
         wish::tell_wish(&msg);
 
         TkGanttChart { id }
