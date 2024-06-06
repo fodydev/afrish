@@ -30,13 +30,13 @@ pub struct PackLayout {
     anchor: widget::Anchor,
     before: Option<String>,
     expand: bool,
-    fill: widget::PackFill, 
+    fill: widget::PackFill,
     inside: Option<String>,
     ipadx: Option<u64>,
     ipady: Option<u64>,
     padx: Option<u64>,
     pady: Option<u64>,
-    side: widget::PackSide 
+    side: widget::PackSide,
 }
 
 impl PackLayout {
@@ -57,7 +57,7 @@ impl PackLayout {
         }
     }
 
-    /// Inserts this widget after given widget in its container and 
+    /// Inserts this widget after given widget in its container and
     /// in its packing order.
     pub fn after(&mut self, widget: &impl widget::TkWidget) -> &mut Self {
         self.after = Some(String::from(widget.id()));
@@ -70,7 +70,7 @@ impl PackLayout {
         self
     }
 
-    /// Inserts this widget before given widget in its container and 
+    /// Inserts this widget before given widget in its container and
     /// in its packing order.
     pub fn before(&mut self, widget: &impl widget::TkWidget) -> &mut Self {
         self.before = Some(String::from(widget.id()));
@@ -89,7 +89,7 @@ impl PackLayout {
         self
     }
 
-    /// Inserts this widget into container of given widget at the end of 
+    /// Inserts this widget into container of given widget at the end of
     /// its packing order.
     pub fn inside(&mut self, widget: &impl widget::TkWidget) -> &mut Self {
         self.inside = Some(String::from(widget.id()));
@@ -119,7 +119,6 @@ impl PackLayout {
         self.pady = Some(pad);
         self
     }
-
 
     /// Specifies side of container that the widget is packed against.
     pub fn side(&mut self, value: widget::PackSide) -> &mut Self {

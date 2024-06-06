@@ -6,7 +6,7 @@ use crate::chart::plotchart;
 use crate::widget;
 use crate::wish;
 
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 enum XYAxis {
     Log(f64, f64),
     Scale(f64, f64, f64),
@@ -39,7 +39,7 @@ impl TkXYDefinition {
     /// Adds custom labels for the x-axis.
     ///
     /// This will replace the step value for the x-axis.
-    /// Labels which are numbers will be placed according to the given scale, 
+    /// Labels which are numbers will be placed according to the given scale,
     /// and otherwise are evenly distributed.
     pub fn x_labels(&mut self, labels: &[&str]) -> &mut Self {
         self.x_labels = Some(widget::strings_list(labels));
@@ -49,7 +49,7 @@ impl TkXYDefinition {
     /// Adds custom labels for the y-axis.
     ///
     /// This will replace the step value for the y-axis.
-    /// Labels which are numbers will be placed according to the given scale, 
+    /// Labels which are numbers will be placed according to the given scale,
     /// and otherwise are evenly distributed.
     pub fn y_labels(&mut self, labels: &[&str]) -> &mut Self {
         self.y_labels = Some(widget::strings_list(labels));
@@ -86,20 +86,24 @@ impl TkXYDefinition {
         let x_str;
         match self.x_axis {
             XYAxis::Log(min, max) => x_str = format!("{{{} {}}}", min, max),
-            XYAxis::Scale(min, max, step) => if self.x_labels.is_none() {
-                x_str = format!("{{{} {} {}}}", min, max, step)
-            } else {
-                x_str = format!("{{{} {}}}", min, max)
-            },
+            XYAxis::Scale(min, max, step) => {
+                if self.x_labels.is_none() {
+                    x_str = format!("{{{} {} {}}}", min, max, step)
+                } else {
+                    x_str = format!("{{{} {}}}", min, max)
+                }
+            }
         };
         let y_str;
         match self.y_axis {
             XYAxis::Log(min, max) => y_str = format!("{{{} {}}}", min, max),
-            XYAxis::Scale(min, max, step) => if self.y_labels.is_none() {
-                y_str = format!("{{{} {} {}}}", min, max, step)
-            } else {
-                y_str = format!("{{{} {}}}", min, max)
-            },
+            XYAxis::Scale(min, max, step) => {
+                if self.y_labels.is_none() {
+                    y_str = format!("{{{} {} {}}}", min, max, step)
+                } else {
+                    y_str = format!("{{{} {}}}", min, max)
+                }
+            }
         };
         let id = wish::next_var();
         let mut msg = format!(
@@ -495,7 +499,11 @@ impl TkXYPlot {
     ///
     /// * `values` is a slice of lists of values at each (x, y) position
     /// * `classes` is a slice of class levels (leave empty for default).
-    pub fn legend_isometric_lines<M: AsRef<[R]>, R: AsRef<[f64]>>(&self, values: M, classes: &[f64]) {
+    pub fn legend_isometric_lines<M: AsRef<[R]>, R: AsRef<[f64]>>(
+        &self,
+        values: M,
+        classes: &[f64],
+    ) {
         let msg = format!(
             "global {}; ${} legendisolines {{{}}} {{{}}}",
             &self.id,
@@ -517,7 +525,7 @@ impl TkXYPlot {
             &self.id,
             &widget::str_list_lists(values.as_ref()),
             &widget::str_list(classes)
-            );
+        );
         wish::tell_wish(&msg);
     }
 
@@ -570,31 +578,40 @@ impl TkXYPlot {
 
     /// Sets whether coordinates specify start or centre of vector arrow.
     pub fn vector_centred(&self, series: &str, value: bool) {
-        let msg = format!( "global {}; ${} vectorconfig {} -centred {}",
-                           &self.id, &self.id, series, 
-                           if value { "1" } else { "0" });
+        let msg = format!(
+            "global {}; ${} vectorconfig {} -centred {}",
+            &self.id,
+            &self.id,
+            series,
+            if value { "1" } else { "0" }
+        );
         wish::tell_wish(&msg);
     }
-    
+
     /// Sets colour of vector arrow.
     pub fn vector_colour(&self, series: &str, colour: &str) {
-        let msg = format!( "global {}; ${} vectorconfig {} -colour {}",
-                           &self.id, &self.id, series, colour);
+        let msg = format!(
+            "global {}; ${} vectorconfig {} -colour {}",
+            &self.id, &self.id, series, colour
+        );
         wish::tell_wish(&msg);
     }
-    
+
     /// Sets scale factor for converting vector length into pixels.
     pub fn vector_scale(&self, series: &str, scale: f64) {
-        let msg = format!( "global {}; ${} vectorconfig {} -scale {}",
-                           &self.id, &self.id, series, scale);
+        let msg = format!(
+            "global {}; ${} vectorconfig {} -scale {}",
+            &self.id, &self.id, series, scale
+        );
         wish::tell_wish(&msg);
-    } 
+    }
 
     /// Sets scale factor for converting vector length into pixels.
     pub fn vector_type(&self, series: &str, value: plotchart::CoordinatesType) {
-        let msg = format!( "global {}; ${} vectorconfig {} -type {}",
-                           &self.id, &self.id, series, value);
+        let msg = format!(
+            "global {}; ${} vectorconfig {} -type {}",
+            &self.id, &self.id, series, value
+        );
         wish::tell_wish(&msg);
     }
 }
-

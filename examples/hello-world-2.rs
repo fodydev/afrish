@@ -14,4 +14,3 @@ fn main() {
 
     rish::mainloop();
 }
-

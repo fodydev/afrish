@@ -11,10 +11,10 @@
 //! button_1.text("Button text");
 //! button_1.command(|| { println!("Clicked button_1"); });
 //! ```
-//! 
-//! Buttons can also display images, with or without text, and how these are 
+//!
+//! Buttons can also display images, with or without text, and how these are
 //! displayed can be controlled using [compound](widget::TkLabelOptions::compound).
-//! In the following example, a button with both an image and text is set to show 
+//! In the following example, a button with both an image and text is set to show
 //! the image below the text:
 //!
 //! ```ignore
@@ -24,7 +24,7 @@
 //! button_3.command(|| { println!("Clicked button_3"); });
 //! button_3.compound(rish::Compound::Bottom);
 //! ```
-//! 
+//!
 
 use super::grid;
 use super::pack;
@@ -75,7 +75,7 @@ impl TkButton {
         wish::tell_wish(&msg);
     }
 
-    /// Sets the state of the button, usually normal (clickable) 
+    /// Sets the state of the button, usually normal (clickable)
     /// or disabled (unclickable).
     pub fn state(&self, value: widget::State) {
         widget::configure(&self.id, "state", &value.to_string());

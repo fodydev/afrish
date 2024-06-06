@@ -196,7 +196,11 @@ impl TkCanvas {
     }
 
     /// Creates a rectangle with opposite corners (x1, y1) (x2, y2).
-    pub fn create_rectangle(&self, (x1, y1): (u64, u64), (x2, y2): (u64, u64)) -> TkCanvasRectangle {
+    pub fn create_rectangle(
+        &self,
+        (x1, y1): (u64, u64),
+        (x2, y2): (u64, u64),
+    ) -> TkCanvasRectangle {
         let msg = format!(
             "puts [{} create rectangle {} {} {} {}] ; flush stdout",
             &self.id, x1, y1, x2, y2
@@ -224,7 +228,11 @@ impl TkCanvas {
     }
 
     /// Creates a widget at (x, y) according to given widget reference.
-    pub fn create_widget(&self, (x, y): (u64, u64), widget: &impl widget::TkWidget) -> TkCanvasWidget {
+    pub fn create_widget(
+        &self,
+        (x, y): (u64, u64),
+        widget: &impl widget::TkWidget,
+    ) -> TkCanvasWidget {
         let msg = format!(
             "puts [{} create window {} {} {}] ; flush stdout",
             &self.id,

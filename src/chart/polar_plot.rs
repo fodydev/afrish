@@ -1,8 +1,8 @@
 //! Polar plot - plots points along a circular axis.
 //!
 
-use crate::chart::plotchart;
 use crate::canvas;
+use crate::chart::plotchart;
 use crate::widget;
 use crate::wish;
 
@@ -13,14 +13,12 @@ pub struct TkPolarPlot {
 }
 
 /// Creates an instance of a polar plot in given canvas.
-pub fn make_polar(canvas: &canvas::TkCanvas, 
-                  radius_data: (f64, f64)) -> TkPolarPlot {
+pub fn make_polar(canvas: &canvas::TkCanvas, radius_data: (f64, f64)) -> TkPolarPlot {
     let id = wish::next_var();
     let msg = format!(
         "global {}; set {} [::Plotchart::createPolarplot {} {{{} {}}}]",
-        id, id, &canvas.id,
-        radius_data.0, radius_data.1
-        );
+        id, id, &canvas.id, radius_data.0, radius_data.1
+    );
     wish::tell_wish(&msg);
 
     TkPolarPlot { id }
@@ -94,9 +92,10 @@ impl TkPolarPlot {
 
     /// Plots a single point with respect to this axis.
     pub fn plot(&self, series: &str, (x, y): (f64, f64)) {
-        let msg = format!("global {}; ${} plot {} {} {}", 
-                          &self.id, &self.id, series, x, y);
+        let msg = format!(
+            "global {}; ${} plot {} {} {}",
+            &self.id, &self.id, series, x, y
+        );
         wish::tell_wish(&msg);
     }
 }
-

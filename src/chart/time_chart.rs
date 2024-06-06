@@ -5,11 +5,11 @@
 //! * A _milestone_ is fixed at a specific point of time.
 //! * A _period_ identifies a range of time.
 //!
-//! Use the methods [milestone](TkTimeChart::milestone) and 
-//! [period](TkTimeChart::period) to create a new labelled row 
-//! in the chart of the appropriate kind, with one milestone or period 
-//! indicated. Extra milestones or periods can be added to the current 
-//! row using the [add_milestone](TkTimeChart::add_milestone) and 
+//! Use the methods [milestone](TkTimeChart::milestone) and
+//! [period](TkTimeChart::period) to create a new labelled row
+//! in the chart of the appropriate kind, with one milestone or period
+//! indicated. Extra milestones or periods can be added to the current
+//! row using the [add_milestone](TkTimeChart::add_milestone) and
 //! [add_period](TkTimeChart::add_period) methods, as appropriate.
 
 use crate::canvas;
@@ -31,7 +31,7 @@ pub struct TkTimeChartDefinition {
     time_end: String,
     num_items: Option<u64>,
     bar_height: Option<u64>,
-    ylabel_width: Option<u64>
+    ylabel_width: Option<u64>,
 }
 
 /// Methods to set options for time-chart - call 'plot' method at
@@ -55,13 +55,14 @@ impl TkTimeChartDefinition {
         self.ylabel_width = Some(value);
         self
     }
- 
+
     /// Completes the definition of a time chart and creates the chart.
     pub fn plot(&self) -> TkTimeChart {
         let id = wish::next_var();
         let mut msg = format!(
             "global {}; set {} [::Plotchart::createTimechart {} {{{}}} {{{}}} ",
-            id, id, &self.canvas_id, &self.time_begin, &self.time_end);
+            id, id, &self.canvas_id, &self.time_begin, &self.time_end
+        );
 
         if let Some(value) = &self.num_items {
             msg.push_str(&format!("{} ", value));
@@ -97,7 +98,7 @@ pub fn make_time_chart(
         time_end: String::from(time_end),
         num_items: None,
         bar_height: None,
-        ylabel_width: None
+        ylabel_width: None,
     }
 }
 
@@ -111,15 +112,19 @@ impl plotchart::TkPlotchart for TkTimeChart {
 impl TkTimeChart {
     /// Adds a new milestone to the current row of the chart.
     pub fn add_milestone(&self, time_point: &str, colour: &str) {
-        let msg = format!("global {}; ${} addmilestone {{{}}} {}",
-                          &self.id, &self.id, time_point, colour);
+        let msg = format!(
+            "global {}; ${} addmilestone {{{}}} {}",
+            &self.id, &self.id, time_point, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a new period to the current row of the chart.
     pub fn add_period(&self, (time_begin, time_end): (&str, &str), colour: &str) {
-        let msg = format!("global {}; ${} addperiod {{{}}} {{{}}} {}",
-                          &self.id, &self.id, time_begin, time_end, colour);
+        let msg = format!(
+            "global {}; ${} addperiod {{{}}} {{{}}} {}",
+            &self.id, &self.id, time_begin, time_end, colour
+        );
         wish::tell_wish(&msg);
     }
 
@@ -129,37 +134,46 @@ impl TkTimeChart {
     /// * `time_point` - the time coordinate at which to draw the line
     /// * `colour` - colour for line
     pub fn draw_line(&self, text: &str, time_point: &str, colour: &str) {
-        let msg = format!("global {}; ${} vertline {{{}}} {{{}}} {}",
-                          &self.id, &self.id, text, time_point, colour);
+        let msg = format!(
+            "global {}; ${} vertline {{{}}} {{{}}} {}",
+            &self.id, &self.id, text, time_point, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a new row to the chart with the given milestone.
     pub fn milestone(&self, text: &str, time_point: &str, colour: &str) {
-        let msg = format!("global {}; ${} milestone {{{}}} {{{}}} {}",
-                          &self.id, &self.id, text, time_point, colour);
+        let msg = format!(
+            "global {}; ${} milestone {{{}}} {{{}}} {}",
+            &self.id, &self.id, text, time_point, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a new row to the chart with the given period.
     pub fn period(&self, text: &str, (time_begin, time_end): (&str, &str), colour: &str) {
-        let msg = format!("global {}; ${} period {{{}}} {{{}}} {{{}}} {}",
-                          &self.id, &self.id, text, time_begin, time_end, colour);
+        let msg = format!(
+            "global {}; ${} period {{{}}} {{{}}} {{{}}} {}",
+            &self.id, &self.id, text, time_begin, time_end, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a horizontal scrollbar to the chart.
     pub fn scrollbar_horizontal(&self, scroll_bar: &scrollbar::TkScrollbar) {
-        let msg = format!("global {}; ${} hscroll {}",
-                          &self.id, &self.id, &scroll_bar.id);
+        let msg = format!(
+            "global {}; ${} hscroll {}",
+            &self.id, &self.id, &scroll_bar.id
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a vertical scrollbar to the chart.
     pub fn scrollbar_vertical(&self, scroll_bar: &scrollbar::TkScrollbar) {
-        let msg = format!("global {}; ${} vscroll {}",
-                          &self.id, &self.id, &scroll_bar.id);
+        let msg = format!(
+            "global {}; ${} vscroll {}",
+            &self.id, &self.id, &scroll_bar.id
+        );
         wish::tell_wish(&msg);
     }
 }
-

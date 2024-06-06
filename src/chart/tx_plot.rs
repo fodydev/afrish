@@ -55,9 +55,15 @@ impl TkTXDefinition {
         let id = wish::next_var();
         let mut msg = format!(
             "global {}; set {} [::Plotchart::createTXPlot {} {{{} {} {}}} {{{} {} {}}}",
-            id, id, &self.canvas_id,
-            self.time_axis.0, self.time_axis.1, self.time_axis.2,
-            self.y_axis.0, self.y_axis.1, self.y_axis.2
+            id,
+            id,
+            &self.canvas_id,
+            self.time_axis.0,
+            self.time_axis.1,
+            self.time_axis.2,
+            self.y_axis.0,
+            self.y_axis.1,
+            self.y_axis.2
         );
 
         if let Some(value) = &self.time_format {
@@ -173,4 +179,3 @@ impl TkTXPlot {
         wish::tell_wish(&msg);
     }
 }
-

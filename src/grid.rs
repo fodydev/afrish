@@ -14,7 +14,7 @@
 //! 2. `layout` must be called last, to perform the layout.
 //! 3. zero or more options are added to the GridLayout, to control the position
 //!   and layout of the widget.
-//! 
+//!
 //! ## Example
 //!
 //! The following example places a label:
@@ -168,8 +168,8 @@ pub trait TkGridLayout: widget::TkWidget {
         GridLayout::new(self.id())
     }
 
-    /// Sets properties for widget layout directly through Tk: see Tk 
-    /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/grid.htm#M9) for 
+    /// Sets properties for widget layout directly through Tk: see Tk
+    /// [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/grid.htm#M9) for
     /// options.
     ///
     /// e.g. to set the "padx" value to "5" on a label:

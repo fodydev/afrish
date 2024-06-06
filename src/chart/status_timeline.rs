@@ -1,4 +1,4 @@
-//! Status timeline - displays information against a time line like a 
+//! Status timeline - displays information against a time line like a
 //!                   horizontal bar chart.
 //!
 
@@ -19,11 +19,13 @@ pub fn make_status_timeline(
     canvas: &canvas::TkCanvas,
     x_axis: (f64, f64, f64),
     y_labels: &[&str],
-    show_x_axis: bool) -> TkStatusTimeline {
+    show_x_axis: bool,
+) -> TkStatusTimeline {
     let id = wish::next_var();
-    let msg = format!(
+    let msg =
+        format!(
         "global {}; set {} [::Plotchart::createStatusTimeline {} {{ {} {} {} }} {{{}}} -xaxis {}]",
-        id, id, &canvas.id, x_axis.0, x_axis.1, x_axis.2, 
+        id, id, &canvas.id, x_axis.0, x_axis.1, x_axis.2,
         widget::strings_list(&y_labels),
         if show_x_axis { "1" } else { "0" });
     wish::tell_wish(&msg);
@@ -40,10 +42,23 @@ impl plotchart::TkPlotchart for TkStatusTimeline {
 
 impl TkStatusTimeline {
     /// Draws a vertical line at given time point.
-    pub fn draw_line(&self, text: &str, time_point: f64, colour: &str, dash: plotchart::ChartDash, width: f64) {
+    pub fn draw_line(
+        &self,
+        text: &str,
+        time_point: f64,
+        colour: &str,
+        dash: plotchart::ChartDash,
+        width: f64,
+    ) {
         let msg = format!(
             "global {}; ${} vertline {{{}}} {} -fill {} -dash {} -width {}",
-            &self.id, &self.id, text, time_point, colour, &dash.to_short_string(), width
+            &self.id,
+            &self.id,
+            text,
+            time_point,
+            colour,
+            &dash.to_short_string(),
+            width
         );
         wish::tell_wish(&msg);
     }
@@ -57,4 +72,3 @@ impl TkStatusTimeline {
         wish::tell_wish(&msg);
     }
 }
-

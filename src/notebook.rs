@@ -1,4 +1,4 @@
-//! Notebook widget - a container widget which contains multiple panes, but 
+//! Notebook widget - a container widget which contains multiple panes, but
 //! displays one pane at a time.
 //!
 //! * also see the Tk [manual](https://www.tcl-lang.org/man/tcl8.6/TkCmd/ttk_notebook.htm)

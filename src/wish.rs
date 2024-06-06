@@ -14,7 +14,7 @@
 //!
 //! The call to `start_wish` starts the "wish" program and sets up some
 //! internal structure to store information about your program's interaction
-//! with wish. The return value is a `Result`, so must be unwrapped (or 
+//! with wish. The return value is a `Result`, so must be unwrapped (or
 //! otherwise handled) to obtain the top-level window.
 //!
 //! If you are using a different program to "wish", e.g. a tclkit, then
@@ -26,7 +26,7 @@
 //!
 //! All construction of the GUI must be done after starting a wish process.
 //!
-//! (For debugging purposes, [trace_with] additionally displays all 
+//! (For debugging purposes, [trace_with] additionally displays all
 //! messages to/from the wish program on stdout.)
 //!
 //! Tk is event-driven, so the code sets up the content and design
@@ -42,11 +42,11 @@
 //!
 //! ## Low-level API
 //!
-//! The modules in this crate aim to provide a rust-friendly, type-checked set 
+//! The modules in this crate aim to provide a rust-friendly, type-checked set
 //! of structs and methods for using the Tk library.
 //!
 //! However, there are many features in Tk and not all of them are likely to be
-//! wrapped. If there is a feature missing they may be used by directly calling 
+//! wrapped. If there is a feature missing they may be used by directly calling
 //! Tk commands through the low-level API.
 //!
 //! 1. every widget has an `id` field, which gives the Tk identifier.
@@ -225,8 +225,9 @@ fn eval_callback0(wid: &str) {
     if let Some(command) = get_callback0(wid) {
         command();
         if !wid.contains("after") && // after commands apply once only
-            !CALLBACKS0.lock().unwrap().contains_key(wid) // do not overwrite if a replacement command added
-            {
+            !CALLBACKS0.lock().unwrap().contains_key(wid)
+        // do not overwrite if a replacement command added
+        {
             add_callback0(wid, command);
         }
     } // TODO - error?
@@ -456,47 +457,50 @@ pub fn start_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
     if let Ok(_) = TRACE_WISH.set(false) {
         start_tk_connection(wish)
     } else {
-        return Err(TkError { message: String::from("Failed to set trace option") })
+        return Err(TkError {
+            message: String::from("Failed to set trace option"),
+        });
     }
 }
 
-/// Creates a connection with the given wish/tclkit program with 
+/// Creates a connection with the given wish/tclkit program with
 /// debugging output enabled (wish interactions are reported to stdout).
 pub fn trace_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
     if let Ok(_) = TRACE_WISH.set(true) {
         start_tk_connection(wish)
     } else {
-        return Err(TkError { message: String::from("Failed to set trace option") })
+        return Err(TkError {
+            message: String::from("Failed to set trace option"),
+        });
     }
 }
 
 /// Creates a connection with the given wish/tclkit program.
-fn start_tk_connection(wish: &str)-> Result<toplevel::TkTopLevel, TkError> {
-
+fn start_tk_connection(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
     let err_msg = format!("Do not start {} twice", wish);
 
     unsafe {
         if let Ok(wish_process) = process::Command::new(wish)
             .stdin(process::Stdio::piped())
-                .stdout(process::Stdio::piped())
-                .spawn()
-                {
-                    if WISH.set(wish_process).is_err() {
-                        return Err(TkError { message: err_msg });
-                    }
-                } else {
-                    return Err(TkError {
-                        message: format!("Failed to start {} process", wish),
-                    });
-                };
+            .stdout(process::Stdio::piped())
+            .spawn()
+        {
+            if WISH.set(wish_process).is_err() {
+                return Err(TkError { message: err_msg });
+            }
+        } else {
+            return Err(TkError {
+                message: format!("Failed to start {} process", wish),
+            });
+        };
 
         let mut input = WISH.get_mut().unwrap().stdin.take().unwrap();
         if OUTPUT
             .set(WISH.get_mut().unwrap().stdout.take().unwrap())
-                .is_err()
-                {
-                    return Err(TkError { message: err_msg });
-                }
+            .is_err()
+        {
+            return Err(TkError { message: err_msg });
+        }
 
         // -- initial setup of Tcl/Tk environment
 
@@ -518,7 +522,7 @@ fn start_tk_connection(wish: &str)-> Result<toplevel::TkTopLevel, TkError> {
                 puts $res
                 flush stdout
         }\n",
-        )
+            )
             .unwrap();
         // tcl function to help working with scale widget
         input
@@ -527,7 +531,7 @@ fn start_tk_connection(wish: &str)-> Result<toplevel::TkTopLevel, TkError> {
             puts cb1f-$w-$value
                 flush stdout
         }\n",
-        )
+            )
             .unwrap();
 
         let (sender, receiver) = mpsc::channel();
@@ -580,49 +584,49 @@ pub(super) fn split_items(text: &str) -> Vec<String> {
             }
             break;
         }
-        }
-
-        result
     }
+
+    result
+}
 
 #[cfg(test)]
-    mod tests {
-        use super::*;
+mod tests {
+    use super::*;
 
-        #[test]
-        fn split_items_1() {
-            let result = split_items("");
-            assert_eq!(0, result.len());
-        }
-
-        #[test]
-        fn split_items_2() {
-            let result = split_items("abc");
-            assert_eq!(1, result.len());
-            assert_eq!("abc", result[0]);
-        }
-
-        #[test]
-        fn split_items_3() {
-            let result = split_items("  abc  def  ");
-            assert_eq!(2, result.len());
-            assert_eq!("abc", result[0]);
-            assert_eq!("def", result[1]);
-        }
-
-        #[test]
-        fn split_items_4() {
-            let result = split_items("{abc def}");
-            assert_eq!(1, result.len());
-            assert_eq!("abc def", result[0]);
-        }
-
-        #[test]
-        fn split_items_5() {
-            let result = split_items("{abc def} xy_z {another}");
-            assert_eq!(3, result.len());
-            assert_eq!("abc def", result[0]);
-            assert_eq!("xy_z", result[1]);
-            assert_eq!("another", result[2]);
-        }
+    #[test]
+    fn split_items_1() {
+        let result = split_items("");
+        assert_eq!(0, result.len());
     }
+
+    #[test]
+    fn split_items_2() {
+        let result = split_items("abc");
+        assert_eq!(1, result.len());
+        assert_eq!("abc", result[0]);
+    }
+
+    #[test]
+    fn split_items_3() {
+        let result = split_items("  abc  def  ");
+        assert_eq!(2, result.len());
+        assert_eq!("abc", result[0]);
+        assert_eq!("def", result[1]);
+    }
+
+    #[test]
+    fn split_items_4() {
+        let result = split_items("{abc def}");
+        assert_eq!(1, result.len());
+        assert_eq!("abc def", result[0]);
+    }
+
+    #[test]
+    fn split_items_5() {
+        let result = split_items("{abc def} xy_z {another}");
+        assert_eq!(3, result.len());
+        assert_eq!("abc def", result[0]);
+        assert_eq!("xy_z", result[1]);
+        assert_eq!("another", result[2]);
+    }
+}

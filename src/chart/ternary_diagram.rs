@@ -48,8 +48,10 @@ impl plotchart::TkChartSeries for TkTernaryDiagram {}
 impl TkTernaryDiagram {
     /// Text labels for the three corners.
     pub fn corner_titles(&self, bottom_left: &str, bottom_right: &str, top_centre: &str) {
-        let msg = format!("global {}; ${} text {{{}}} {{{}}} {{{}}}",
-                          &self.id, &self.id, bottom_left, bottom_right, top_centre);
+        let msg = format!(
+            "global {}; ${} text {{{}}} {{{}}} {{{}}}",
+            &self.id, &self.id, bottom_left, bottom_right, top_centre
+        );
         wish::tell_wish(&msg);
     }
 
@@ -60,8 +62,10 @@ impl TkTernaryDiagram {
             points_str.push_str(&format!("{} {} {} ", x, y, z));
         }
 
-        let msg = format!("global {}; ${} fill {} {{{}}}",
-                          &self.id, &self.id, series, &points_str);
+        let msg = format!(
+            "global {}; ${} fill {} {{{}}}",
+            &self.id, &self.id, series, &points_str
+        );
         wish::tell_wish(&msg);
     }
 
@@ -72,32 +76,50 @@ impl TkTernaryDiagram {
             points_str.push_str(&format!("{} {} {} ", x, y, z));
         }
 
-        let msg = format!("global {}; ${} line {} {{{}}}",
-                          &self.id, &self.id, series, &points_str);
+        let msg = format!(
+            "global {}; ${} line {} {{{}}}",
+            &self.id, &self.id, series, &points_str
+        );
         wish::tell_wish(&msg);
     }
 
     /// Turns on ticklines, with given colour.
     pub fn draw_ticklines(&self, colour: &str) {
-        let msg = format!("global {}; ${} ticklines {}",
-                          &self.id, &self.id, colour);
+        let msg = format!("global {}; ${} ticklines {}", &self.id, &self.id, colour);
         wish::tell_wish(&msg);
     }
 
     /// Plots a labelled point on the diagram.
-    pub fn plot(&self, series: &str, (x, y, z): (f64, f64, f64), text: &str, 
-                direction: plotchart::Direction) {
-        let msg = format!("global {}; ${} plot {} {} {} {} {{{}}} {}",
-                          &self.id, &self.id, series, x, y, z,
-                          text, &direction.to_short_string());
+    pub fn plot(
+        &self,
+        series: &str,
+        (x, y, z): (f64, f64, f64),
+        text: &str,
+        direction: plotchart::Direction,
+    ) {
+        let msg = format!(
+            "global {}; ${} plot {} {} {} {} {{{}}} {}",
+            &self.id,
+            &self.id,
+            series,
+            x,
+            y,
+            z,
+            text,
+            &direction.to_short_string()
+        );
         wish::tell_wish(&msg);
     }
 
     /// Set to true to use smooth corners.
     pub fn series_smooth(&self, series: &str, smooth: bool) {
-        let msg = format!("global {}; ${} dataconfig {} -smooth {}",
-                          &self.id, &self.id, series, 
-                          if smooth { "1" } else { "0" });
+        let msg = format!(
+            "global {}; ${} dataconfig {} -smooth {}",
+            &self.id,
+            &self.id,
+            series,
+            if smooth { "1" } else { "0" }
+        );
         wish::tell_wish(&msg);
     }
 }

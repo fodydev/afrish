@@ -1,6 +1,6 @@
 //! Gantt chart - displays information against a time line.
 //!
-//! Like the [time chart](crate::chart::time_chart), rows are defined for two 
+//! Like the [time chart](crate::chart::time_chart), rows are defined for two
 //! kinds of display:
 //! _milestones_ and _periods_.
 //!
@@ -32,7 +32,7 @@ pub struct TkGanttChartDefinition {
     num_items: Option<u64>,
     bar_height: Option<u64>,
     ylabel_width: Option<u64>,
-    max_width: Option<u64>
+    max_width: Option<u64>,
 }
 
 /// Refers to a task on a gantt chart
@@ -69,13 +69,14 @@ impl TkGanttChartDefinition {
         self.ylabel_width = Some(value);
         self
     }
- 
+
     /// Completes the definition of a time chart and creates the chart.
     pub fn plot(&self) -> TkGanttChart {
         let id = wish::next_var();
         let mut msg = format!(
             "global {}; set {} [::Plotchart::createGanttchart {} {{{}}} {{{}}} ",
-            id, id, &self.canvas_id, &self.time_begin, &self.time_end);
+            id, id, &self.canvas_id, &self.time_begin, &self.time_end
+        );
 
         if let Some(value) = &self.num_items {
             msg.push_str(&format!("{} ", value));
@@ -99,7 +100,7 @@ impl TkGanttChartDefinition {
 
 /// Creates a Gantt chart.
 ///
-/// Constructor creates an instance of a gantt chart definition in given 
+/// Constructor creates an instance of a gantt chart definition in given
 /// canvas.
 ///
 /// Options must be added and then 'plot' called to finally
@@ -116,7 +117,7 @@ pub fn make_gantt_chart(
         num_items: None,
         bar_height: None,
         ylabel_width: None,
-        max_width: None
+        max_width: None,
     }
 }
 
@@ -130,71 +131,79 @@ impl plotchart::TkPlotchart for TkGanttChart {
 impl TkGanttChart {
     /// Sets colour of description.
     pub fn description_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour description {}",
-                          &self.id, &self.id, colour);
+        let msg = format!(
+            "global {}; ${} colour description {}",
+            &self.id, &self.id, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets colour of description.
     pub fn description_font(&self, font: &font::TkFont) {
-        let msg = format!("global {}; ${} font description {{{}}}",
-                          &self.id, &self.id, font);
+        let msg = format!(
+            "global {}; ${} font description {{{}}}",
+            &self.id, &self.id, font
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets colour of completed part of task.
     pub fn completed_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour completed {}",
-                          &self.id, &self.id, colour);
+        let msg = format!(
+            "global {}; ${} colour completed {}",
+            &self.id, &self.id, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets colour of uncompleted part of task.
     pub fn uncompleted_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour left {}",
-                          &self.id, &self.id, colour);
+        let msg = format!("global {}; ${} colour left {}", &self.id, &self.id, colour);
         wish::tell_wish(&msg);
     }
 
     /// Sets background colour of odd entries.
     pub fn odd_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour odd {}",
-                          &self.id, &self.id, colour);
+        let msg = format!("global {}; ${} colour odd {}", &self.id, &self.id, colour);
         wish::tell_wish(&msg);
     }
 
     /// Sets background colour of even entries.
     pub fn even_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour even {}",
-                          &self.id, &self.id, colour);
+        let msg = format!("global {}; ${} colour even {}", &self.id, &self.id, colour);
         wish::tell_wish(&msg);
     }
 
     /// Sets colour of summary text.
     pub fn summary_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour summary {}",
-                          &self.id, &self.id, colour);
+        let msg = format!(
+            "global {}; ${} colour summary {}",
+            &self.id, &self.id, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets font of summary text.
     pub fn summary_font(&self, font: &font::TkFont) {
-        let msg = format!("global {}; ${} font summary {{{}}}",
-                          &self.id, &self.id, font);
+        let msg = format!(
+            "global {}; ${} font summary {{{}}}",
+            &self.id, &self.id, font
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets colour of summary bar.
     pub fn summary_bar_colour(&self, colour: &str) {
-        let msg = format!("global {}; ${} colour summarybar {}",
-                          &self.id, &self.id, colour);
+        let msg = format!(
+            "global {}; ${} colour summarybar {}",
+            &self.id, &self.id, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Sets font of time scale.
     pub fn scale_font(&self, font: &font::TkFont) {
-        let msg = format!("global {}; ${} font scale {{{}}}",
-                          &self.id, &self.id, font);
+        let msg = format!("global {}; ${} font scale {{{}}}", &self.id, &self.id, font);
         wish::tell_wish(&msg);
     }
 
@@ -204,43 +213,55 @@ impl TkGanttChart {
     /// * `time_point` - the time coordinate at which to draw the line
     /// * `colour` - colour for line
     pub fn draw_line(&self, text: &str, time_point: &str, colour: &str) {
-        let msg = format!("global {}; ${} vertline {{{}}} {{{}}} {}",
-                          &self.id, &self.id, text, time_point, colour);
+        let msg = format!(
+            "global {}; ${} vertline {{{}}} {{{}}} {}",
+            &self.id, &self.id, text, time_point, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a new row to the chart with the given milestone.
     pub fn milestone(&self, text: &str, time_point: &str, colour: &str) {
-        let msg = format!("global {}; ${} milestone {{{}}} {{{}}} {}",
-                          &self.id, &self.id, text, time_point, colour);
+        let msg = format!(
+            "global {}; ${} milestone {{{}}} {{{}}} {}",
+            &self.id, &self.id, text, time_point, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a new row to the chart with the given period.
     pub fn period(&self, text: &str, (time_begin, time_end): (&str, &str), colour: &str) {
-        let msg = format!("global {}; ${} period {{{}}} {{{}}} {{{}}} {}",
-                          &self.id, &self.id, text, time_begin, time_end, colour);
+        let msg = format!(
+            "global {}; ${} period {{{}}} {{{}}} {{{}}} {}",
+            &self.id, &self.id, text, time_begin, time_end, colour
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a horizontal scrollbar to the chart.
     pub fn scrollbar_horizontal(&self, scroll_bar: &scrollbar::TkScrollbar) {
-        let msg = format!("global {}; ${} hscroll {}",
-                          &self.id, &self.id, &scroll_bar.id);
+        let msg = format!(
+            "global {}; ${} hscroll {}",
+            &self.id, &self.id, &scroll_bar.id
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a vertical scrollbar to the chart.
     pub fn scrollbar_vertical(&self, scroll_bar: &scrollbar::TkScrollbar) {
-        let msg = format!("global {}; ${} vscroll {}",
-                          &self.id, &self.id, &scroll_bar.id);
+        let msg = format!(
+            "global {}; ${} vscroll {}",
+            &self.id, &self.id, &scroll_bar.id
+        );
         wish::tell_wish(&msg);
     }
 
     /// Connect two tasks.
     pub fn connect(&self, from_task: &TkGanttTask, to_task: &TkGanttTask) {
-        let msg = format!("global {}; ${} connect ${} ${}",
-                          &self.id, &self.id, &from_task.id, &to_task.id);
+        let msg = format!(
+            "global {}; ${} connect ${} ${}",
+            &self.id, &self.id, &from_task.id, &to_task.id
+        );
         wish::tell_wish(&msg);
     }
 
@@ -251,19 +272,27 @@ impl TkGanttChart {
             task_str.push_str(&format!("${} ", task.id));
         }
 
-        let msg = format!("global {}; ${} summary {{{}}} {}",
-                          &self.id, &self.id, text, task_str);
+        let msg = format!(
+            "global {}; ${} summary {{{}}} {}",
+            &self.id, &self.id, text, task_str
+        );
         wish::tell_wish(&msg);
     }
 
     /// Adds a task to the chart.
-    pub fn task(&self, text: &str, (time_begin, time_end): (&str, &str), completed: u64) -> TkGanttTask {
+    pub fn task(
+        &self,
+        text: &str,
+        (time_begin, time_end): (&str, &str),
+        completed: u64,
+    ) -> TkGanttTask {
         let id = wish::next_var();
-        let msg = format!("global {}; set {} [${} task {{{}}} {{{}}} {{{}}} {}]",
-                          &self.id, id, &self.id, text, time_begin, time_end, completed);
+        let msg = format!(
+            "global {}; set {} [${} task {{{}}} {{{}}} {{{}}} {}]",
+            &self.id, id, &self.id, text, time_begin, time_end, completed
+        );
         wish::tell_wish(&msg);
 
         TkGanttTask { id }
     }
 }
-
