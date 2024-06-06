@@ -26,7 +26,7 @@ pub fn make_status_timeline(
         format!(
         "global {}; set {} [::Plotchart::createStatusTimeline {} {{ {} {} {} }} {{{}}} -xaxis {}]",
         id, id, &canvas.id, x_axis.0, x_axis.1, x_axis.2,
-        widget::strings_list(&y_labels),
+        widget::strings_list(y_labels),
         if show_x_axis { "1" } else { "0" });
     wish::tell_wish(&msg);
 

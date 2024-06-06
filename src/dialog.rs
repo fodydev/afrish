@@ -564,13 +564,13 @@ pub fn font_chooser_title(title: &str) {
 pub fn font_chooser_command(command: impl Fn(font::TkFont) + Send + 'static) {
     wish::add_callback1_font("font", wish::mk_callback1_font(command));
     let msg = "tk fontchooser configure -command [list font_choice font]";
-    wish::tell_wish(&msg);
+    wish::tell_wish(msg);
 }
 
 /// Get the font for the font-chooser.
 pub fn font_chooser_font_get() -> String {
     let msg = "tk fontchooser configure -font ";
-    wish::ask_wish(&msg)
+    wish::ask_wish(msg)
 }
 
 /// Set the font for the font-chooser.
@@ -582,18 +582,18 @@ pub fn font_chooser_font_set(font: &str) {
 /// Hide the font-chooser, making it not visible.
 pub fn font_chooser_hide() {
     let msg = "tk fontchooser hide";
-    wish::tell_wish(&msg);
+    wish::tell_wish(msg);
 }
 
 /// Show the font-chooser, making it visible.
 pub fn font_chooser_show() {
     let msg = "tk fontchooser show";
-    wish::tell_wish(&msg);
+    wish::tell_wish(msg);
 }
 
 /// Check if the font-chooser is currently visible.
 pub fn font_chooser_visible() -> bool {
     let msg = "tk fontchooser configure -visible ";
-    let result = wish::ask_wish(&msg);
+    let result = wish::ask_wish(msg);
     result == "1"
 }
