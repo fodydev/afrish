@@ -548,6 +548,11 @@ fn start_tk_connection(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
             )
             .unwrap();
 
+        // configure the communication encoding
+        input
+            .write_all(b"chan configure stdin -encoding utf-8\n")
+            .unwrap();
+
         let (sender, receiver) = mpsc::channel();
         SENDER.set(sender).expect(&err_msg);
 
