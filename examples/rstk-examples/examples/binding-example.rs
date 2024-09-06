@@ -1,9 +1,9 @@
-use rish::*;
+use afrish::*;
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
 
-    let label = rish::make_label(&root);
+    let label = afrish::make_label(&root);
     label.text("Starting ...");
     label.grid().padx(10).pady(10).layout();
 
@@ -33,5 +33,5 @@ fn main() {
                                               event.x, event.y));
                        });
 
-    rish::mainloop();
+    afrish::mainloop();
 }

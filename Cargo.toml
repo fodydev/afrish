@@ -1,12 +1,12 @@
 [package]
-name = "rish"
+name = "afrish"
 version = "0.1.0"
 authors = ["Brady Fomegne <brady.fomegne@outlook.com>"]
 edition = "2021"
 
 categories = ["gui"]
-description = "A Rust binding for the Tk graphics toolkit."
-repository = "https://github.com/pythonbrad/rish/"
+description = "A Rust binding for the Tk graphics toolkit, made for building the Afrim IME."
+repository = "https://github.com/pythonbrad/afrish/"
 keywords = ["gui", "tk"]
 license = "MIT"
 readme = "README.md"

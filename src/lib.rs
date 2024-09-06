@@ -1,6 +1,6 @@
 //! A Rust binding for the Tk graphics toolkit.
 //!
-//! rish opens and communicates with Tk's wish program as a separate process.
+//! afrish opens and communicates with Tk's wish program as a separate process.
 //! The library provides:
 //!
 //! * low-level functions to directly communicate with wish, suitable for
@@ -23,17 +23,17 @@
 //! A simple hello-world example:
 //!
 //! ```ignore
-//! use rish::*;
+//! use afrish::*;
 //!
 //! fn main() {
-//!   let root = rish::start_wish().unwrap();
+//!   let root = afrish::start_wish().unwrap();
 //!
-//!   let hello = rish::make_label(&root);
+//!   let hello = afrish::make_label(&root);
 //!   hello.text("Hello from Rust/Tk");
 //!
 //!   hello.grid().layout();
 //!
-//!   rish::mainloop();
+//!   afrish::mainloop();
 //! }
 //! ```
 //!

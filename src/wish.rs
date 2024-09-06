@@ -4,11 +4,11 @@
 //!
 //! ```ignore
 //! fn main() {
-//!   let root = rish::start_wish().unwrap();
+//!   let root = afrish::start_wish().unwrap();
 //!
 //!   // -- add code here to create program
 //!
-//!   rish::mainloop();
+//!   afrish::mainloop();
 //! }
 //! ```
 //!
@@ -21,7 +21,7 @@
 //! call instead:
 //!
 //! ```ignore
-//!   let root = rish::start_with("tclkit").unwrap();
+//!   let root = afrish::start_with("tclkit").unwrap();
 //! ```
 //!
 //! All construction of the GUI must be done after starting a wish process.
@@ -59,9 +59,9 @@
 //! flag is not wrapped. You can nevertheless set its value using:
 //!
 //! ```ignore
-//! let label = rish::make_label(&root);
+//! let label = afrish::make_label(&root);
 //!
-//! rish::tell_wish(&format!("{} configure -takefocus 0", &label.id));
+//! afrish::tell_wish(&format!("{} configure -takefocus 0", &label.id));
 //! ```
 //!
 //! Also useful are:

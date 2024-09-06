@@ -12,7 +12,7 @@
 //! accepts a single boolean, which is the _new_ state of the button:
 //!
 //! ```ignore
-//! let button_1 = rish::make_check_button(&root);
+//! let button_1 = afrish::make_check_button(&root);
 //! button_1.text("Button label");
 //! button_1.command(|value| { println!("button_1 now {}", value); });
 //! ```
@@ -24,11 +24,11 @@
 //! text:
 //!
 //! ```ignore
-//! let button_3 = rish::make_check_button(&root);
+//! let button_3 = afrish::make_check_button(&root);
 //! button_3.image(&read_image("tcllogo.gif"));
 //! button_3.text("Tcl Logo");
 //! button_3.command(|state| { println!("Clicked button_3"); });
-//! button_3.compound(rish::Compound::Bottom);
+//! button_3.compound(afrish::Compound::Bottom);
 //! ```
 //!
 //! The check button's state can be changed or checked using the

@@ -17,7 +17,7 @@
 //! information dialog:
 //!
 //! ```ignore
-//! rish::message_box()
+//! afrish::message_box()
 //!   .OPTION(VALUE) // 0 or more
 //!   .show();
 //! ```

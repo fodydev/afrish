@@ -1,31 +1,31 @@
-use rish::*;
+use afrish::*;
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
     root.title("treeview-example.rs");
 
-    let treeview = rish::make_treeview(&root);
+    let treeview = afrish::make_treeview(&root);
     treeview.columns(&["size", "modified"]);
     treeview.heading_text("#0", "Name");
     treeview.heading_text("size", "Size (kB)");
     treeview.heading_text("modified", "Last Modified");
 
-    let hscroll = rish::make_horizontal_scrollbar(&root, &treeview);
-    let vscroll = rish::make_vertical_scrollbar(&root, &treeview);
+    let hscroll = afrish::make_horizontal_scrollbar(&root, &treeview);
+    let vscroll = afrish::make_vertical_scrollbar(&root, &treeview);
 
-    treeview.grid().column(0).row(0).sticky(rish::Sticky::NESW).layout();
-    hscroll.grid().column(0).row(1).sticky(rish::Sticky::EW).layout();
-    vscroll.grid().column(1).row(0).sticky(rish::Sticky::NS).layout();
+    treeview.grid().column(0).row(0).sticky(afrish::Sticky::NESW).layout();
+    hscroll.grid().column(0).row(1).sticky(afrish::Sticky::EW).layout();
+    vscroll.grid().column(1).row(0).sticky(afrish::Sticky::NS).layout();
     root.grid_configure_column(0, "weight", "1");
     root.grid_configure_row(0, "weight", "1");
 
     // -- alter alignments
-    treeview.column_anchor("size", rish::Anchor::Centre);
-    treeview.column_anchor("modified", rish::Anchor::Centre);
+    treeview.column_anchor("size", afrish::Anchor::Centre);
+    treeview.column_anchor("modified", afrish::Anchor::Centre);
 
     // -- add a feedback label
-    let label = rish::make_label(&root);
-    label.grid().column(0).row(2).sticky(rish::Sticky::EW).layout();
+    let label = afrish::make_label(&root);
+    label.grid().column(0).row(2).sticky(afrish::Sticky::EW).layout();
 
     // -- populate treeview with dummy items
     let item1 = treeview.insert_item();
@@ -49,6 +49,6 @@ fn main() {
         label.text(&format!("{} selected items", selected_items.len()));
     });
 
-    rish::mainloop();
+    afrish::mainloop();
 }
 

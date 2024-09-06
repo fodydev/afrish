@@ -1,10 +1,10 @@
-# rish
+# afrish
 
-A Rust binding for the Tk graphics toolkit.
+A Rust binding for the Tk graphics toolkit, designed specifically for the development of the [Afrim IME](https://github.com/fodydev/afrim).
 
 ## Overview
 
-rish opens and communicates with Tk's wish program as a separate process.
+afrish opens and communicates with Tk's wish program as a separate process.
 The library provides:
 
 * low-level functions to directly communicate with wish, suitable for 
@@ -16,17 +16,17 @@ The library provides:
 A simple hello-world example:
 
 ```rust
-use rish::*;
+use afrish::*;
 
 fn main() {
-  let root = rish::start_wish().unwrap();
+  let root = afrish::start_wish().unwrap();
 
-  let hello = rish::make_label(&root);
+  let hello = afrish::make_label(&root);
   hello.text("Hello from Rust/Tk");
 
   hello.grid().layout();
 
-  rish::mainloop();
+  afrish::mainloop();
 }
 ```
 
