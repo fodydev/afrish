@@ -171,6 +171,21 @@ impl TkTopLevel {
         let msg = format!("wm withdraw {}", self.id);
         wish::tell_wish(&msg);
     }
+
+    /// Hide / Show the window border.
+    pub fn border(&self, value: bool) {
+        wish::tell_wish(&format!("wm overrideredirect {} {};", &self.id, !value));
+    }
+
+    /// Put the windows in front all the windows.
+    pub fn topmost(&self, value: bool) {
+        wish::tell_wish(&format!("wm attributes {} -topmost {};", &self.id, value));
+    }
+
+    /// Change the window position.
+    pub fn position(&self, x: u64, y: u64) {
+        wish::tell_wish(&format!("wm geometry {} +{}+{}", &self.id, x, y));
+    }
 }
 
 // Parse the widthxheight+x+y tcl string into a tuple: (width, height, x, y).
