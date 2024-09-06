@@ -180,8 +180,7 @@ pub fn next_wid(parent: &str) -> String {
     }
 }
 
-/// Returns a new variable name. This is used in the chart
-/// module to reference the chart instances in Tk.
+/// Returns a new variable name.
 ///
 /// This is only for use when writing an extension library.
 ///
@@ -521,9 +520,6 @@ fn start_tk_connection(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
         }
 
         // -- initial setup of Tcl/Tk environment
-
-        // load the plotchart package - TODO: give some indication if this fails
-        input.write_all(b"package require Plotchart\n").unwrap();
 
         // set close button to output 'exit' message, so rust can close connection
         input
