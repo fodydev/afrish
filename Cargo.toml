@@ -6,7 +6,7 @@ edition = "2021"
 
 categories = ["gui"]
 description = "A Rust binding for the Tk graphics toolkit, made for building the Afrim IME."
-repository = "https://github.com/pythonbrad/afrish/"
+repository = "https://github.com/fodydev/afrish/"
 keywords = ["gui", "tk"]
 license = "MIT"
 readme = "README.md"
