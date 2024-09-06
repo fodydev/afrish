@@ -4,11 +4,9 @@
 
 use std::fmt;
 
-use super::canvas;
 use super::font;
 use super::image;
 use super::wish;
-use crate::chart::plotchart;
 
 /// Struct holding information from a bound event,
 /// returned as a parameter to the bound closure.
@@ -694,38 +692,6 @@ pub(super) fn padding(wid: &str, values: &[u64]) {
     configure(wid, "padding", &value_str);
 }
 
-pub(super) fn strings_list(values: &[&str]) -> String {
-    let mut values_str = String::new();
-
-    for value in values {
-        values_str.push_str(&format!("{} ", value));
-    }
-
-    values_str
-}
-
-pub(super) fn str_list(values: &[f64]) -> String {
-    let mut values_str = String::new();
-
-    for value in values {
-        values_str.push_str(&format!("{} ", value));
-    }
-
-    values_str
-}
-
-pub(super) fn str_list_lists<M: AsRef<[R]>, R: AsRef<[f64]>>(values: M) -> String {
-    let mut values_str = String::new();
-
-    for vs in values.as_ref() {
-        values_str.push('{');
-        values_str.push_str(&str_list(vs.as_ref()));
-        values_str.push_str("} ");
-    }
-
-    values_str
-}
-
 // --------------------------------------------------------------------------
 
 /// Triggers given command after 'time' milliseconds.
@@ -740,30 +706,6 @@ pub fn after(time: u64, command: impl Fn() + Send + 'static) {
 /// Binds command for event pattern to _all_ widgets.
 pub fn bind(pattern: &str, command: impl Fn(TkEvent) + Send + 'static) {
     bind_to("all", pattern, command);
-}
-
-/// Sets colour map (for xy_plots).
-pub fn colour_map(map: plotchart::ColourMap) {
-    let msg = format!("::Plotchart::colorMap {}", map);
-    wish::tell_wish(&msg);
-}
-
-/// Copies contents of one or more plots onto another canvas widget.
-pub fn plot_pack(
-    canvas: &canvas::TkCanvas,
-    direction: plotchart::PlotDirection,
-    charts: &[&impl plotchart::TkPlotchart],
-) {
-    let mut charts_str = String::new();
-    for chart in charts {
-        charts_str.push_str(&format!("${} ", chart.id()));
-    }
-
-    let msg = format!(
-        "::Plotchart::plotpack {} {} {}",
-        &canvas.id, direction, charts_str
-    );
-    wish::tell_wish(&msg);
 }
 
 /// Checks what the current OS system is: see

@@ -53,9 +53,6 @@ pub use button::*;
 pub mod canvas;
 pub use canvas::*;
 
-pub mod chart;
-pub use chart::*;
-
 pub mod check_button;
 pub use check_button::*;
 
