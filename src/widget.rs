@@ -547,7 +547,7 @@ impl fmt::Display for Relief {
 
 /// Defines mode of selection.
 ///
-/// Note: rish diverges from the Tk terminology:
+/// Note: afrish diverges from the Tk terminology:
 ///
 /// * 'Single' is equivalent to Tk's "browse"
 /// * 'Multiple' is equivalent to Tk's "extended"

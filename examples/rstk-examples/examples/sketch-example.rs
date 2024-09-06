@@ -1,21 +1,21 @@
-use rish::*;
+use afrish::*;
 use std::sync::Arc;
 use std::sync::Mutex;
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
 
     let colour = Arc::new(Mutex::new("blue"));
     let last_x = Arc::new(Mutex::new(0));
     let last_y = Arc::new(Mutex::new(0));
 
     root.title("sketch-example.rs");
-    let canvas = rish::make_canvas(&root);
+    let canvas = afrish::make_canvas(&root);
     canvas.width(500);
     canvas.height(500);
     canvas.background("gray75");
 
-    canvas.grid().column(0).row(0).sticky(rish::Sticky::NESW).layout();
+    canvas.grid().column(0).row(0).sticky(afrish::Sticky::NESW).layout();
     root.grid_configure_column(0, "weight", "1");
     root.grid_configure_row(0, "weight", "1");
 
@@ -87,7 +87,7 @@ fn main() {
         });
     }
 
-    rish::mainloop();
+    afrish::mainloop();
 }
 
 

@@ -1,16 +1,16 @@
-use rish::*;
+use afrish::*;
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
     root.title("text-example-3.rs");
 
-    let text = rish::make_text(&root);
+    let text = afrish::make_text(&root);
     text.width(40);
     text.height(5);
-    text.wrap(rish::Wrapping::None);
+    text.wrap(afrish::Wrapping::None);
     text.insert_end("abcd\nefgh");
 
-    text.grid().column(0).row(0).sticky(rish::Sticky::NESW).layout();
+    text.grid().column(0).row(0).sticky(afrish::Sticky::NESW).layout();
 
     //text.delete_char((1,2));
     //text.delete((1,1), (1,2));
@@ -19,6 +19,6 @@ fn main() {
     text.replace((1,2), (2,1), "--");
     println!("Text now: {}", text.get_to_end((1, 0)));
 
-    rish::mainloop();
+    afrish::mainloop();
 }
 

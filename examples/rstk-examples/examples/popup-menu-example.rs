@@ -1,11 +1,11 @@
-use rish::*;
+use afrish::*;
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
 
     root.title("popup-menu-example.rs");
 
-    let menu = rish::make_menu(&root);
+    let menu = afrish::make_menu(&root);
     for item in ["One", "Two", "Three"].iter() {
         menu.command()
             .label(item)
@@ -17,5 +17,5 @@ fn main() {
         menu.popup(event.root_x, event.root_y);
     });
 
-    rish::mainloop();
+    afrish::mainloop();
 }

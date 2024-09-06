@@ -1,12 +1,12 @@
-use rish::*;
+use afrish::*;
 use std::sync::Arc;
 use std::sync::Mutex;
 
 fn result(answer: i32, 
           interrupt: Arc<Mutex<bool>>,
-          progressbar: rish::TkProgressbar, 
-          button: rish::TkButton, 
-          label: rish::TkLabel) {
+          progressbar: afrish::TkProgressbar, 
+          button: afrish::TkButton, 
+          label: afrish::TkLabel) {
     progressbar.value(0.0);
     if answer >= 0 {
         label.text(&format!("Answer {}", answer));
@@ -20,9 +20,9 @@ fn result(answer: i32,
 }
 
 fn start(interrupt: Arc<Mutex<bool>>, 
-         progressbar: rish::TkProgressbar,
-         button: rish::TkButton,
-         label: rish::TkLabel) {
+         progressbar: afrish::TkProgressbar,
+         button: afrish::TkButton,
+         label: afrish::TkLabel) {
     button.text("Stop!");
     {
         let interrupt = interrupt.clone();
@@ -34,7 +34,7 @@ fn start(interrupt: Arc<Mutex<bool>>,
 
     {
         let interrupt = interrupt.clone();
-        rish::after(1, move || {
+        afrish::after(1, move || {
             step(0.0, interrupt.clone(), progressbar.clone(), button.clone(), label.clone());
         });
     }
@@ -42,9 +42,9 @@ fn start(interrupt: Arc<Mutex<bool>>,
 
 fn step(count: f32, 
         interrupt: Arc<Mutex<bool>>, 
-         progressbar: rish::TkProgressbar,
-         button: rish::TkButton,
-         label: rish::TkLabel) {
+         progressbar: afrish::TkProgressbar,
+         button: afrish::TkButton,
+         label: afrish::TkLabel) {
     progressbar.value(count);
     let interruptv = interrupt.lock().unwrap();
     if *interruptv {
@@ -52,7 +52,7 @@ fn step(count: f32,
     } else {
         {
             let interrupt = interrupt.clone();
-            rish::after(100, move || {
+            afrish::after(100, move || {
                 if count >= 20.0 {
                     result(42, interrupt.clone(), progressbar.clone(), button.clone(), label.clone());
                 } else {
@@ -69,17 +69,17 @@ fn stop(interrupt: Arc<Mutex<bool>>) {
 }
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
     root.title("event-example.rs");
 
     // - set up the interface
-    let button = rish::make_button(&root);
+    let button = afrish::make_button(&root);
     button.text("Start!");
-    let label = rish::make_label(&root);
+    let label = afrish::make_label(&root);
     label.text("No Answer");
-    let progressbar = rish::make_progressbar(&root, 
-                                             rish::Orientation::Horizontal,
-                                             rish::ProgressMode::Determinate);
+    let progressbar = afrish::make_progressbar(&root, 
+                                             afrish::Orientation::Horizontal,
+                                             afrish::ProgressMode::Determinate);
     progressbar.maximum(20.0);
 
     button.grid().row(0).column(1).padx(5).pady(5).layout();
@@ -92,5 +92,5 @@ fn main() {
         start(interrupt.clone(), progressbar.clone(), button.clone(), label.clone());
     });
 
-    rish::mainloop();
+    afrish::mainloop();
 }

@@ -1,40 +1,40 @@
-use rish::*;
+use afrish::*;
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
 
     root.title("Feet to Metres");
-    let content = rish::make_frame(&root);
+    let content = afrish::make_frame(&root);
     content.padding(&[3, 3, 12, 12]);
     content.grid()
         .column(0)
         .row(0)
-        .sticky(rish::Sticky::NESW)
+        .sticky(afrish::Sticky::NESW)
         .layout();
     root.grid_configure_column(0, "weight", "1");
     root.grid_configure_row(0, "weight", "1");
 
     // top row has the entry widget and explanatory label to its right
-    let feet_entry = rish::make_entry(&content);
+    let feet_entry = afrish::make_entry(&content);
     feet_entry.width(7);
-    feet_entry.grid().column(2).row(1).sticky(rish::Sticky::EW).padx(5).pady(5).layout();
+    feet_entry.grid().column(2).row(1).sticky(afrish::Sticky::EW).padx(5).pady(5).layout();
 
-    let feet_label = rish::make_label(&content);
+    let feet_label = afrish::make_label(&content);
     feet_label.text("feet");
-    feet_label.grid().column(3).row(1).sticky(rish::Sticky::W).padx(5).pady(5).layout();
+    feet_label.grid().column(3).row(1).sticky(afrish::Sticky::W).padx(5).pady(5).layout();
 
     // middle row has three labels
-    let desc_label = rish::make_label(&content);
+    let desc_label = afrish::make_label(&content);
     desc_label.text("is equivalent to");
-    desc_label.grid().column(1).row(2).sticky(rish::Sticky::E).padx(5).pady(5).layout();
+    desc_label.grid().column(1).row(2).sticky(afrish::Sticky::E).padx(5).pady(5).layout();
 
-    let result_label = rish::make_label(&content);
+    let result_label = afrish::make_label(&content);
     result_label.text("");
-    result_label.grid().column(2).row(2).sticky(rish::Sticky::EW).padx(5).pady(5).layout();
+    result_label.grid().column(2).row(2).sticky(afrish::Sticky::EW).padx(5).pady(5).layout();
     
-    let metres_label = rish::make_label(&content);
+    let metres_label = afrish::make_label(&content);
     metres_label.text("metres");
-    metres_label.grid().column(3).row(2).sticky(rish::Sticky::EW).padx(5).pady(5).layout();
+    metres_label.grid().column(3).row(2).sticky(afrish::Sticky::EW).padx(5).pady(5).layout();
 
     let calculate = {
         let feet_entry = feet_entry.clone();
@@ -49,14 +49,14 @@ fn main() {
     };
 
     // last row has the button on right
-    let calc_button = rish::make_button(&content);
+    let calc_button = afrish::make_button(&content);
     calc_button.text("Calculate");
     calc_button.command(calculate.clone());
-    calc_button.grid().column(3).row(3).sticky(rish::Sticky::W).padx(5).pady(5).layout();
+    calc_button.grid().column(3).row(3).sticky(afrish::Sticky::W).padx(5).pady(5).layout();
 
     feet_entry.focus();
     root.bind("<Return>", move |_| { calculate(); }); 
 
-    rish::mainloop();
+    afrish::mainloop();
 }
 

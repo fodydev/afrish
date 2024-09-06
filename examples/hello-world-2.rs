@@ -1,16 +1,16 @@
-use rish::*;
+use afrish::*;
 
-fn setup(root: &impl rish::TkWidget) {
-    let hello = rish::make_label(root);
+fn setup(root: &impl afrish::TkWidget) {
+    let hello = afrish::make_label(root);
     hello.text("Hello from Rust/Tk");
 
     hello.grid().layout();
 }
 
 fn main() {
-    let root = rish::start_wish().unwrap();
+    let root = afrish::start_wish().unwrap();
 
     setup(&root);
 
-    rish::mainloop();
+    afrish::mainloop();
 }

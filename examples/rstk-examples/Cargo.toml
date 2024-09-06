@@ -1,8 +1,8 @@
 [package]
-name = "rish-examples"
+name = "afrish-examples"
 edition = "2018"
 version = "0.1.0"
 
 [dependencies]
 rand = "0.4"
-rish = "0.1.0"
+afrish = "0.1.0"
