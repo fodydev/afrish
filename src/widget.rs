@@ -32,6 +32,34 @@ pub struct TkEvent {
     pub mouse_button: u64,
 }
 
+#[derive(Clone, Debug, Default)]
+pub struct Style {
+    pub name: &'static str,
+    pub background: String,
+    pub foreground: String,
+    pub font_size: u64,
+    pub font_family: String,
+    pub font_weight: String,
+}
+
+impl Style {
+    pub fn update(&self) {
+        wish::tell_wish(&format!(
+            "ttk::style layout {{{}}} [ttk::style layout {{{}}}];",
+            self.name, self.name
+        ));
+        wish::tell_wish(&format!(
+            "ttk::style config {} -background {{{}}} -foreground {{{}}} -font {{{} {} {}}};",
+            self.name,
+            self.background,
+            self.foreground,
+            self.font_family,
+            self.font_size,
+            self.font_weight
+        ));
+    }
+}
+
 /// Common trait for container widgets. Child widgets should implement the `id`
 /// method. The remaining methods are standard Tk methods and convenient,
 /// type-safe versions of them.
@@ -243,6 +271,15 @@ pub trait TkWidget {
             value
         );
         wish::tell_wish(&msg);
+    }
+
+    /// Apply a style to the widget.
+    fn style(&self, style: &Style) {
+        wish::tell_wish(&format!(
+            "{} configure -style {{{}}}",
+            self.id(),
+            style.name
+        ));
     }
 }
 
