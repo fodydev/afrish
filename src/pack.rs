@@ -13,7 +13,7 @@
 //! 1. `pack` is called first, to get the PackLayout instance.
 //! 2. `layout` must be called last, to perform the layout.
 //! 3. zero or more options are added to the PackLayout, to control the position
-//!   and layout of the widget.
+//!    and layout of the widget.
 
 use super::widget;
 use super::wish;

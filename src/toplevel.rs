@@ -69,9 +69,9 @@ impl TkTopLevel {
     /// * `height` - the vertical height of the window, in pixels
     /// * `width` - the horizontal width of the window, in pixels
     /// * `x` - a positive value gives position relative to _left_ edge of screen,
-    ///         and a negative value gives position relative to _right_ edge.
+    ///   and a negative value gives position relative to _right_ edge.
     /// * `y` - a positive value gives position relative to _top_ edge of screen,
-    ///         and a negative value gives position relative to _bottom_ edge.
+    ///   and a negative value gives position relative to _bottom_ edge.
     pub fn geometry(&self, width: u64, height: u64, x: i64, y: i64) {
         let msg = format!(
             "wm geometry {} {}x{}{}{}{}{}",
