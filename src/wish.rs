@@ -86,7 +86,7 @@ use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::process;
 use std::sync::mpsc;
-use std::sync::{Mutex, OnceLock};
+use std::sync::{Mutex, OnceLock, LazyLock};
 use std::thread;
 
 use super::font;
@@ -105,18 +105,18 @@ fn tracing() -> bool {
     *TRACE_WISH.get().unwrap_or(&false)
 }
 
-static mut WISH: OnceLock<process::Child> = OnceLock::new();
-static mut OUTPUT: OnceLock<process::ChildStdout> = OnceLock::new();
-static mut SENDER: OnceLock<mpsc::Sender<String>> = OnceLock::new();
+static WISH: OnceLock<Mutex<process::Child>> = OnceLock::new();
+static OUTPUT: OnceLock<Mutex<process::ChildStdout>> = OnceLock::new();
+static SENDER: OnceLock<Mutex<mpsc::Sender<String>>> = OnceLock::new();
 
 // Kills the wish process - should be called to exit
 pub(super) fn kill_wish() {
-    unsafe {
-        WISH.get_mut()
-            .unwrap()
-            .kill()
-            .expect("Wish was unexpectedly already finished");
-    }
+    WISH.get()
+        .unwrap()
+        .lock()
+        .unwrap()
+        .kill()
+        .expect("Wish was unexpectedly already finished");
 }
 
 /// Sends a message (tcl command) to wish.
@@ -127,10 +127,21 @@ pub fn tell_wish(msg: &str) {
     if tracing() {
         println!("wish: {}", msg);
     }
-    unsafe {
-        SENDER.get_mut().unwrap().send(String::from(msg)).unwrap();
-        SENDER.get_mut().unwrap().send(String::from("\n")).unwrap();
-    }
+
+    SENDER
+        .get()
+        .unwrap()
+        .lock()
+        .unwrap()
+        .send(String::from(msg))
+        .unwrap();
+    SENDER
+        .get()
+        .unwrap()
+        .lock()
+        .unwrap()
+        .send(String::from("\n"))
+        .unwrap();
 }
 
 /// Sends a message (tcl command) to wish and expects a result.
@@ -141,15 +152,20 @@ pub fn tell_wish(msg: &str) {
 pub fn ask_wish(msg: &str) -> String {
     tell_wish(msg);
 
-    unsafe {
-        let mut input = [32; 10000]; // TODO - long inputs can get split?
-        if OUTPUT.get_mut().unwrap().read(&mut input).is_ok() {
-            if let Ok(input) = String::from_utf8(input.to_vec()) {
-                if tracing() {
-                    println!("---: {:?}", input.trim());
-                }
-                return input.trim().to_string();
+    let mut input = [32; 10000]; // TODO - long inputs can get split?
+    if OUTPUT
+        .get()
+        .unwrap()
+        .lock()
+        .unwrap()
+        .read(&mut input)
+        .is_ok()
+    {
+        if let Ok(input) = String::from_utf8(input.to_vec()) {
+            if tracing() {
+                println!("---: {:?}", input.trim());
             }
+            return input.trim().to_string();
         }
     }
 
@@ -157,12 +173,7 @@ pub fn ask_wish(msg: &str) -> String {
 }
 
 // -- Counter for making new ids
-
-fn next_static_id() -> &'static Mutex<i64> {
-    static NEXT_ID: OnceLock<Mutex<i64>> = OnceLock::new();
-
-    NEXT_ID.get_or_init(|| Mutex::new(0))
-}
+static NEXT_ID: LazyLock<Mutex<i64>> = LazyLock::new(Default::default);
 
 /// Returns a new id string which can be used to name a new
 /// widget instance. The new id will be in reference to the
@@ -171,7 +182,7 @@ fn next_static_id() -> &'static Mutex<i64> {
 /// This is only for use when writing an extension library.
 ///
 pub fn next_wid(parent: &str) -> String {
-    let mut nid = next_static_id().lock().unwrap();
+    let mut nid = NEXT_ID.lock().unwrap();
     *nid += 1;
     if parent == "." {
         format!(".r{}", nid)
@@ -185,13 +196,13 @@ pub fn next_wid(parent: &str) -> String {
 /// This is only for use when writing an extension library.
 ///
 pub fn next_var() -> String {
-    let mut nid = next_static_id().lock().unwrap();
+    let mut nid = NEXT_ID.lock().unwrap();
     *nid += 1;
     format!("::var{}", nid)
 }
 
 pub(super) fn current_id() -> i64 {
-    let nid = next_static_id().lock().unwrap();
+    let nid = NEXT_ID.lock().unwrap();
     *nid
 }
 
@@ -205,21 +216,17 @@ where
     Box::new(f)
 }
 
-fn static_callbacks0() -> &'static Mutex<HashMap<String, Callback0>> {
-    static CALLBACKS0: OnceLock<Mutex<HashMap<String, Callback0>>> = OnceLock::new();
-
-    CALLBACKS0.get_or_init(|| Mutex::new(HashMap::new()))
-}
+static CALLBACKS0: LazyLock<Mutex<HashMap<String, Callback0>>> = LazyLock::new(Default::default);
 
 pub(super) fn add_callback0(wid: &str, callback: Callback0) {
-    static_callbacks0()
+    CALLBACKS0
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback0(wid: &str) -> Option<Callback0> {
-    if let Some((_, command)) = static_callbacks0().lock().unwrap().remove_entry(wid) {
+    if let Some((_, command)) = CALLBACKS0.lock().unwrap().remove_entry(wid) {
         Some(command)
     } else {
         None
@@ -230,7 +237,7 @@ fn eval_callback0(wid: &str) {
     if let Some(command) = get_callback0(wid) {
         command();
         if !wid.contains("after") && // after commands apply once only
-            !static_callbacks0().lock().unwrap().contains_key(wid)
+            !CALLBACKS0.lock().unwrap().contains_key(wid)
         // do not overwrite if a replacement command added
         {
             add_callback0(wid, command);
@@ -246,21 +253,17 @@ where
     Box::new(f)
 }
 
-fn static_callbacks1bool() -> &'static Mutex<HashMap<String, Callback1Bool>> {
-    static CALLBACKS1BOOL: OnceLock<Mutex<HashMap<String, Callback1Bool>>> = OnceLock::new();
-
-    CALLBACKS1BOOL.get_or_init(|| Mutex::new(HashMap::new()))
-}
+static CALLBACKS1BOOL: LazyLock<Mutex<HashMap<String, Callback1Bool>>> = LazyLock::new(Default::default);
 
 pub(super) fn add_callback1_bool(wid: &str, callback: Callback1Bool) {
-    static_callbacks1bool()
+    CALLBACKS1BOOL
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_bool(wid: &str) -> Option<Callback1Bool> {
-    if let Some((_, command)) = static_callbacks1bool().lock().unwrap().remove_entry(wid) {
+    if let Some((_, command)) = CALLBACKS1BOOL.lock().unwrap().remove_entry(wid) {
         Some(command)
     } else {
         None
@@ -270,7 +273,7 @@ fn get_callback1_bool(wid: &str) -> Option<Callback1Bool> {
 fn eval_callback1_bool(wid: &str, value: bool) {
     if let Some(command) = get_callback1_bool(wid) {
         command(value);
-        if !static_callbacks1bool().lock().unwrap().contains_key(wid) {
+        if !CALLBACKS1BOOL.lock().unwrap().contains_key(wid) {
             add_callback1_bool(wid, command);
         }
     } // TODO - error?
@@ -286,21 +289,17 @@ where
 
 // for bound events, key is widgetid/all + pattern, as multiple events can be
 // bound to same entity
-fn static_callbacks1event() -> &'static Mutex<HashMap<String, Callback1Event>> {
-    static CALLBACKS1EVENT: OnceLock<Mutex<HashMap<String, Callback1Event>>> = OnceLock::new();
-
-    CALLBACKS1EVENT.get_or_init(|| Mutex::new(HashMap::new()))
-}
+static CALLBACKS1EVENT: LazyLock<Mutex<HashMap<String, Callback1Event>>> = LazyLock::new(Default::default);
 
 pub(super) fn add_callback1_event(wid: &str, callback: Callback1Event) {
-    static_callbacks1event()
+    CALLBACKS1EVENT
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_event(wid: &str) -> Option<Callback1Event> {
-    if let Some((_, command)) = static_callbacks1event().lock().unwrap().remove_entry(wid) {
+    if let Some((_, command)) = CALLBACKS1EVENT.lock().unwrap().remove_entry(wid) {
         Some(command)
     } else {
         None
@@ -310,7 +309,7 @@ fn get_callback1_event(wid: &str) -> Option<Callback1Event> {
 fn eval_callback1_event(wid: &str, value: widget::TkEvent) {
     if let Some(command) = get_callback1_event(wid) {
         command(value);
-        if !static_callbacks1event().lock().unwrap().contains_key(wid) {
+        if !CALLBACKS1EVENT.lock().unwrap().contains_key(wid) {
             add_callback1_event(wid, command);
         }
     } // TODO - error?
@@ -324,21 +323,17 @@ where
     Box::new(f)
 }
 
-fn static_callbacks1float() -> &'static Mutex<HashMap<String, Callback1Float>> {
-    static CALLBACKS1FLOAT: OnceLock<Mutex<HashMap<String, Callback1Float>>> = OnceLock::new();
-
-    CALLBACKS1FLOAT.get_or_init(|| Mutex::new(HashMap::new()))
-}
+static CALLBACKS1FLOAT: LazyLock<Mutex<HashMap<String, Callback1Float>>> = LazyLock::new(Default::default);
 
 pub(super) fn add_callback1_float(wid: &str, callback: Callback1Float) {
-    static_callbacks1float()
+    CALLBACKS1FLOAT
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_float(wid: &str) -> Option<Callback1Float> {
-    if let Some((_, command)) = static_callbacks1float().lock().unwrap().remove_entry(wid) {
+    if let Some((_, command)) = CALLBACKS1FLOAT.lock().unwrap().remove_entry(wid) {
         Some(command)
     } else {
         None
@@ -348,7 +343,7 @@ fn get_callback1_float(wid: &str) -> Option<Callback1Float> {
 fn eval_callback1_float(wid: &str, value: f64) {
     if let Some(command) = get_callback1_float(wid) {
         command(value);
-        if !static_callbacks1float().lock().unwrap().contains_key(wid) {
+        if !CALLBACKS1FLOAT.lock().unwrap().contains_key(wid) {
             add_callback1_float(wid, command);
         }
     } // TODO - error?
@@ -362,21 +357,17 @@ where
     Box::new(f)
 }
 
-fn static_callbacks1font() -> &'static Mutex<HashMap<String, Callback1Font>> {
-    static CALLBACKS1FONT: OnceLock<Mutex<HashMap<String, Callback1Font>>> = OnceLock::new();
-
-    CALLBACKS1FONT.get_or_init(|| Mutex::new(HashMap::new()))
-}
+static CALLBACKS1FONT: LazyLock<Mutex<HashMap<String, Callback1Font>>> = LazyLock::new(Default::default);
 
 pub(super) fn add_callback1_font(wid: &str, callback: Callback1Font) {
-    static_callbacks1font()
+    CALLBACKS1FONT
         .lock()
         .unwrap()
         .insert(String::from(wid), callback);
 }
 
 fn get_callback1_font(wid: &str) -> Option<Callback1Font> {
-    if let Some((_, command)) = static_callbacks1font().lock().unwrap().remove_entry(wid) {
+    if let Some((_, command)) = CALLBACKS1FONT.lock().unwrap().remove_entry(wid) {
         Some(command)
     } else {
         None
@@ -386,7 +377,7 @@ fn get_callback1_font(wid: &str) -> Option<Callback1Font> {
 fn eval_callback1_font(wid: &str, value: font::TkFont) {
     if let Some(command) = get_callback1_font(wid) {
         command(value);
-        if !static_callbacks1font().lock().unwrap().contains_key(wid) {
+        if !CALLBACKS1FONT.lock().unwrap().contains_key(wid) {
             add_callback1_font(wid, command);
         }
     } // TODO - error?
@@ -394,70 +385,75 @@ fn eval_callback1_font(wid: &str, value: font::TkFont) {
 
 /// Loops while GUI events occur
 pub fn mainloop() {
-    unsafe {
-        loop {
-            let mut input = [32; 10000];
-            if OUTPUT.get_mut().unwrap().read(&mut input).is_ok() {
-                if let Ok(input) = String::from_utf8(input.to_vec()) {
-                    if tracing() {
-                        println!("Callback: {:?}", &input.trim());
-                    }
+    loop {
+        let mut input = [32; 10000];
+        if OUTPUT
+            .get()
+            .unwrap()
+            .lock()
+            .unwrap()
+            .read(&mut input)
+            .is_ok()
+        {
+            if let Ok(input) = String::from_utf8(input.to_vec()) {
+                if tracing() {
+                    println!("Callback: {:?}", &input.trim());
+                }
 
-                    // here - do a match or similar on what was read from wish
-                    if input.starts_with("clicked") {
-                        // -- callbacks
-                        if let Some(n) = input.find(['\n', '\r']) {
-                            let widget = &input[8..n];
-                            eval_callback0(widget);
-                        }
-                    } else if input.starts_with("cb1b") {
-                        // -- callback 1 with bool
-                        let parts: Vec<&str> = input.split('-').collect();
-                        let widget = parts[1].trim();
-                        let value = parts[2].trim();
-                        eval_callback1_bool(widget, value == "1");
-                    } else if input.starts_with("cb1e") {
-                        // -- callback 1 with event
-                        let parts: Vec<&str> = input.split(':').collect();
-                        let widget_pattern = parts[1].trim();
-                        let x = parts[2].parse::<i64>().unwrap_or(0);
-                        let y = parts[3].parse::<i64>().unwrap_or(0);
-                        let root_x = parts[4].parse::<i64>().unwrap_or(0);
-                        let root_y = parts[5].parse::<i64>().unwrap_or(0);
-                        let height = parts[6].parse::<i64>().unwrap_or(0);
-                        let width = parts[7].parse::<i64>().unwrap_or(0);
-                        let key_code = parts[8].parse::<u64>().unwrap_or(0);
-                        let key_symbol = parts[9].parse::<String>().unwrap_or_default();
-                        let mouse_button = parts[10].parse::<u64>().unwrap_or(0);
-                        let event = widget::TkEvent {
-                            x,
-                            y,
-                            root_x,
-                            root_y,
-                            height,
-                            width,
-                            key_code,
-                            key_symbol,
-                            mouse_button,
-                        };
-                        eval_callback1_event(widget_pattern, event);
-                    } else if input.starts_with("cb1f") {
-                        // -- callback 1 with float
-                        let parts: Vec<&str> = input.split('-').collect();
-                        let widget = parts[1].trim();
-                        let value = parts[2].trim().parse::<f64>().unwrap_or(0.0);
-                        eval_callback1_float(widget, value);
-                    } else if let Some(font) = input.strip_prefix("font") {
-                        // -- callback 1 with font
-                        let font = font.trim();
-                        if let Ok(font) = font.parse::<font::TkFont>() {
-                            eval_callback1_font("font", font);
-                        }
-                    } else if input.starts_with("exit") {
-                        // -- wish has exited
-                        kill_wish();
-                        return; // exit loop and program
+                // here - do a match or similar on what was read from wish
+                if input.starts_with("clicked") {
+                    // -- callbacks
+                    if let Some(n) = input.find(['\n', '\r']) {
+                        let widget = &input[8..n];
+                        eval_callback0(widget);
                     }
+                } else if input.starts_with("cb1b") {
+                    // -- callback 1 with bool
+                    let parts: Vec<&str> = input.split('-').collect();
+                    let widget = parts[1].trim();
+                    let value = parts[2].trim();
+                    eval_callback1_bool(widget, value == "1");
+                } else if input.starts_with("cb1e") {
+                    // -- callback 1 with event
+                    let parts: Vec<&str> = input.split(':').collect();
+                    let widget_pattern = parts[1].trim();
+                    let x = parts[2].parse::<i64>().unwrap_or(0);
+                    let y = parts[3].parse::<i64>().unwrap_or(0);
+                    let root_x = parts[4].parse::<i64>().unwrap_or(0);
+                    let root_y = parts[5].parse::<i64>().unwrap_or(0);
+                    let height = parts[6].parse::<i64>().unwrap_or(0);
+                    let width = parts[7].parse::<i64>().unwrap_or(0);
+                    let key_code = parts[8].parse::<u64>().unwrap_or(0);
+                    let key_symbol = parts[9].parse::<String>().unwrap_or_default();
+                    let mouse_button = parts[10].parse::<u64>().unwrap_or(0);
+                    let event = widget::TkEvent {
+                        x,
+                        y,
+                        root_x,
+                        root_y,
+                        height,
+                        width,
+                        key_code,
+                        key_symbol,
+                        mouse_button,
+                    };
+                    eval_callback1_event(widget_pattern, event);
+                } else if input.starts_with("cb1f") {
+                    // -- callback 1 with float
+                    let parts: Vec<&str> = input.split('-').collect();
+                    let widget = parts[1].trim();
+                    let value = parts[2].trim().parse::<f64>().unwrap_or(0.0);
+                    eval_callback1_float(widget, value);
+                } else if let Some(font) = input.strip_prefix("font") {
+                    // -- callback 1 with font
+                    let font = font.trim();
+                    if let Ok(font) = font.parse::<font::TkFont>() {
+                        eval_callback1_font("font", font);
+                    }
+                } else if input.starts_with("exit") {
+                    // -- wish has exited
+                    kill_wish();
+                    return; // exit loop and program
                 }
             }
         }
@@ -496,75 +492,82 @@ pub fn trace_with(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
 fn start_tk_connection(wish: &str) -> Result<toplevel::TkTopLevel, TkError> {
     let err_msg = format!("Do not start {} twice", wish);
 
-    unsafe {
-        if let Ok(wish_process) = process::Command::new(wish)
-            .stdin(process::Stdio::piped())
-            .stdout(process::Stdio::piped())
-            .spawn()
-        {
-            if WISH.set(wish_process).is_err() {
-                return Err(TkError { message: err_msg });
-            }
-        } else {
-            return Err(TkError {
-                message: format!("Failed to start {} process", wish),
-            });
-        };
-
-        let mut input = WISH.get_mut().unwrap().stdin.take().unwrap();
-        if OUTPUT
-            .set(WISH.get_mut().unwrap().stdout.take().unwrap())
-            .is_err()
-        {
+    if let Ok(wish_process) = process::Command::new(wish)
+        .stdin(process::Stdio::piped())
+        .stdout(process::Stdio::piped())
+        .spawn()
+    {
+        if WISH.set(wish_process.into()).is_err() {
             return Err(TkError { message: err_msg });
         }
+    } else {
+        return Err(TkError {
+            message: format!("Failed to start {} process", wish),
+        });
+    };
 
-        // -- initial setup of Tcl/Tk environment
+    let mut input = WISH.get().unwrap().lock().unwrap().stdin.take().unwrap();
+    if OUTPUT
+        .set(
+            WISH.get()
+                .unwrap()
+                .lock()
+                .unwrap()
+                .stdout
+                .take()
+                .unwrap()
+                .into(),
+        )
+        .is_err()
+    {
+        return Err(TkError { message: err_msg });
+    }
 
-        // set close button to output 'exit' message, so rust can close connection
-        input
-            .write_all(b"wm protocol . WM_DELETE_WINDOW { puts stdout {exit} ; flush stdout } \n")
-            .unwrap();
-        // remove the 'tearoff' menu option
-        input.write_all(b"option add *tearOff 0\n").unwrap();
-        // tcl function to help working with font chooser
-        input
-            .write_all(
-                b"proc font_choice {w font args} {
+    // -- initial setup of Tcl/Tk environment
+
+    // set close button to output 'exit' message, so rust can close connection
+    input
+        .write_all(b"wm protocol . WM_DELETE_WINDOW { puts stdout {exit} ; flush stdout } \n")
+        .unwrap();
+    // remove the 'tearoff' menu option
+    input.write_all(b"option add *tearOff 0\n").unwrap();
+    // tcl function to help working with font chooser
+    input
+        .write_all(
+            b"proc font_choice {w font args} {
             set res {font }
             append res [font actual $font]
                 puts $res
                 flush stdout
         }\n",
-            )
-            .unwrap();
-        // tcl function to help working with scale widget
-        input
-            .write_all(
-                b"proc scale_value {w value args} {
+        )
+        .unwrap();
+    // tcl function to help working with scale widget
+    input
+        .write_all(
+            b"proc scale_value {w value args} {
             puts cb1f-$w-$value
                 flush stdout
         }\n",
-            )
-            .unwrap();
+        )
+        .unwrap();
 
-        // configure the communication encoding
-        input
-            .write_all(b"chan configure stdin -encoding utf-8\n")
-            .unwrap();
+    // configure the communication encoding
+    input
+        .write_all(b"chan configure stdin -encoding utf-8\n")
+        .unwrap();
 
-        let (sender, receiver) = mpsc::channel();
-        SENDER.set(sender).expect(&err_msg);
+    let (sender, receiver) = mpsc::channel();
+    SENDER.set(sender.into()).expect(&err_msg);
 
-        // create thread to receive strings to send on to wish
-        thread::spawn(move || loop {
-            let msg: Result<String, mpsc::RecvError> = receiver.recv();
-            if let Ok(msg) = msg {
-                input.write_all(msg.as_bytes()).unwrap();
-                input.write_all(b"\n").unwrap();
-            }
-        });
-    }
+    // create thread to receive strings to send on to wish
+    thread::spawn(move || loop {
+        let msg: Result<String, mpsc::RecvError> = receiver.recv();
+        if let Ok(msg) = msg {
+            input.write_all(msg.as_bytes()).unwrap();
+            input.write_all(b"\n").unwrap();
+        }
+    });
 
     Ok(toplevel::TkTopLevel {
         id: String::from("."),
