@@ -210,12 +210,7 @@ impl TkFont {
             self, text
         );
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            // TODO can this fail?
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Returns font's metrics

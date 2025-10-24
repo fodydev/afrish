@@ -120,44 +120,28 @@ pub trait TkWidget {
     fn position_x(&self) -> u64 {
         let msg = format!("winfo x {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Returns the widget y position in pixels, within its parent.
     fn position_y(&self) -> u64 {
         let msg = format!("winfo y {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Returns the widget height in pixels.
     fn widget_height(&self) -> u64 {
         let msg = format!("winfo height {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Returns the widget width in pixels.
     fn widget_width(&self) -> u64 {
         let msg = format!("winfo width {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Returns the position of the mouse on screen of widget as (x,y).
@@ -169,66 +153,42 @@ pub trait TkWidget {
     fn mouse_x(&self) -> i64 {
         let msg = format!("winfo pointerx {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<i64>() {
-            value
-        } else {
-            -1
-        }
+        result.parse::<i64>().unwrap_or(-1)
     }
 
     /// Gives the y position of the mouse on screen of widget.
     fn mouse_y(&self) -> i64 {
         let msg = format!("winfo pointery {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<i64>() {
-            value
-        } else {
-            -1
-        }
+        result.parse::<i64>().unwrap_or(-1)
     }
 
     /// Height of screen of widget in pixels.
     fn screen_height(&self) -> u64 {
         let msg = format!("winfo screenheight {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Height of screen of widget in millimetres.
     fn screen_height_mm(&self) -> u64 {
         let msg = format!("winfo screenmmheight {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Width of screen of widget in pixels.
     fn screen_width(&self) -> u64 {
         let msg = format!("winfo screenwidth {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     /// Width of screen of widget in millimetres.
     fn screen_width_mm(&self) -> u64 {
         let msg = format!("winfo screenmmwidth {}", self.id());
         let result = wish::ask_wish(&msg);
-        if let Ok(value) = result.parse::<u64>() {
-            value
-        } else {
-            0
-        }
+        result.parse::<u64>().unwrap_or(0)
     }
 
     // -- stacking order

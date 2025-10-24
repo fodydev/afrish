@@ -79,11 +79,7 @@ impl TkProgressbar {
     /// Returns the current value of the progress bar.
     pub fn value_get(&self) -> f64 {
         let result = widget::TkWidget::cget(self, "value");
-        if let Ok(value) = result.parse::<f64>() {
-            value
-        } else {
-            0.0
-        }
+        result.parse::<f64>().unwrap_or(0.0)
     }
 
     /// Sets the value of the progress bar.
