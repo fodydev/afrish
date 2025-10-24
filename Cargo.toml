@@ -1,6 +1,6 @@
 [package]
 name = "afrish"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Brady Fomegne <brady.fomegne@outlook.com>"]
 edition = "2021"
 
